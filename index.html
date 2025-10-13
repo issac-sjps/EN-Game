@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>顏色英文學習遊戲</title>
+    <style>
+        body {
+            box-sizing: border-box;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100%;
+            color: white;
+        }
+        
+        html, body {
+            height: 100%;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .header {
+            margin-bottom: 30px;
+        }
+        
+        .title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .game-area {
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .question {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 15px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+        
+        .colors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin: 30px 0;
+        }
+        
+        .color-option {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 4px solid white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            margin: 0 auto;
+        }
+        
+        .color-option:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 25px rgba(0,0,0,0.3);
+        }
+        
+        .color-option.correct {
+            animation: correctPulse 0.6s ease;
+            border-color: #4ade80;
+            border-width: 6px;
+        }
+        
+        .color-option.wrong {
+            animation: wrongShake 0.6s ease;
+            border-color: #ef4444;
+            border-width: 6px;
+        }
+        
+        @keyframes correctPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+        
+        @keyframes wrongShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        
+        .score-board {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+        
+        .score-item {
+            background: rgba(255,255,255,0.2);
+            padding: 10px 20px;
+            border-radius: 25px;
+            backdrop-filter: blur(5px);
+        }
+        
+        .feedback {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 20px 0;
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .next-btn {
+            background: linear-gradient(45deg, #4ade80, #22c55e);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            display: none;
+        }
+        
+        .next-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        
+        .celebration {
+            font-size: 3rem;
+            animation: bounce 1s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        @media (max-width: 600px) {
+            .title { font-size: 2rem; }
+            .question { font-size: 1.5rem; }
+            .color-option { width: 100px; height: 100px; }
+            .colors-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">🎨 顏色英文學習遊戲</h1>
+            <p class="subtitle">點擊正確的顏色來學習英文單詞！</p>
+            <div style="background: rgba(255,255,255,0.1); border-radius: 15px; padding: 20px; margin: 20px 0; backdrop-filter: blur(10px);">
+                <h3 style="margin-bottom: 15px; font-size: 1.3rem;">📚 題庫內容 (共10種顏色)</h3>
+                <div id="password-section">
+                    <div style="margin-bottom: 15px;">
+                        <input type="password" id="password-input" placeholder="請輸入密碼查看題庫" 
+                               style="padding: 10px; border-radius: 8px; border: none; margin-right: 10px; font-size: 1rem; width: 200px;">
+                        <button onclick="checkPassword()" 
+                                style="padding: 10px 20px; background: #4ade80; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem;">
+                            查看
+                        </button>
+                    </div>
+                </div>
+                <div id="question-bank" style="display: none;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; font-size: 0.9rem; text-align: left;">
+                        <div>1. Red (紅色)</div>
+                        <div>2. Blue (藍色)</div>
+                        <div>3. Green (綠色)</div>
+                        <div>4. Yellow (黃色)</div>
+                        <div>5. Purple (紫色)</div>
+                        <div>6. Orange (橙色)</div>
+                        <div>7. Pink (粉紅色)</div>
+                        <div>8. Brown (棕色)</div>
+                        <div>9. Black (黑色)</div>
+                        <div>10. White (白色)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="game-area">
+            <div class="score-board">
+                <div class="score-item">
+                    <span>分數: </span>
+                    <span id="score">0</span>
+                </div>
+                <div class="score-item">
+                    <span>題目: </span>
+                    <span id="current-question">1</span>
+                    <span>/20</span>
+                </div>
+                <div class="score-item">
+                    <span>答對率: </span>
+                    <span id="accuracy">0%</span>
+                </div>
+            </div>
+            
+            <div class="question" id="question">
+                點擊 "Red"
+            </div>
+            
+            <div class="colors-grid" id="colors-grid">
+                <!-- 顏色選項會動態生成 -->
+            </div>
+            
+            <div class="feedback" id="feedback"></div>
+            
+            <button class="next-btn" id="next-btn" onclick="nextQuestion()">
+                下一題 →
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const colors = [
+            { name: 'Red', chinese: '紅色', hex: '#ef4444' },
+            { name: 'Blue', chinese: '藍色', hex: '#3b82f6' },
+            { name: 'Green', chinese: '綠色', hex: '#22c55e' },
+            { name: 'Yellow', chinese: '黃色', hex: '#eab308' },
+            { name: 'Purple', chinese: '紫色', hex: '#a855f7' },
+            { name: 'Orange', chinese: '橙色', hex: '#f97316' },
+            { name: 'Pink', chinese: '粉紅色', hex: '#ec4899' },
+            { name: 'Brown', chinese: '棕色', hex: '#8b4513' },
+            { name: 'Black', chinese: '黑色', hex: '#1f2937' },
+            { name: 'White', chinese: '白色', hex: '#f8fafc' }
+        ];
+        
+        let currentQuestion = 1;
+        let score = 0;
+        let correctAnswers = 0;
+        let totalAnswered = 0;
+        let correctColor = null;
+        let gameOptions = [];
+        let answered = false;
+        
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+        
+        function generateQuestion() {
+            answered = false;
+            document.getElementById('next-btn').style.display = 'none';
+            document.getElementById('feedback').innerHTML = '';
+            
+            // 選擇正確答案
+            correctColor = colors[Math.floor(Math.random() * colors.length)];
+            
+            // 生成選項（包含正確答案和3個錯誤答案）
+            gameOptions = [correctColor];
+            const remainingColors = colors.filter(c => c.name !== correctColor.name);
+            const shuffledRemaining = shuffleArray(remainingColors);
+            gameOptions.push(...shuffledRemaining.slice(0, 3));
+            gameOptions = shuffleArray(gameOptions);
+            
+            // 更新問題
+            document.getElementById('question').innerHTML = 
+                `點擊 "${correctColor.name}"`;
+            
+            // 生成顏色選項
+            const colorsGrid = document.getElementById('colors-grid');
+            colorsGrid.innerHTML = '';
+            
+            gameOptions.forEach((color, index) => {
+                const colorDiv = document.createElement('div');
+                colorDiv.className = 'color-option';
+                colorDiv.style.backgroundColor = color.hex;
+                if (color.name === 'White') {
+                    colorDiv.style.border = '4px solid #666';
+                }
+                colorDiv.onclick = () => selectColor(color, colorDiv);
+                colorsGrid.appendChild(colorDiv);
+            });
+        }
+        
+        function selectColor(selectedColor, element) {
+            if (answered) return;
+            
+            answered = true;
+            const feedbackEl = document.getElementById('feedback');
+            
+            totalAnswered++;
+            
+            if (selectedColor.name === correctColor.name) {
+                // 正確答案
+                element.classList.add('correct');
+                score += 10;
+                correctAnswers++;
+                feedbackEl.innerHTML = `
+                    <span class="celebration">🎉</span>
+                    太棒了！${correctColor.name} 就是${correctColor.chinese}！
+                    <span class="celebration">🎉</span>
+                `;
+                feedbackEl.style.color = '#4ade80';
+                
+                // 正確答案後1.5秒自動進入下一題
+                setTimeout(() => {
+                    nextQuestion();
+                }, 1500);
+            } else {
+                // 錯誤答案
+                element.classList.add('wrong');
+                feedbackEl.innerHTML = `
+                    ❌ 不對哦！${correctColor.name} 是${correctColor.chinese}
+                `;
+                feedbackEl.style.color = '#ef4444';
+                
+                // 高亮正確答案
+                setTimeout(() => {
+                    const correctElement = Array.from(document.querySelectorAll('.color-option'))
+                        .find(el => el.style.backgroundColor === correctColor.hex);
+                    if (correctElement) {
+                        correctElement.classList.add('correct');
+                    }
+                }, 500);
+                
+                // 錯誤答案後2.5秒自動進入下一題
+                setTimeout(() => {
+                    nextQuestion();
+                }, 2500);
+            }
+            
+            // 更新分數和答對率
+            document.getElementById('score').textContent = score;
+            const accuracy = Math.round((correctAnswers / totalAnswered) * 100);
+            document.getElementById('accuracy').textContent = accuracy + '%';
+        }
+        
+        function nextQuestion() {
+            if (currentQuestion >= 20) {
+                // 遊戲結束
+                showGameComplete();
+                return;
+            }
+            
+            currentQuestion++;
+            document.getElementById('current-question').textContent = currentQuestion;
+            generateQuestion();
+        }
+        
+        function showGameComplete() {
+            const gameArea = document.querySelector('.game-area');
+            const percentage = (score / 200) * 100;
+            let message = '';
+            
+            if (percentage >= 80) {
+                message = '🏆 太厲害了！你是顏色英文大師！';
+            } else if (percentage >= 60) {
+                message = '👍 做得很好！繼續加油！';
+            } else {
+                message = '💪 不錯的開始！多練習會更棒！';
+            }
+            
+            gameArea.innerHTML = `
+                <div style="text-align: center; padding: 40px;">
+                    <div class="celebration" style="font-size: 4rem; margin-bottom: 20px;">
+                        🎊🎉🎊
+                    </div>
+                    <h2 style="font-size: 2.5rem; margin-bottom: 20px;">遊戲完成！</h2>
+                    <div style="font-size: 2rem; margin-bottom: 20px;">
+                        最終分數: <span style="color: #4ade80; font-weight: bold;">${score}/200</span>
+                    </div>
+                    <div style="font-size: 1.8rem; margin-bottom: 20px;">
+                        答對率: <span style="color: #fbbf24; font-weight: bold;">${Math.round((correctAnswers / totalAnswered) * 100)}%</span>
+                        (${correctAnswers}/${totalAnswered})
+                    </div>
+                    <div style="font-size: 1.5rem; margin-bottom: 30px;">
+                        ${message}
+                    </div>
+                    <button onclick="restartGame()" style="
+                        background: linear-gradient(45deg, #667eea, #764ba2);
+                        color: white;
+                        border: none;
+                        padding: 15px 30px;
+                        font-size: 1.2rem;
+                        font-weight: bold;
+                        border-radius: 25px;
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+                    ">
+                        🔄 重新開始
+                    </button>
+                </div>
+            `;
+        }
+        
+        function restartGame() {
+            currentQuestion = 1;
+            score = 0;
+            correctAnswers = 0;
+            totalAnswered = 0;
+            document.getElementById('score').textContent = score;
+            document.getElementById('current-question').textContent = currentQuestion;
+            
+            // 重新創建遊戲區域
+            const gameArea = document.querySelector('.game-area');
+            gameArea.innerHTML = `
+                <div class="score-board">
+                    <div class="score-item">
+                        <span>分數: </span>
+                        <span id="score">0</span>
+                    </div>
+                    <div class="score-item">
+                        <span>題目: </span>
+                        <span id="current-question">1</span>
+                        <span>/20</span>
+                    </div>
+                    <div class="score-item">
+                        <span>答對率: </span>
+                        <span id="accuracy">0%</span>
+                    </div>
+                </div>
+                
+                <div class="question" id="question">
+                    點擊 "Red"
+                </div>
+                
+                <div class="colors-grid" id="colors-grid">
+                    <!-- 顏色選項會動態生成 -->
+                </div>
+                
+                <div class="feedback" id="feedback"></div>
+                
+                <button class="next-btn" id="next-btn" onclick="nextQuestion()">
+                    下一題 →
+                </button>
+            `;
+            
+            generateQuestion();
+        }
+        
+        // 密碼驗證功能
+        function checkPassword() {
+            const password = document.getElementById('password-input').value;
+            const passwordSection = document.getElementById('password-section');
+            const questionBank = document.getElementById('question-bank');
+            
+            if (password === '000000') {
+                passwordSection.style.display = 'none';
+                questionBank.style.display = 'block';
+            } else {
+                alert('密碼錯誤！請輸入正確密碼。');
+                document.getElementById('password-input').value = '';
+            }
+        }
+        
+        // 支援按Enter鍵驗證密碼
+        document.getElementById('password-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkPassword();
+            }
+        });
+        
+        // 初始化遊戲
+        generateQuestion();
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98dd52d571774a69',t:'MTc2MDM0MjYzOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
