@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>學習英文形狀 - Learn English Shapes</title>
+    <style>
+        body {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100%;
+            color: #333;
+        }
+        
+        html {
+            height: 100%;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            color: #4a5568;
+            margin: 0 0 10px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            color: #718096;
+            margin: 0;
+        }
+        
+        .shapes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .shape-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .shape-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+        }
+        
+        .shape-card.active {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            transform: scale(1.05);
+        }
+        
+        .shape-visual {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .circle {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            border-radius: 50%;
+        }
+        
+        .square {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(45deg, #4834d4, #686de0);
+        }
+        
+        .triangle {
+            width: 0;
+            height: 0;
+            border-left: 50px solid transparent;
+            border-right: 50px solid transparent;
+            border-bottom: 87px solid #00d2d3;
+        }
+        
+        .rectangle {
+            width: 120px;
+            height: 70px;
+            background: linear-gradient(45deg, #ff9ff3, #f368e0);
+        }
+        
+        .oval {
+            width: 120px;
+            height: 70px;
+            background: linear-gradient(45deg, #feca57, #ff9f43);
+            border-radius: 50%;
+        }
+        
+        .diamond {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(45deg, #5f27cd, #a55eea);
+            transform: rotate(45deg);
+        }
+        
+        .star {
+            position: relative;
+            width: 0;
+            height: 0;
+            border-left: 50px solid transparent;
+            border-right: 50px solid transparent;
+            border-bottom: 35px solid #10ac84;
+            transform: rotate(35deg);
+        }
+        
+        .star:before {
+            content: '';
+            position: absolute;
+            left: -50px;
+            top: -25px;
+            width: 0;
+            height: 0;
+            border-left: 50px solid transparent;
+            border-right: 50px solid transparent;
+            border-bottom: 35px solid #10ac84;
+            transform: rotate(-70deg);
+        }
+        
+        .star:after {
+            content: '';
+            position: absolute;
+            left: -50px;
+            top: 5px;
+            width: 0;
+            height: 0;
+            border-left: 50px solid transparent;
+            border-right: 50px solid transparent;
+            border-bottom: 35px solid #10ac84;
+            transform: rotate(70deg);
+        }
+        
+        .heart {
+            position: relative;
+            width: 80px;
+            height: 70px;
+            transform: rotate(-45deg);
+        }
+        
+        .heart:before,
+        .heart:after {
+            content: '';
+            width: 40px;
+            height: 60px;
+            position: absolute;
+            left: 40px;
+            top: 0;
+            background: #e74c3c;
+            border-radius: 40px 40px 0 0;
+            transform: rotate(-45deg);
+            transform-origin: 0 100%;
+        }
+        
+        .heart:after {
+            left: 0;
+            transform: rotate(45deg);
+            transform-origin: 100% 100%;
+        }
+        
+        .shape-name {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+        
+        .shape-pronunciation {
+            font-size: 1.1rem;
+            color: #718096;
+            font-style: italic;
+            margin-bottom: 15px;
+        }
+        
+        .shape-chinese {
+            font-size: 1.3rem;
+            color: #4a5568;
+            font-weight: 600;
+        }
+        
+        .pronunciation-btn {
+            background: linear-gradient(45deg, #48bb78, #38a169);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 8px 15px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .pronunciation-btn:hover {
+            background: linear-gradient(45deg, #38a169, #2f855a);
+            transform: translateY(-2px);
+        }
+        
+        .pronunciation-btn:active {
+            transform: translateY(0);
+        }
+        
+        .quiz-section {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+        
+        .quiz-title {
+            font-size: 2rem;
+            color: #4a5568;
+            margin-bottom: 20px;
+        }
+        
+        .quiz-question {
+            font-size: 1.4rem;
+            color: #2d3748;
+            margin-bottom: 30px;
+        }
+        
+        .quiz-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .quiz-option {
+            background: #f7fafc;
+            border: 3px solid #e2e8f0;
+            border-radius: 15px;
+            padding: 15px 20px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .quiz-option:hover {
+            background: #edf2f7;
+            border-color: #cbd5e0;
+        }
+        
+        .quiz-option.correct {
+            background: #c6f6d5;
+            border-color: #38a169;
+            color: #22543d;
+        }
+        
+        .quiz-option.wrong {
+            background: #fed7d7;
+            border-color: #e53e3e;
+            color: #742a2a;
+        }
+        
+        .option-pronunciation-btn:hover {
+            background: linear-gradient(45deg, #38a169, #2f855a) !important;
+            transform: translateY(-1px);
+        }
+        
+        .quiz-result {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+        }
+        
+        .quiz-result.correct {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+        
+        .quiz-result.wrong {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+        
+        .next-quiz-btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            border-radius: 25px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .next-quiz-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .score {
+            background: linear-gradient(45deg, #ffecd2, #fcb69f);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #744210;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎨 學習英文形狀 Learn English Shapes</h1>
+            <p>點擊形狀來學習它們的英文名稱！Click on shapes to learn their English names!</p>
+        </div>
+        
+        <!-- 形狀學習區域密碼保護 -->
+        <div class="quiz-section" style="margin-bottom: 40px;" id="shapesLearningSection">
+            <h2 class="quiz-title">📚 形狀學習區 Shape Learning Area</h2>
+            
+            <!-- 密碼輸入區域 -->
+            <div id="shapesPasswordSection">
+                <div class="password-container" style="padding: 20px;">
+                    <div style="font-size: 1.2rem; margin-bottom: 15px; color: #4a5568;">
+                        🔒 請輸入密碼來查看形狀學習內容<br>
+                        <span style="font-size: 0.9rem; color: #718096;">Please enter password to access shape learning content</span>
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <input type="password" id="shapesPasswordInput" placeholder="輸入密碼 Enter password" 
+                               style="padding: 10px 15px; font-size: 1rem; border: 3px solid #e2e8f0; border-radius: 15px; width: 180px; text-align: center;">
+                    </div>
+                    <button onclick="checkShapesPassword()" style="background: linear-gradient(45deg, #667eea, #764ba2); color: white; border: none; padding: 10px 20px; font-size: 1rem; border-radius: 20px; cursor: pointer;">
+                        🔓 解鎖學習內容 Unlock Learning Content
+                    </button>
+                    <div id="shapesPasswordError" style="color: #e53e3e; margin-top: 10px; font-weight: bold; display: none;">
+                        ❌ 密碼錯誤！請重新輸入 Wrong password! Please try again.
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 形狀學習內容 -->
+            <div id="shapesContent" style="display: none;">
+                <div class="shapes-grid" id="shapesGrid">
+                    <div class="shape-card" data-shape="circle" onclick="playShape('circle')">
+                        <div class="shape-visual">
+                            <div class="circle"></div>
+                        </div>
+                        <div class="shape-name">Circle</div>
+                        <div class="shape-pronunciation">/ˈsɜːrkəl/</div>
+                        <div class="shape-chinese">圓形</div>
+                        <button class="pronunciation-btn" onclick="event.stopPropagation(); speakWord('Circle')">
+                            🔊 聽發音
+                        </button>
+                    </div>
+                    
+                    <div class="shape-card" data-shape="square" onclick="playShape('square')">
+                        <div class="shape-visual">
+                            <div class="square"></div>
+                        </div>
+                        <div class="shape-name">Square</div>
+                        <div class="shape-pronunciation">/skwer/</div>
+                        <div class="shape-chinese">正方形</div>
+                        <button class="pronunciation-btn" onclick="event.stopPropagation(); speakWord('Square')">
+                            🔊 聽發音
+                        </button>
+                    </div>
+                    
+                    <div class="shape-card" data-shape="triangle" onclick="playShape('triangle')">
+                        <div class="shape-visual">
+                            <div class="triangle"></div>
+                        </div>
+                        <div class="shape-name">Triangle</div>
+                        <div class="shape-pronunciation">/ˈtraɪæŋɡəl/</div>
+                        <div class="shape-chinese">三角形</div>
+                        <button class="pronunciation-btn" onclick="event.stopPropagation(); speakWord('Triangle')">
+                            🔊 聽發音
+                        </button>
+                    </div>
+                    
+                    <div class="shape-card" data-shape="rectangle" onclick="playShape('rectangle')">
+                        <div class="shape-visual">
+                            <div class="rectangle"></div>
+                        </div>
+                        <div class="shape-name">Rectangle</div>
+                        <div class="shape-pronunciation">/ˈrektæŋɡəl/</div>
+                        <div class="shape-chinese">長方形</div>
+                        <button class="pronunciation-btn" onclick="event.stopPropagation(); speakWord('Rectangle')">
+                            🔊 聽發音
+                        </button>
+                    </div>
+                    
+                    <div class="shape-card" data-shape="oval" onclick="playShape('oval')">
+                        <div class="shape-visual">
+                            <div class="oval"></div>
+                        </div>
+                        <div class="shape-name">Oval</div>
+                        <div class="shape-pronunciation">/ˈoʊvəl/</div>
+                        <div class="shape-chinese">橢圓形</div>
+                        <button class="pronunciation-btn" onclick="event.stopPropagation(); speakWord('Oval')">
+                            🔊 聽發音
+                        </button>
+                    </div>
+                    
+                    <div class="shape-card" data-shape="diamond" onclick="playShape('diamond')">
+                        <div class="shape-visual">
+                            <div class="diamond"></div>
+                        </div>
+                        <div class="shape-name">Diamond</div>
+                        <div class="shape-pronunciation">/ˈdaɪmənd/</div>
+                        <div class="shape-chinese">菱形</div>
+                        <button class="pronunciation-btn" onclick="event.stopPropagation(); speakWord('Diamond')">
+                            🔊 聽發音
+                        </button>
+                    </div>
+                    
+                    <div class="shape-card" data-shape="star" onclick="playShape('star')">
+                        <div class="shape-visual">
+                            <div class="star"></div>
+                        </div>
+                        <div class="shape-name">Star</div>
+                        <div class="shape-pronunciation">/stɑːr/</div>
+                        <div class="shape-chinese">星形</div>
+                        <button class="pronunciation-btn" onclick="event.stopPropagation(); speakWord('Star')">
+                            🔊 聽發音
+                        </button>
+                    </div>
+                    
+                    <div class="shape-card" data-shape="heart" onclick="playShape('heart')">
+                        <div class="shape-visual">
+                            <div class="heart"></div>
+                        </div>
+                        <div class="shape-name">Heart</div>
+                        <div class="shape-pronunciation">/hɑːrt/</div>
+                        <div class="shape-chinese">心形</div>
+                        <button class="pronunciation-btn" onclick="event.stopPropagation(); speakWord('Heart')">
+                            🔊 聽發音
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="quiz-section">
+            <div class="score" id="score">得分 Score: 0/0 | 題目 Question: 0/20</div>
+            <h2 class="quiz-title">🎯 形狀測驗 Shape Quiz</h2>
+            
+            <div class="quiz-question" id="quizQuestion">點擊「開始測驗」來測試你的學習成果！共有20題等你挑戰！</div>
+            <div class="quiz-options" id="quizOptions"></div>
+            <div class="quiz-result" id="quizResult" style="display: none;"></div>
+            <button class="next-quiz-btn" onclick="startQuiz()" id="quizBtn">🚀 開始測驗 Start Quiz</button>
+        </div>
+    </div>
+
+    <script>
+        const shapes = [
+            { name: 'Circle', chinese: '圓形', pronunciation: '/ˈsɜːrkəl/' },
+            { name: 'Square', chinese: '正方形', pronunciation: '/skwer/' },
+            { name: 'Triangle', chinese: '三角形', pronunciation: '/ˈtraɪæŋɡəl/' },
+            { name: 'Rectangle', chinese: '長方形', pronunciation: '/ˈrektæŋɡəl/' },
+            { name: 'Oval', chinese: '橢圓形', pronunciation: '/ˈoʊvəl/' },
+            { name: 'Diamond', chinese: '菱形', pronunciation: '/ˈdaɪmənd/' },
+            { name: 'Star', chinese: '星形', pronunciation: '/stɑːr/' },
+            { name: 'Heart', chinese: '心形', pronunciation: '/hɑːrt/' }
+        ];
+        
+        let currentQuiz = null;
+        let score = 0;
+        let totalQuestions = 0;
+        let maxQuestions = 20;
+        let quizActive = false;
+        let shapesUnlocked = false;
+        
+        // 形狀學習區密碼驗證功能
+        function checkShapesPassword() {
+            const passwordInput = document.getElementById('shapesPasswordInput');
+            const password = passwordInput.value;
+            const errorDiv = document.getElementById('shapesPasswordError');
+            const shapesSection = document.getElementById('shapesLearningSection');
+            
+            if (password === '000000') {
+                // 密碼正確，顯示形狀學習內容並擴展區域
+                document.getElementById('shapesPasswordSection').style.display = 'none';
+                document.getElementById('shapesContent').style.display = 'block';
+                
+                // 添加擴展動畫效果
+                shapesSection.style.transition = 'all 0.5s ease';
+                shapesSection.style.transform = 'scale(1.02)';
+                
+                setTimeout(() => {
+                    shapesSection.style.transform = 'scale(1)';
+                }, 500);
+                
+                shapesUnlocked = true;
+                errorDiv.style.display = 'none';
+            } else {
+                // 密碼錯誤，顯示錯誤訊息
+                errorDiv.style.display = 'block';
+                passwordInput.value = '';
+                passwordInput.focus();
+            }
+        }
+        
+        // 監聽Enter鍵
+        document.addEventListener('DOMContentLoaded', function() {
+            const shapesPasswordInput = document.getElementById('shapesPasswordInput');
+            if (shapesPasswordInput) {
+                shapesPasswordInput.addEventListener('keypress', function(event) {
+                    if (event.key === 'Enter') {
+                        checkShapesPassword();
+                    }
+                });
+            }
+        });
+        
+        // 語音朗讀功能
+        function speakWord(word) {
+            if ('speechSynthesis' in window) {
+                // 停止任何正在進行的語音
+                speechSynthesis.cancel();
+                
+                const utterance = new SpeechSynthesisUtterance(word);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.8; // 稍微慢一點的語速
+                utterance.pitch = 1;
+                utterance.volume = 1;
+                
+                speechSynthesis.speak(utterance);
+            } else {
+                alert('抱歉，您的瀏覽器不支援語音功能。Sorry, your browser does not support speech synthesis.');
+            }
+        }
+        
+        function playShape(shapeName) {
+            if (!shapesUnlocked) {
+                alert('請先輸入密碼解鎖形狀學習區！Please unlock the shapes learning area first!');
+                return;
+            }
+            
+            // 移除所有active類別
+            document.querySelectorAll('.shape-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            
+            // 添加active類別到被點擊的形狀
+            document.querySelector(`[data-shape="${shapeName}"]`).classList.add('active');
+            
+            // 找到對應的形狀資料
+            const shape = shapes.find(s => s.name.toLowerCase() === shapeName);
+            
+            // 顯示學習提示
+            const resultDiv = document.getElementById('quizResult');
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'quiz-result correct';
+            resultDiv.innerHTML = `
+                <div style="font-size: 1.5rem; margin-bottom: 10px;">✨ 很好！你點擊了 ${shape.name}！</div>
+                <div>英文：${shape.name} ${shape.pronunciation}</div>
+                <div>中文：${shape.chinese}</div>
+            `;
+            
+            // 3秒後移除active效果
+            setTimeout(() => {
+                document.querySelector(`[data-shape="${shapeName}"]`).classList.remove('active');
+                if (!quizActive) {
+                    resultDiv.style.display = 'none';
+                }
+            }, 3000);
+        }
+        
+        function startQuiz() {
+            if (!quizActive) {
+                quizActive = true;
+                score = 0;
+                totalQuestions = 0;
+                generateQuiz();
+                document.getElementById('quizBtn').textContent = '⏭️ 下一題 Next Question';
+            } else {
+                if (totalQuestions >= maxQuestions) {
+                    // 測驗結束
+                    showFinalResult();
+                    return;
+                }
+                generateQuiz();
+            }
+        }
+        
+        function generateQuiz() {
+            // 隨機選擇一個形狀作為正確答案
+            const correctShape = shapes[Math.floor(Math.random() * shapes.length)];
+            currentQuiz = correctShape;
+            
+            // 生成3個錯誤選項
+            const wrongOptions = shapes.filter(s => s !== correctShape)
+                .sort(() => Math.random() - 0.5)
+                .slice(0, 3);
+            
+            // 組合所有選項並隨機排序
+            const allOptions = [correctShape, ...wrongOptions].sort(() => Math.random() - 0.5);
+            
+            // 更新問題
+            document.getElementById('quizQuestion').innerHTML = `
+                這個形狀的英文名稱是什麼？<br>
+                <strong style="color: #667eea;">${correctShape.chinese}</strong><br>
+                <button onclick="speakWord('${correctShape.name}')" style="background: linear-gradient(45deg, #ff6b6b, #ee5a24); color: white; border: none; border-radius: 20px; padding: 12px 20px; font-size: 1.1rem; cursor: pointer; margin-top: 15px; transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 8px;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                    🔊 聽聽這個形狀的發音 Listen to pronunciation
+                </button>
+            `;
+            
+            // 生成選項按鈕
+            const optionsDiv = document.getElementById('quizOptions');
+            optionsDiv.innerHTML = '';
+            
+            allOptions.forEach(option => {
+                const button = document.createElement('div');
+                button.className = 'quiz-option';
+                button.innerHTML = `
+                    <span style="flex: 1;">${option.name}</span>
+                    <button class="option-pronunciation-btn" onclick="event.stopPropagation(); speakWord('${option.name}')" style="background: linear-gradient(45deg, #48bb78, #38a169); color: white; border: none; border-radius: 15px; padding: 6px 12px; font-size: 0.8rem; cursor: pointer; margin-left: 10px; transition: all 0.3s ease;">
+                        🔊
+                    </button>
+                `;
+                button.style.display = 'flex';
+                button.style.alignItems = 'center';
+                button.style.justifyContent = 'space-between';
+                button.onclick = () => checkAnswer(option, correctShape);
+                optionsDiv.appendChild(button);
+            });
+            
+            // 隱藏結果
+            document.getElementById('quizResult').style.display = 'none';
+        }
+        
+        function checkAnswer(selectedOption, correctOption) {
+            totalQuestions++;
+            const resultDiv = document.getElementById('quizResult');
+            const options = document.querySelectorAll('.quiz-option');
+            
+            // 禁用所有選項
+            options.forEach(option => {
+                option.style.pointerEvents = 'none';
+                if (option.textContent === correctOption.name) {
+                    option.classList.add('correct');
+                } else if (option.textContent === selectedOption.name && selectedOption !== correctOption) {
+                    option.classList.add('wrong');
+                }
+            });
+            
+            if (selectedOption === correctOption) {
+                score++;
+                resultDiv.className = 'quiz-result correct';
+                resultDiv.innerHTML = `
+                    <div style="font-size: 1.5rem; margin-bottom: 10px;">🎉 正確！Correct!</div>
+                    <div>${correctOption.name} ${correctOption.pronunciation} = ${correctOption.chinese}</div>
+                `;
+            } else {
+                resultDiv.className = 'quiz-result wrong';
+                resultDiv.innerHTML = `
+                    <div style="font-size: 1.5rem; margin-bottom: 10px;">❌ 錯誤！Wrong!</div>
+                    <div>你選擇的：${selectedOption.name} = ${selectedOption.chinese}</div>
+                    <div>正確答案：${correctOption.name} ${correctOption.pronunciation} = ${correctOption.chinese}</div>
+                `;
+            }
+            
+            resultDiv.style.display = 'block';
+            updateScore();
+            
+            // 檢查是否完成20題
+            if (totalQuestions >= maxQuestions) {
+                document.getElementById('quizBtn').textContent = '🏆 查看最終成績 View Final Score';
+            }
+            
+            // 2秒後重置選項樣式
+            setTimeout(() => {
+                options.forEach(option => {
+                    option.style.pointerEvents = 'auto';
+                    option.classList.remove('correct', 'wrong');
+                });
+            }, 2000);
+        }
+        
+        function showFinalResult() {
+            const percentage = Math.round((score / maxQuestions) * 100);
+            let grade = '';
+            let message = '';
+            
+            if (percentage >= 90) {
+                grade = 'A+';
+                message = '太棒了！你是形狀大師！Excellent! You are a shape master!';
+            } else if (percentage >= 80) {
+                grade = 'A';
+                message = '很好！你對形狀很熟悉！Great! You know shapes very well!';
+            } else if (percentage >= 70) {
+                grade = 'B';
+                message = '不錯！繼續加油！Good! Keep practicing!';
+            } else if (percentage >= 60) {
+                grade = 'C';
+                message = '還可以，多練習會更好！Fair, more practice will help!';
+            } else {
+                grade = 'D';
+                message = '需要多練習喔！Need more practice!';
+            }
+            
+            document.getElementById('quizQuestion').innerHTML = `
+                <div style="font-size: 2rem; margin-bottom: 20px;">🏆 測驗完成！Quiz Complete!</div>
+                <div style="font-size: 1.5rem; margin-bottom: 15px;">最終成績 Final Score: ${score}/${maxQuestions} (${percentage}%)</div>
+                <div style="font-size: 1.8rem; margin-bottom: 15px; color: #667eea;">等級 Grade: ${grade}</div>
+                <div style="font-size: 1.2rem; color: #4a5568;">${message}</div>
+            `;
+            
+            document.getElementById('quizOptions').innerHTML = '';
+            document.getElementById('quizResult').style.display = 'none';
+            document.getElementById('quizBtn').textContent = '🔄 重新開始測驗 Restart Quiz';
+            document.getElementById('quizBtn').onclick = restartQuiz;
+        }
+        
+        function restartQuiz() {
+            quizActive = false;
+            score = 0;
+            totalQuestions = 0;
+            document.getElementById('quizQuestion').textContent = '點擊「開始測驗」來測試你的學習成果！共有20題等你挑戰！';
+            document.getElementById('quizOptions').innerHTML = '';
+            document.getElementById('quizResult').style.display = 'none';
+            document.getElementById('quizBtn').textContent = '🚀 開始測驗 Start Quiz';
+            document.getElementById('quizBtn').onclick = startQuiz;
+            updateScore();
+        }
+        
+        function updateScore() {
+            const accuracy = totalQuestions > 0 ? Math.round((score / totalQuestions) * 100) : 0;
+            document.getElementById('score').textContent = `得分 Score: ${score}/${totalQuestions} | 題目 Question: ${totalQuestions}/${maxQuestions} | 答對率 Accuracy: ${accuracy}%`;
+        }
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98dd9f37463b4a69',t:'MTc2MDM0NTc2OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
