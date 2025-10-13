@@ -346,24 +346,24 @@
         </div>
         
         <!-- 形狀學習區域密碼保護 -->
-        <div class="quiz-section" style="margin-bottom: 40px;">
+        <div class="quiz-section" style="margin-bottom: 40px;" id="shapesLearningSection">
             <h2 class="quiz-title">📚 形狀學習區 Shape Learning Area</h2>
             
             <!-- 密碼輸入區域 -->
             <div id="shapesPasswordSection">
-                <div class="password-container">
-                    <div style="font-size: 1.4rem; margin-bottom: 20px; color: #4a5568;">
+                <div class="password-container" style="padding: 20px;">
+                    <div style="font-size: 1.2rem; margin-bottom: 15px; color: #4a5568;">
                         🔒 請輸入密碼來查看形狀學習內容<br>
-                        <span style="font-size: 1rem; color: #718096;">Please enter password to access shape learning content</span>
+                        <span style="font-size: 0.9rem; color: #718096;">Please enter password to access shape learning content</span>
                     </div>
-                    <div style="margin-bottom: 20px;">
+                    <div style="margin-bottom: 15px;">
                         <input type="password" id="shapesPasswordInput" placeholder="輸入密碼 Enter password" 
-                               style="padding: 12px 20px; font-size: 1.2rem; border: 3px solid #e2e8f0; border-radius: 15px; width: 200px; text-align: center;">
+                               style="padding: 10px 15px; font-size: 1rem; border: 3px solid #e2e8f0; border-radius: 15px; width: 180px; text-align: center;">
                     </div>
-                    <button onclick="checkShapesPassword()" style="background: linear-gradient(45deg, #667eea, #764ba2); color: white; border: none; padding: 12px 25px; font-size: 1.1rem; border-radius: 20px; cursor: pointer;">
+                    <button onclick="checkShapesPassword()" style="background: linear-gradient(45deg, #667eea, #764ba2); color: white; border: none; padding: 10px 20px; font-size: 1rem; border-radius: 20px; cursor: pointer;">
                         🔓 解鎖學習內容 Unlock Learning Content
                     </button>
-                    <div id="shapesPasswordError" style="color: #e53e3e; margin-top: 15px; font-weight: bold; display: none;">
+                    <div id="shapesPasswordError" style="color: #e53e3e; margin-top: 10px; font-weight: bold; display: none;">
                         ❌ 密碼錯誤！請重新輸入 Wrong password! Please try again.
                     </div>
                 </div>
@@ -506,11 +506,21 @@
             const passwordInput = document.getElementById('shapesPasswordInput');
             const password = passwordInput.value;
             const errorDiv = document.getElementById('shapesPasswordError');
+            const shapesSection = document.getElementById('shapesLearningSection');
             
             if (password === '000000') {
-                // 密碼正確，顯示形狀學習內容
+                // 密碼正確，顯示形狀學習內容並擴展區域
                 document.getElementById('shapesPasswordSection').style.display = 'none';
                 document.getElementById('shapesContent').style.display = 'block';
+                
+                // 添加擴展動畫效果
+                shapesSection.style.transition = 'all 0.5s ease';
+                shapesSection.style.transform = 'scale(1.02)';
+                
+                setTimeout(() => {
+                    shapesSection.style.transform = 'scale(1)';
+                }, 500);
+                
                 shapesUnlocked = true;
                 errorDiv.style.display = 'none';
             } else {
@@ -620,7 +630,10 @@
             // 更新問題
             document.getElementById('quizQuestion').innerHTML = `
                 這個形狀的英文名稱是什麼？<br>
-                <strong style="color: #667eea;">${correctShape.chinese}</strong>
+                <strong style="color: #667eea;">${correctShape.chinese}</strong><br>
+                <button onclick="speakWord('${correctShape.name}')" style="background: linear-gradient(45deg, #ff6b6b, #ee5a24); color: white; border: none; border-radius: 20px; padding: 12px 20px; font-size: 1.1rem; cursor: pointer; margin-top: 15px; transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 8px;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                    🔊 聽聽這個形狀的發音 Listen to pronunciation
+                </button>
             `;
             
             // 生成選項按鈕
@@ -747,5 +760,5 @@
             document.getElementById('score').textContent = `得分 Score: ${score}/${totalQuestions} | 題目 Question: ${totalQuestions}/${maxQuestions} | 答對率 Accuracy: ${accuracy}%`;
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98dd8f0bf42b4a69',t:'MTc2MDM0NTEwNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98dd9f37463b4a69',t:'MTc2MDM0NTc2OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
