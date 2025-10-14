@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>顏色英文學習遊戲</title>
+    <title>11405四年級學習扶助題目單字複習</title>
     <style>
         body {
             box-sizing: border-box;
@@ -12,547 +12,563 @@
             padding: 20px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100%;
-            color: white;
-        }
-        
-        html, body {
-            height: 100%;
+            color: #333;
         }
         
         .container {
             max-width: 800px;
             margin: 0 auto;
-            text-align: center;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
         }
         
         .header {
-            margin-bottom: 30px;
+            background: linear-gradient(45deg, #ff6b6b, #feca57);
+            padding: 30px;
+            text-align: center;
+            color: white;
         }
         
-        .title {
-            font-size: 2.5rem;
-            font-weight: bold;
-            margin-bottom: 10px;
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
         
-        .subtitle {
-            font-size: 1.2rem;
-            opacity: 0.9;
+        .login-screen {
+            padding: 50px;
+            text-align: center;
         }
         
-        .game-area {
-            background: rgba(255,255,255,0.1);
-            border-radius: 20px;
-            padding: 30px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-        }
-        
-        .question {
-            font-size: 2rem;
-            font-weight: bold;
-            margin-bottom: 20px;
+        .password-input {
+            font-size: 24px;
             padding: 15px;
-            background: rgba(255,255,255,0.2);
-            border-radius: 15px;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            border: 3px solid #ddd;
+            border-radius: 10px;
+            margin: 20px;
+            text-align: center;
+            width: 200px;
         }
         
-        .colors-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 15px;
-            margin: 30px 0;
-        }
-        
-        .color-option {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            border: 4px solid white;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            margin: 0 auto;
-        }
-        
-        .color-option:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 25px rgba(0,0,0,0.3);
-        }
-        
-        .color-option.correct {
-            animation: correctPulse 0.6s ease;
-            border-color: #4ade80;
-            border-width: 6px;
-        }
-        
-        .color-option.wrong {
-            animation: wrongShake 0.6s ease;
-            border-color: #ef4444;
-            border-width: 6px;
-        }
-        
-        @keyframes correctPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-        }
-        
-        @keyframes wrongShake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-10px); }
-            75% { transform: translateX(10px); }
-        }
-        
-        .score-board {
-            display: flex;
-            justify-content: space-around;
-            margin: 20px 0;
-            font-size: 1.3rem;
-            font-weight: bold;
-        }
-        
-        .score-item {
-            background: rgba(255,255,255,0.2);
-            padding: 10px 20px;
-            border-radius: 25px;
-            backdrop-filter: blur(5px);
-        }
-        
-        .feedback {
-            font-size: 1.5rem;
-            font-weight: bold;
-            margin: 20px 0;
-            min-height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .next-btn {
-            background: linear-gradient(45deg, #4ade80, #22c55e);
+        .btn {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
             color: white;
             border: none;
             padding: 15px 30px;
-            font-size: 1.2rem;
-            font-weight: bold;
+            font-size: 18px;
             border-radius: 25px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+            margin: 10px;
+        }
+        
+        .btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .game-screen {
             display: none;
+            padding: 30px;
         }
         
-        .next-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        .question-area {
+            text-align: center;
+            margin-bottom: 30px;
         }
         
-        .celebration {
-            font-size: 3rem;
-            animation: bounce 1s infinite;
+        .word-display {
+            font-size: 3em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin: 20px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
         }
         
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
+        .sound-btn {
+            background: linear-gradient(45deg, #ff9a9e, #fecfef);
+            border: none;
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            font-size: 30px;
+            cursor: pointer;
+            margin: 20px;
+            transition: transform 0.2s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
         
-        @media (max-width: 600px) {
-            .title { font-size: 2rem; }
-            .question { font-size: 1.5rem; }
-            .color-option { width: 100px; height: 100px; }
-            .colors-grid { grid-template-columns: repeat(2, 1fr); }
+        .sound-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .option-card {
+            background: white;
+            border: 3px solid #ddd;
+            border-radius: 15px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .option-card:hover {
+            border-color: #4ecdc4;
+            transform: translateY(-5px);
+        }
+        
+        .option-card.correct {
+            border-color: #27ae60;
+            background: #d5f4e6;
+        }
+        
+        .option-card.wrong {
+            border-color: #e74c3c;
+            background: #fadbd8;
+        }
+        
+        .option-image {
+            font-size: 4em;
+            margin-bottom: 10px;
+        }
+        
+        .option-sound-btn {
+            background: linear-gradient(45deg, #ff9a9e, #fecfef);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 20px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: transform 0.2s;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        }
+        
+        .option-sound-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .score-area {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #ecf0f1;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            width: 0%;
+            transition: width 0.5s;
+        }
+        
+        .feedback {
+            text-align: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            margin: 20px 0;
+            min-height: 40px;
+        }
+        
+        .correct-feedback {
+            color: #27ae60;
+        }
+        
+        .wrong-feedback {
+            color: #e74c3c;
+        }
+        
+        .final-screen {
+            display: none;
+            text-align: center;
+            padding: 50px;
+        }
+        
+        .final-score {
+            font-size: 3em;
+            color: #f39c12;
+            margin: 20px 0;
+        }
+        
+        .wordbank-screen {
+            padding: 30px;
+        }
+        
+        .wordbank-card {
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        
+        .wordbank-card:hover {
+            transform: translateY(-3px);
+            border-color: #4ecdc4;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1 class="title">🎨 顏色英文學習遊戲</h1>
-            <p class="subtitle">點擊正確的顏色來學習英文單詞！</p>
-            <div style="background: rgba(255,255,255,0.1); border-radius: 15px; padding: 20px; margin: 20px 0; backdrop-filter: blur(10px);">
-                <h3 style="margin-bottom: 15px; font-size: 1.3rem;">📚 題庫內容 (共10種顏色)</h3>
-                <div id="password-section">
-                    <div style="margin-bottom: 15px;">
-                        <input type="password" id="password-input" placeholder="請輸入密碼查看題庫" 
-                               style="padding: 10px; border-radius: 8px; border: none; margin-right: 10px; font-size: 1rem; width: 200px;">
-                        <button onclick="checkPassword()" 
-                                style="padding: 10px 20px; background: #4ade80; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem;">
-                            查看
-                        </button>
-                    </div>
+            <h1>🎓 11405四年級學習扶助題目單字複習 🎓</h1>
+        </div>
+        
+        <!-- 主選單畫面 -->
+        <div class="main-menu" id="mainMenu">
+            <div style="text-align: center; padding: 50px;">
+                <h2>🎮 歡迎來到英語練習遊戲！</h2>
+                <button class="btn" onclick="startGame()" style="font-size: 24px; padding: 20px 40px; margin: 20px;">
+                    🚀 開始練習
+                </button>
+                <br>
+                <button class="btn" onclick="showTeacherLogin()" style="background: linear-gradient(45deg, #ff6b6b, #feca57);">
+                    👨‍🏫 老師查看題庫
+                </button>
+            </div>
+        </div>
+
+        <!-- 老師登入畫面 -->
+        <div class="login-screen" id="loginScreen" style="display: none;">
+            <h2>👨‍🏫 老師請輸入密碼查看題庫</h2>
+            <input type="password" class="password-input" id="passwordInput" placeholder="請輸入密碼">
+            <br>
+            <button class="btn" onclick="checkPassword()">查看題庫</button>
+            <button class="btn" onclick="backToMenu()" style="background: #95a5a6;">返回</button>
+            <div id="loginError" style="color: red; margin-top: 20px;"></div>
+        </div>
+
+        <!-- 題庫查看畫面 -->
+        <div class="wordbank-screen" id="wordbankScreen" style="display: none;">
+            <div style="padding: 30px;">
+                <h2>📚 題庫內容</h2>
+                <div id="wordbankList" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin: 20px 0;">
+                    <!-- 題庫內容會動態生成 -->
                 </div>
-                <div id="question-bank" style="display: none;">
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; font-size: 0.9rem; text-align: left;">
-                        <div>1. Red (紅色)</div>
-                        <div>2. Blue (藍色)</div>
-                        <div>3. Green (綠色)</div>
-                        <div>4. Yellow (黃色)</div>
-                        <div>5. Purple (紫色)</div>
-                        <div>6. Orange (橙色)</div>
-                        <div>7. Pink (粉紅色)</div>
-                        <div>8. Brown (棕色)</div>
-                        <div>9. Black (黑色)</div>
-                        <div>10. White (白色)</div>
-                    </div>
+                <div style="text-align: center;">
+                    <button class="btn" onclick="backToMenu()">返回主選單</button>
                 </div>
             </div>
         </div>
         
-        <div class="game-area">
-            <div class="score-board">
-                <div class="score-item">
-                    <span>分數: </span>
-                    <span id="score">0</span>
-                </div>
-                <div class="score-item">
-                    <span>題目: </span>
-                    <span id="current-question">1</span>
-                    <span>/20</span>
-                </div>
-                <div class="score-item">
-                    <span>答對率: </span>
-                    <span id="accuracy">0%</span>
-                </div>
+        <!-- 遊戲畫面 -->
+        <div class="game-screen" id="gameScreen" style="display: none;">
+            <div class="score-area">
+                <span>分數: <span id="score">0</span></span>
+                <span style="margin-left: 30px;">題目: <span id="currentQuestion">1</span>/<span id="totalQuestions">20</span></span>
+                <span style="margin-left: 30px;">正確率: <span id="accuracy">0%</span></span>
             </div>
             
-            <div class="question" id="question">
-                點擊 "Red"
-                <button onclick="speakWord(correctColor.name)" style="
-                    background: #4ade80;
-                    color: white;
-                    border: none;
-                    border-radius: 50%;
-                    width: 40px;
-                    height: 40px;
-                    margin-left: 15px;
-                    cursor: pointer;
-                    font-size: 1.2rem;
-                    transition: all 0.3s ease;
-                    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-                " onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
-                    🔊
-                </button>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
             </div>
             
-            <div class="colors-grid" id="colors-grid">
-                <!-- 顏色選項會動態生成 -->
+            <div class="question-area">
+                <div class="word-display" id="wordDisplay">cake</div>
+                <button class="sound-btn" onclick="playSound()" title="點擊聽發音">🔊</button>
             </div>
             
             <div class="feedback" id="feedback"></div>
             
-            <button class="next-btn" id="next-btn" onclick="nextQuestion()">
-                下一題 →
-            </button>
+            <div class="options-grid" id="optionsGrid">
+                <!-- 選項會動態生成 -->
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="btn" onclick="nextQuestion()" id="nextBtn" style="display: none;">下一題</button>
+            </div>
+        </div>
+        
+        <!-- 結束畫面 -->
+        <div class="final-screen" id="finalScreen">
+            <h2>🎉 遊戲結束！</h2>
+            <div class="final-score" id="finalScore">0/20</div>
+            <div style="font-size: 2em; color: #3498db; margin: 10px 0;">正確率: <span id="finalAccuracy">0%</span></div>
+            <p id="finalMessage"></p>
+            <button class="btn" onclick="restartGame()">重新開始</button>
         </div>
     </div>
 
     <script>
-        const colors = [
-            { name: 'Red', chinese: '紅色', hex: '#ef4444' },
-            { name: 'Blue', chinese: '藍色', hex: '#3b82f6' },
-            { name: 'Green', chinese: '綠色', hex: '#22c55e' },
-            { name: 'Yellow', chinese: '黃色', hex: '#eab308' },
-            { name: 'Purple', chinese: '紫色', hex: '#a855f7' },
-            { name: 'Orange', chinese: '橙色', hex: '#f97316' },
-            { name: 'Pink', chinese: '粉紅色', hex: '#ec4899' },
-            { name: 'Brown', chinese: '棕色', hex: '#8b4513' },
-            { name: 'Black', chinese: '黑色', hex: '#1f2937' },
-            { name: 'White', chinese: '白色', hex: '#f8fafc' }
-        ];
+        // 題庫
+        const wordBank = ['cake', 'milk', 'book', 'fish', 'dog', 'lion', 'blue', 'bird', 'yellow', 'white', 'red', 'ruler', 'marker', 'black', 'name', 'banana', 'pen', 'egg', 'rabbit', 'tiger', 'pencil', 'apple'];
         
-        let currentQuestion = 1;
+        // 單字對應的圖示
+        const wordEmojis = {
+            'cake': '🎂',
+            'milk': '🥛',
+            'book': '📚',
+            'fish': '🐟',
+            'dog': '🐕',
+            'lion': '🦁',
+            'blue': '🔵',
+            'bird': '🐦',
+            'yellow': '🟡',
+            'white': '⚪',
+            'red': '🔴',
+            'ruler': '📏',
+            'marker': '🖍️',
+            'black': '⚫',
+            'name': '📛',
+            'banana': '🍌',
+            'pen': '🖊️',
+            'egg': '🥚',
+            'rabbit': '🐰',
+            'tiger': '🐅',
+            'pencil': '✏️',
+            'apple': '🍎'
+        };
+        
+        let currentWord = '';
         let score = 0;
-        let correctAnswers = 0;
-        let totalAnswered = 0;
-        let correctColor = null;
-        let gameOptions = [];
+        let questionNumber = 1;
+        let totalQuestions = 20;
+        let gameQuestions = [];
         let answered = false;
         
-        function shuffleArray(array) {
-            const newArray = [...array];
-            for (let i = newArray.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
-            }
-            return newArray;
+        function startGame() {
+            document.getElementById('mainMenu').style.display = 'none';
+            document.getElementById('gameScreen').style.display = 'block';
+            initGame();
         }
-        
-        function generateQuestion() {
-            answered = false;
-            document.getElementById('next-btn').style.display = 'none';
-            document.getElementById('feedback').innerHTML = '';
+
+        function showTeacherLogin() {
+            document.getElementById('mainMenu').style.display = 'none';
+            document.getElementById('loginScreen').style.display = 'block';
+            document.getElementById('passwordInput').value = '';
+            document.getElementById('loginError').textContent = '';
+        }
+
+        function checkPassword() {
+            const password = document.getElementById('passwordInput').value;
+            if (password === '000000') {
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('wordbankScreen').style.display = 'block';
+                showWordbank();
+            } else {
+                document.getElementById('loginError').textContent = '密碼錯誤，請重新輸入';
+            }
+        }
+
+        function showWordbank() {
+            const wordbankList = document.getElementById('wordbankList');
+            wordbankList.innerHTML = '';
             
-            // 選擇正確答案
-            correctColor = colors[Math.floor(Math.random() * colors.length)];
-            
-            // 生成選項（包含正確答案和3個錯誤答案）
-            gameOptions = [correctColor];
-            const remainingColors = colors.filter(c => c.name !== correctColor.name);
-            const shuffledRemaining = shuffleArray(remainingColors);
-            gameOptions.push(...shuffledRemaining.slice(0, 3));
-            gameOptions = shuffleArray(gameOptions);
-            
-            // 更新問題
-            document.getElementById('question').innerHTML = 
-                `點擊 "${correctColor.name}"
-                <button onclick="speakWord('${correctColor.name}')" style="
-                    background: #4ade80;
-                    color: white;
-                    border: none;
-                    border-radius: 50%;
-                    width: 40px;
-                    height: 40px;
-                    margin-left: 15px;
-                    cursor: pointer;
-                    font-size: 1.2rem;
-                    transition: all 0.3s ease;
-                    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-                " onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
-                    🔊
-                </button>`;
-            
-            // 生成顏色選項
-            const colorsGrid = document.getElementById('colors-grid');
-            colorsGrid.innerHTML = '';
-            
-            gameOptions.forEach((color, index) => {
-                const colorContainer = document.createElement('div');
-                colorContainer.style.textAlign = 'center';
-                
-                const colorDiv = document.createElement('div');
-                colorDiv.className = 'color-option';
-                colorDiv.style.backgroundColor = color.hex;
-                if (color.name === 'White') {
-                    colorDiv.style.border = '4px solid #666';
-                }
-                colorDiv.onclick = () => selectColor(color, colorDiv);
-                
-                const speakButton = document.createElement('button');
-                speakButton.innerHTML = '🔊';
-                speakButton.onclick = (e) => {
-                    e.stopPropagation();
-                    speakWord(color.name);
-                };
-                speakButton.style.cssText = `
-                    background: rgba(255,255,255,0.9);
-                    color: #333;
-                    border: none;
-                    border-radius: 50%;
-                    width: 30px;
-                    height: 30px;
-                    margin-top: 8px;
-                    cursor: pointer;
-                    font-size: 0.9rem;
-                    transition: all 0.3s ease;
-                    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            wordBank.forEach(word => {
+                const wordCard = document.createElement('div');
+                wordCard.style.cssText = `
+                    background: white;
+                    border: 2px solid #ddd;
+                    border-radius: 10px;
+                    padding: 15px;
+                    text-align: center;
+                    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
                 `;
-                speakButton.onmouseover = () => speakButton.style.transform = 'scale(1.1)';
-                speakButton.onmouseout = () => speakButton.style.transform = 'scale(1)';
                 
-                colorContainer.appendChild(colorDiv);
-                colorContainer.appendChild(speakButton);
-                colorsGrid.appendChild(colorContainer);
+                wordCard.innerHTML = `
+                    <div style="font-size: 2em; margin-bottom: 5px;">${wordEmojis[word] || '❓'}</div>
+                    <div style="font-weight: bold; color: #2c3e50;">${word}</div>
+                `;
+                
+                wordbankList.appendChild(wordCard);
             });
         }
-        
-        function selectColor(selectedColor, element) {
-            if (answered) return;
-            
-            answered = true;
-            const feedbackEl = document.getElementById('feedback');
-            
-            totalAnswered++;
-            
-            if (selectedColor.name === correctColor.name) {
-                // 正確答案
-                element.classList.add('correct');
-                score += 10;
-                correctAnswers++;
-                feedbackEl.innerHTML = `
-                    <span class="celebration">🎉</span>
-                    太棒了！${correctColor.name} 就是${correctColor.chinese}！
-                    <span class="celebration">🎉</span>
-                `;
-                feedbackEl.style.color = '#4ade80';
-                
-                // 正確答案後1.5秒自動進入下一題
-                setTimeout(() => {
-                    nextQuestion();
-                }, 1500);
-            } else {
-                // 錯誤答案
-                element.classList.add('wrong');
-                feedbackEl.innerHTML = `
-                    ❌ 不對哦！${correctColor.name} 是${correctColor.chinese}
-                `;
-                feedbackEl.style.color = '#ef4444';
-                
-                // 高亮正確答案
-                setTimeout(() => {
-                    const correctElement = Array.from(document.querySelectorAll('.color-option'))
-                        .find(el => el.style.backgroundColor === correctColor.hex);
-                    if (correctElement) {
-                        correctElement.classList.add('correct');
-                    }
-                }, 500);
-                
-                // 錯誤答案後2.5秒自動進入下一題
-                setTimeout(() => {
-                    nextQuestion();
-                }, 2500);
-            }
-            
-            // 更新分數和答對率
-            document.getElementById('score').textContent = score;
-            const accuracy = Math.round((correctAnswers / totalAnswered) * 100);
-            document.getElementById('accuracy').textContent = accuracy + '%';
+
+        function backToMenu() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('wordbankScreen').style.display = 'none';
+            document.getElementById('gameScreen').style.display = 'none';
+            document.getElementById('finalScreen').style.display = 'none';
+            document.getElementById('mainMenu').style.display = 'block';
         }
         
-        function nextQuestion() {
-            if (currentQuestion >= 20) {
-                // 遊戲結束
-                showGameComplete();
+        function initGame() {
+            // 隨機選擇20個單字（可重複）
+            gameQuestions = [];
+            for (let i = 0; i < totalQuestions; i++) {
+                const randomIndex = Math.floor(Math.random() * wordBank.length);
+                gameQuestions.push(wordBank[randomIndex]);
+            }
+            
+            score = 0;
+            questionNumber = 1;
+            answered = false;
+            
+            document.getElementById('score').textContent = score;
+            document.getElementById('totalQuestions').textContent = totalQuestions;
+            
+            loadQuestion();
+        }
+        
+        function loadQuestion() {
+            if (questionNumber > totalQuestions) {
+                endGame();
                 return;
             }
             
-            currentQuestion++;
-            document.getElementById('current-question').textContent = currentQuestion;
-            generateQuestion();
+            currentWord = gameQuestions[questionNumber - 1];
+            document.getElementById('wordDisplay').textContent = currentWord;
+            document.getElementById('currentQuestion').textContent = questionNumber;
+            document.getElementById('feedback').textContent = '';
+            document.getElementById('nextBtn').style.display = 'none';
+            answered = false;
+            
+            // 更新進度條
+            const progress = ((questionNumber - 1) / totalQuestions) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+            
+            generateOptions();
         }
         
-        function showGameComplete() {
-            const gameArea = document.querySelector('.game-area');
-            const percentage = (score / 200) * 100;
-            let message = '';
+        function generateOptions() {
+            const optionsGrid = document.getElementById('optionsGrid');
+            optionsGrid.innerHTML = '';
             
-            if (percentage >= 80) {
-                message = '🏆 太厲害了！你是顏色英文大師！';
-            } else if (percentage >= 60) {
-                message = '👍 做得很好！繼續加油！';
+            // 獲取正確答案和3個錯誤選項
+            const correctAnswer = currentWord;
+            const wrongAnswers = wordBank.filter(word => word !== correctAnswer)
+                .sort(() => 0.5 - Math.random())
+                .slice(0, 3);
+            
+            const allOptions = [correctAnswer, ...wrongAnswers].sort(() => 0.5 - Math.random());
+            
+            allOptions.forEach(word => {
+                const optionCard = document.createElement('div');
+                optionCard.className = 'option-card';
+                optionCard.onclick = () => selectOption(word, optionCard);
+                
+                optionCard.innerHTML = `
+                    <div class="option-image">${wordEmojis[word] || '❓'}</div>
+                    <button class="option-sound-btn" onclick="playOptionSound('${word}')" title="點擊聽發音">🔊</button>
+                `;
+                
+                optionsGrid.appendChild(optionCard);
+            });
+        }
+        
+        function selectOption(selectedWord, cardElement) {
+            if (answered) return;
+            
+            answered = true;
+            const feedback = document.getElementById('feedback');
+            
+            // 清除所有選項的樣式
+            document.querySelectorAll('.option-card').forEach(card => {
+                card.classList.remove('correct', 'wrong');
+            });
+            
+            if (selectedWord === currentWord) {
+                cardElement.classList.add('correct');
+                feedback.textContent = '🎉 答對了！';
+                feedback.className = 'feedback correct-feedback';
+                score++;
+                document.getElementById('score').textContent = score;
             } else {
-                message = '💪 不錯的開始！多練習會更棒！';
+                cardElement.classList.add('wrong');
+                // 標示正確答案
+                document.querySelectorAll('.option-card').forEach(card => {
+                    const soundBtn = card.querySelector('.option-sound-btn');
+                    if (soundBtn && soundBtn.onclick.toString().includes(currentWord)) {
+                        card.classList.add('correct');
+                    }
+                });
+                feedback.textContent = '❌ 答錯了，正確答案是 ' + currentWord;
+                feedback.className = 'feedback wrong-feedback';
             }
             
-            gameArea.innerHTML = `
-                <div style="text-align: center; padding: 40px;">
-                    <div class="celebration" style="font-size: 4rem; margin-bottom: 20px;">
-                        🎊🎉🎊
-                    </div>
-                    <h2 style="font-size: 2.5rem; margin-bottom: 20px;">遊戲完成！</h2>
-                    <div style="font-size: 2rem; margin-bottom: 20px;">
-                        最終分數: <span style="color: #4ade80; font-weight: bold;">${score}/200</span>
-                    </div>
-                    <div style="font-size: 1.8rem; margin-bottom: 20px;">
-                        答對率: <span style="color: #fbbf24; font-weight: bold;">${Math.round((correctAnswers / totalAnswered) * 100)}%</span>
-                        (${correctAnswers}/${totalAnswered})
-                    </div>
-                    <div style="font-size: 1.5rem; margin-bottom: 30px;">
-                        ${message}
-                    </div>
-                    <button onclick="restartGame()" style="
-                        background: linear-gradient(45deg, #667eea, #764ba2);
-                        color: white;
-                        border: none;
-                        padding: 15px 30px;
-                        font-size: 1.2rem;
-                        font-weight: bold;
-                        border-radius: 25px;
-                        cursor: pointer;
-                        transition: all 0.3s ease;
-                        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-                    ">
-                        🔄 重新開始
-                    </button>
-                </div>
-            `;
+            // 更新正確率
+            const accuracy = Math.round((score / questionNumber) * 100);
+            document.getElementById('accuracy').textContent = accuracy + '%';
+            
+            document.getElementById('nextBtn').style.display = 'inline-block';
         }
         
-        function restartGame() {
-            currentQuestion = 1;
-            score = 0;
-            correctAnswers = 0;
-            totalAnswered = 0;
-            document.getElementById('score').textContent = score;
-            document.getElementById('current-question').textContent = currentQuestion;
-            
-            // 重新創建遊戲區域
-            const gameArea = document.querySelector('.game-area');
-            gameArea.innerHTML = `
-                <div class="score-board">
-                    <div class="score-item">
-                        <span>分數: </span>
-                        <span id="score">0</span>
-                    </div>
-                    <div class="score-item">
-                        <span>題目: </span>
-                        <span id="current-question">1</span>
-                        <span>/20</span>
-                    </div>
-                    <div class="score-item">
-                        <span>答對率: </span>
-                        <span id="accuracy">0%</span>
-                    </div>
-                </div>
-                
-                <div class="question" id="question">
-                    點擊 "Red"
-                </div>
-                
-                <div class="colors-grid" id="colors-grid">
-                    <!-- 顏色選項會動態生成 -->
-                </div>
-                
-                <div class="feedback" id="feedback"></div>
-                
-                <button class="next-btn" id="next-btn" onclick="nextQuestion()">
-                    下一題 →
-                </button>
-            `;
-            
-            generateQuestion();
+        function nextQuestion() {
+            questionNumber++;
+            loadQuestion();
         }
         
-        // 密碼驗證功能
-        function checkPassword() {
-            const password = document.getElementById('password-input').value;
-            const passwordSection = document.getElementById('password-section');
-            const questionBank = document.getElementById('question-bank');
-            
-            if (password === '000000') {
-                passwordSection.style.display = 'none';
-                questionBank.style.display = 'block';
+        function playSound() {
+            // 使用 Web Speech API 進行發音
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(currentWord);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.8;
+                speechSynthesis.speak(utterance);
             } else {
-                alert('密碼錯誤！請輸入正確密碼。');
-                document.getElementById('password-input').value = '';
+                alert('您的瀏覽器不支援語音功能');
             }
         }
         
-        // 支援按Enter鍵驗證密碼
-        document.getElementById('password-input').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                checkPassword();
-            }
-        });
-        
-        // 語音播放功能
-        function speakWord(word) {
+        function playOptionSound(word) {
+            // 播放選項的發音
             if ('speechSynthesis' in window) {
                 const utterance = new SpeechSynthesisUtterance(word);
                 utterance.lang = 'en-US';
                 utterance.rate = 0.8;
-                utterance.pitch = 1;
                 speechSynthesis.speak(utterance);
             } else {
-                console.log('瀏覽器不支援語音合成功能');
+                alert('您的瀏覽器不支援語音功能');
             }
         }
         
-        // 初始化遊戲
-        generateQuestion();
+        function endGame() {
+            document.getElementById('gameScreen').style.display = 'none';
+            document.getElementById('finalScreen').style.display = 'block';
+            
+            document.getElementById('finalScore').textContent = score + '/' + totalQuestions;
+            
+            const percentage = (score / totalQuestions) * 100;
+            document.getElementById('finalAccuracy').textContent = Math.round(percentage) + '%';
+            
+            let message = '';
+            
+            if (percentage >= 90) {
+                message = '🌟 太棒了！你是英語小天才！';
+            } else if (percentage >= 70) {
+                message = '👍 很好！繼續加油！';
+            } else if (percentage >= 50) {
+                message = '💪 不錯！多練習會更好！';
+            } else {
+                message = '📚 加油！多聽多練習！';
+            }
+            
+            document.getElementById('finalMessage').textContent = message;
+        }
+        
+        function restartGame() {
+            document.getElementById('finalScreen').style.display = 'none';
+            document.getElementById('mainMenu').style.display = 'block';
+        }
+        
+        // 允許按Enter鍵登入
+        document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkPassword();
+            }
+        });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98ddb6f893764a69',t:'MTc2MDM0Njc0MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98e2fde3c7c6a3ac',t:'MTc2MDQwMjA3NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
