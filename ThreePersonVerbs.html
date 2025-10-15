@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第三人稱動詞+s 學習遊戲</title>
+    <style>
+        body {
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100%;
+            color: #333;
+        }
+        
+        html, body {
+            height: 100%;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .stats {
+            background: #f8f9fa;
+            padding: 20px;
+            display: flex;
+            justify-content: space-around;
+            border-bottom: 3px solid #e9ecef;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 10px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            min-width: 120px;
+        }
+        
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #4ecdc4;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        .game-area {
+            padding: 40px;
+        }
+        
+        .question-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-left: 5px solid #4ecdc4;
+        }
+        
+        .question-text {
+            font-size: 1.4em;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .option-btn {
+            padding: 15px 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+        }
+        
+        .option-btn:hover {
+            border-color: #4ecdc4;
+            background: #f0fdfc;
+            transform: translateY(-2px);
+        }
+        
+        .option-btn.correct {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+        
+        .option-btn.incorrect {
+            background: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+        
+        .next-btn {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            display: none;
+            margin: 20px auto 0 auto;
+            display: block;
+        }
+        
+        .next-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .teacher-section {
+            background: #fff3cd;
+            border: 2px solid #ffeaa7;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .password-input {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .password-input input {
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+        
+        .unlock-btn {
+            background: #ffeaa7;
+            border: 2px solid #fdcb6e;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .teacher-content {
+            display: none;
+        }
+        
+        .explanation {
+            background: #e8f5e8;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border-left: 4px solid #28a745;
+        }
+        
+        .explanation-box {
+            background: #f0f8ff;
+            border: 2px solid #4ecdc4;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            animation: slideDown 0.3s ease-out;
+        }
+        
+        .explanation-content {
+            font-size: 1.1em;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .result-screen {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .result-title {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            color: #4ecdc4;
+        }
+        
+        .final-score {
+            font-size: 3em;
+            font-weight: bold;
+            color: #ff6b6b;
+            margin: 20px 0;
+        }
+        
+        .restart-btn {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.2em;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        
+        @media (max-width: 600px) {
+            .options {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 第三人稱動詞+s 遊戲</h1>
+            <p>學習 he/she/it 後面動詞要加 s 的規則！</p>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-number" id="currentQ">1</div>
+                <div class="stat-label">題目</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="correct">0</div>
+                <div class="stat-label">答對</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="accuracy">0%</div>
+                <div class="stat-label">答對率</div>
+            </div>
+        </div>
+        
+        <div class="game-area">
+            <div class="teacher-section">
+                <h3>👩‍🏫 老師教學區</h3>
+                <div class="password-input">
+                    <label>密碼：</label>
+                    <input type="password" id="teacherPassword" placeholder="請輸入密碼">
+                    <button class="unlock-btn" onclick="unlockTeacher()">解鎖</button>
+                </div>
+                <div class="teacher-content" id="teacherContent">
+                    <div class="explanation">
+                        <h4>📚 第三人稱單數動詞變化規則：</h4>
+                        <p><strong>1. 一般動詞：</strong>直接加 s<br>
+                        例：work → works, play → plays</p>
+                        <p><strong>2. 以 s, x, ch, sh, o 結尾：</strong>加 es<br>
+                        例：go → goes, watch → watches</p>
+                        <p><strong>3. 以子音+y 結尾：</strong>去 y 加 ies<br>
+                        例：study → studies, fly → flies</p>
+                        <p><strong>4. 不規則變化：</strong>have → has</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="gameContent">
+                <div class="question-card">
+                    <div class="question-text" id="questionText"></div>
+                    <div class="options" id="optionsContainer"></div>
+                    <div class="explanation-box" id="explanationBox" style="display: none;">
+                        <div class="explanation-content" id="explanationContent"></div>
+                    </div>
+                    <button class="next-btn" id="nextBtn" onclick="nextQuestion()">下一題 →</button>
+                </div>
+            </div>
+            
+            <div class="result-screen" id="resultScreen">
+                <div class="result-title">🎉 遊戲完成！</div>
+                <div class="final-score" id="finalScore"></div>
+                <p id="resultMessage"></p>
+                <button class="restart-btn" onclick="restartGame()">重新開始</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            { 
+                question: "She _____ to school every day.", 
+                options: ["go", "goes", "going", "went"], 
+                correct: 1,
+                explanation: "💡 因為主詞是 'She'（第三人稱單數），動詞 'go' 要加 's' 變成 'goes'。這是現在簡單式的基本規則。"
+            },
+            { 
+                question: "They _____ basketball after school.", 
+                options: ["play", "plays", "playing", "played"], 
+                correct: 0,
+                explanation: "💡 因為主詞是 'They'（第三人稱複數），動詞 'play' 不需要加 s，保持原形。只有第三人稱單數才需要加 s！"
+            },
+            { 
+                question: "He _____ his homework after dinner.", 
+                options: ["do", "does", "doing", "did"], 
+                correct: 1,
+                explanation: "💡 因為主詞是 'He'（第三人稱單數），動詞 'do' 要加 'es' 變成 'does'。以 o 結尾的動詞通常加 es。"
+            },
+            { 
+                question: "We _____ English every Monday.", 
+                options: ["study", "studies", "studying", "studied"], 
+                correct: 0,
+                explanation: "💡 因為主詞是 'We'（第一人稱複數），動詞 'study' 不需要加 s，保持原形。只有第三人稱單數才需要加 s！"
+            },
+            { 
+                question: "The cat _____ on the sofa.", 
+                options: ["sleep", "sleeps", "sleeping", "slept"], 
+                correct: 1,
+                explanation: "💡 因為主詞是 'The cat'（第三人稱單數），動詞 'sleep' 要加 's' 變成 'sleeps'。一般動詞直接加 s。"
+            },
+            { 
+                question: "I _____ coffee every morning.", 
+                options: ["drink", "drinks", "drinking", "drank"], 
+                correct: 0,
+                explanation: "💡 因為主詞是 'I'（第一人稱單數），動詞 'drink' 不需要加 s，保持原形。只有第三人稱單數才需要加 s！"
+            },
+            { 
+                question: "My mother _____ delicious food.", 
+                options: ["cook", "cooks", "cooking", "cooked"], 
+                correct: 1,
+                explanation: "💡 因為主詞是 'My mother'（第三人稱單數），動詞 'cook' 要加 's' 變成 'cooks'。一般動詞直接加 s。"
+            },
+            { 
+                question: "You _____ very well.", 
+                options: ["sing", "sings", "singing", "sang"], 
+                correct: 0,
+                explanation: "💡 因為主詞是 'You'（第二人稱），動詞 'sing' 不需要加 s，保持原形。只有第三人稱單數才需要加 s！"
+            },
+            { 
+                question: "Tom _____ basketball every weekend.", 
+                options: ["play", "plays", "playing", "played"], 
+                correct: 1,
+                explanation: "💡 因為主詞是 'Tom'（第三人稱單數），動詞 'play' 要加 's' 變成 'plays'。一般動詞直接加 s。"
+            },
+            { 
+                question: "The students _____ hard for the test.", 
+                options: ["study", "studies", "studying", "studied"], 
+                correct: 0,
+                explanation: "💡 因為主詞是 'The students'（第三人稱複數），動詞 'study' 不需要加 s，保持原形。只有第三人稱單數才需要加 s！"
+            },
+            { 
+                question: "She _____ TV in the evening.", 
+                options: ["watch", "watches", "watching", "watched"], 
+                correct: 1,
+                explanation: "💡 因為主詞是 'She'（第三人稱單數），動詞 'watch' 要加 'es' 變成 'watches'。以 ch 結尾的動詞要加 es。"
+            },
+            { 
+                question: "They _____ to music while working.", 
+                options: ["listen", "listens", "listening", "listened"], 
+                correct: 0,
+                explanation: "💡 因為主詞是 'They'（第三人稱複數），動詞 'listen' 不需要加 s，保持原形。只有第三人稱單數才需要加 s！"
+            },
+            { 
+                question: "The dog _____ in the park.", 
+                options: ["run", "runs", "running", "ran"], 
+                correct: 1,
+                explanation: "💡 因為主詞是 'The dog'（第三人稱單數），動詞 'run' 要加 's' 變成 'runs'。一般動詞直接加 s。"
+            },
+            { 
+                question: "We _____ our teeth twice a day.", 
+                options: ["brush", "brushes", "brushing", "brushed"], 
+                correct: 0,
+                explanation: "💡 因為主詞是 'We'（第一人稱複數），動詞 'brush' 不需要加 s，保持原形。只有第三人稱單數才需要加 s！"
+            },
+            { 
+                question: "He _____ English very well.", 
+                options: ["speak", "speaks", "speaking", "spoke"], 
+                correct: 1,
+                explanation: "💡 因為主詞是 'He'（第三人稱單數），動詞 'speak' 要加 's' 變成 'speaks'。一般動詞直接加 s。"
+            },
+            { 
+                question: "I _____ my car every Sunday.", 
+                options: ["wash", "washes", "washing", "washed"], 
+                correct: 0,
+                explanation: "💡 因為主詞是 'I'（第一人稱單數），動詞 'wash' 不需要加 s，保持原形。只有第三人稱單數才需要加 s！"
+            },
+            { 
+                question: "Lisa _____ her teeth twice a day.", 
+                options: ["brush", "brushes", "brushing", "brushed"], 
+                correct: 1,
+                explanation: "💡 因為主詞是 'Lisa'（第三人稱單數），動詞 'brush' 要加 'es' 變成 'brushes'。以 sh 結尾的動詞要加 es。"
+            },
+            { 
+                question: "The birds _____ in the sky.", 
+                options: ["fly", "flies", "flying", "flew"], 
+                correct: 0,
+                explanation: "💡 因為主詞是 'The birds'（第三人稱複數），動詞 'fly' 不需要加 s，保持原形。只有第三人稱單數才需要加 s！"
+            },
+            { 
+                question: "She _____ hard for the exam.", 
+                options: ["study", "studies", "studying", "studied"], 
+                correct: 1,
+                explanation: "💡 因為主詞是 'She'（第三人稱單數），動詞 'study' 要去 y 加 'ies' 變成 'studies'。子音+y 結尾的動詞要去 y 加 ies。"
+            },
+            { 
+                question: "You _____ lunch at 12 o'clock.", 
+                options: ["have", "has", "having", "had"], 
+                correct: 0,
+                explanation: "💡 因為主詞是 'You'（第二人稱），動詞 'have' 不需要變化，保持原形。只有第三人稱單數才變成 has！"
+            },
+            { 
+                question: "The baby _____ loudly.", 
+                options: ["cry", "cries", "crying", "cried"], 
+                correct: 1,
+                explanation: "💡 因為主詞是 'The baby'（第三人稱單數），動詞 'cry' 要去 y 加 'ies' 變成 'cries'。子音+y 結尾的動詞要去 y 加 ies。"
+            },
+            { 
+                question: "They _____ the lesson clearly.", 
+                options: ["explain", "explains", "explaining", "explained"], 
+                correct: 0,
+                explanation: "💡 因為主詞是 'They'（第三人稱複數），動詞 'explain' 不需要加 s，保持原形。只有第三人稱單數才需要加 s！"
+            },
+            { 
+                question: "He _____ to work by bus.", 
+                options: ["go", "goes", "going", "went"], 
+                correct: 1,
+                explanation: "💡 因為主詞是 'He'（第三人稱單數），動詞 'go' 要加 'es' 變成 'goes'。以 o 結尾的動詞通常加 es。"
+            },
+            { 
+                question: "We _____ in the east.", 
+                options: ["live", "lives", "living", "lived"], 
+                correct: 0,
+                explanation: "💡 因為主詞是 'We'（第一人稱複數），動詞 'live' 不需要加 s，保持原形。只有第三人稱單數才需要加 s！"
+            },
+            { 
+                question: "She _____ her room every week.", 
+                options: ["clean", "cleans", "cleaning", "cleaned"], 
+                correct: 1,
+                explanation: "💡 因為主詞是 'She'（第三人稱單數），動詞 'clean' 要加 's' 變成 'cleans'。一般動詞直接加 s。"
+            }
+        ];
+
+        let currentQuestion = 0;
+        let correctAnswers = 0;
+        let totalAnswered = 0;
+        let gameFinished = false;
+
+        function unlockTeacher() {
+            const password = document.getElementById('teacherPassword').value;
+            if (password === '000000') {
+                document.getElementById('teacherContent').style.display = 'block';
+                document.getElementById('teacherPassword').style.display = 'none';
+                document.querySelector('.unlock-btn').style.display = 'none';
+                document.querySelector('.password-input label').textContent = '✅ 教學區已解鎖';
+            } else {
+                alert('密碼錯誤！請輸入正確密碼。');
+            }
+        }
+
+        function displayQuestion() {
+            if (currentQuestion >= questions.length) {
+                showResults();
+                return;
+            }
+
+            const q = questions[currentQuestion];
+            document.getElementById('questionText').textContent = q.question;
+            document.getElementById('currentQ').textContent = currentQuestion + 1;
+            
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+            
+            q.options.forEach((option, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = option;
+                btn.onclick = () => selectAnswer(index);
+                optionsContainer.appendChild(btn);
+            });
+            
+            // 隱藏解釋框和下一題按鈕
+            document.getElementById('explanationBox').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'none';
+        }
+
+        function selectAnswer(selectedIndex) {
+            if (gameFinished) return;
+            
+            const q = questions[currentQuestion];
+            const options = document.querySelectorAll('.option-btn');
+            
+            totalAnswered++;
+            
+            options.forEach((btn, index) => {
+                btn.onclick = null;
+                if (index === q.correct) {
+                    btn.classList.add('correct');
+                } else if (index === selectedIndex) {
+                    btn.classList.add('incorrect');
+                }
+            });
+            
+            if (selectedIndex === q.correct) {
+                correctAnswers++;
+            }
+            
+            // 顯示解釋
+            const explanationBox = document.getElementById('explanationBox');
+            const explanationContent = document.getElementById('explanationContent');
+            explanationContent.textContent = q.explanation;
+            explanationBox.style.display = 'block';
+            
+            updateStats();
+            document.getElementById('nextBtn').style.display = 'block';
+        }
+
+        function updateStats() {
+            document.getElementById('correct').textContent = correctAnswers;
+            const accuracy = totalAnswered > 0 ? Math.round((correctAnswers / totalAnswered) * 100) : 0;
+            document.getElementById('accuracy').textContent = accuracy + '%';
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            displayQuestion();
+        }
+
+        function showResults() {
+            gameFinished = true;
+            document.getElementById('gameContent').style.display = 'none';
+            document.getElementById('resultScreen').style.display = 'block';
+            
+            const accuracy = Math.round((correctAnswers / questions.length) * 100);
+            document.getElementById('finalScore').textContent = accuracy + '%';
+            
+            let message = '';
+            if (accuracy >= 90) {
+                message = '🌟 太棒了！你完全掌握了第三人稱動詞變化！';
+            } else if (accuracy >= 70) {
+                message = '👍 很好！再多練習一下就能更進步！';
+            } else if (accuracy >= 50) {
+                message = '💪 不錯的開始！建議複習一下規則再挑戰！';
+            } else {
+                message = '📚 別灰心！先看看老師教學區，再來挑戰吧！';
+            }
+            
+            document.getElementById('resultMessage').textContent = message;
+        }
+
+        function restartGame() {
+            currentQuestion = 0;
+            correctAnswers = 0;
+            totalAnswered = 0;
+            gameFinished = false;
+            
+            document.getElementById('gameContent').style.display = 'block';
+            document.getElementById('resultScreen').style.display = 'none';
+            
+            updateStats();
+            displayQuestion();
+        }
+
+        // 初始化遊戲
+        displayQuestion();
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98ebfd0c17df8412',t:'MTc2MDQ5NjQxMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
