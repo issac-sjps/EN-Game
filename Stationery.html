@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文具英文學習遊戲</title>
+    <style>
+        body {
+            box-sizing: border-box;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100%;
+        }
+        
+        html, body {
+            height: 100%;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .title {
+            color: #4a5568;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .score-board {
+            display: flex;
+            justify-content: space-between;
+            background: #f7fafc;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 2px solid #e2e8f0;
+        }
+        
+        .score-item {
+            text-align: center;
+            font-weight: bold;
+            color: #2d3748;
+        }
+        
+        .question-card {
+            background: #fff5f5;
+            border: 3px solid #fed7d7;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .question-number {
+            color: #e53e3e;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        
+        .stationery-icon {
+            font-size: 4rem;
+            margin: 20px 0;
+            display: block;
+        }
+        
+        .question-text {
+            font-size: 1.5rem;
+            color: #2d3748;
+            margin-bottom: 25px;
+            font-weight: bold;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .option-btn {
+            background: #4299e1;
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .option-btn:hover {
+            background: #3182ce;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        
+        .option-btn.correct {
+            background: #48bb78;
+            animation: bounce 0.5s ease;
+        }
+        
+        .option-btn.wrong {
+            background: #f56565;
+            animation: shake 0.5s ease;
+        }
+        
+        .option-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        
+        .next-btn {
+            background: #38a169;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: none;
+            margin: 0 auto;
+            transition: all 0.3s ease;
+        }
+        
+        .next-btn:hover {
+            background: #2f855a;
+            transform: scale(1.05);
+        }
+        
+        .result-card {
+            background: #f0fff4;
+            border: 3px solid #9ae6b4;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            display: none;
+        }
+        
+        .result-title {
+            font-size: 2rem;
+            color: #2f855a;
+            margin-bottom: 20px;
+        }
+        
+        .final-score {
+            font-size: 1.5rem;
+            color: #2d3748;
+            margin-bottom: 20px;
+        }
+        
+        .restart-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .restart-btn:hover {
+            background: #5a67d8;
+            transform: scale(1.05);
+        }
+        
+        .teacher-btn {
+            background: #ed8936;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .teacher-btn:hover {
+            background: #dd6b20;
+            transform: scale(1.05);
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 60%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            80% { transform: translateY(-5px); }
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4299e1, #667eea);
+            border-radius: 5px;
+            transition: width 0.3s ease;
+        }
+        
+        .teacher-login {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .login-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            text-align: center;
+            min-width: 300px;
+        }
+        
+        .login-form label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #2d3748;
+        }
+        
+        .login-form input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+        }
+        
+        .login-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        
+        .login-btn, .cancel-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .login-btn {
+            background: #48bb78;
+            color: white;
+        }
+        
+        .login-btn:hover {
+            background: #38a169;
+        }
+        
+        .cancel-btn {
+            background: #e2e8f0;
+            color: #2d3748;
+        }
+        
+        .cancel-btn:hover {
+            background: #cbd5e0;
+        }
+        
+        .error-message {
+            color: #e53e3e;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+        
+        .teacher-panel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+        
+        .teacher-panel .container {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            max-width: 800px;
+            max-height: 90%;
+            overflow-y: auto;
+            margin: 20px;
+        }
+        
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .close-btn {
+            background: #f56565;
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .close-btn:hover {
+            background: #e53e3e;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f7fafc;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .section h3 {
+            color: #2d3748;
+            margin-bottom: 15px;
+        }
+        
+        .vocabulary-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .vocab-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border: 2px solid #e2e8f0;
+        }
+        
+        .vocab-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .vocab-english {
+            font-weight: bold;
+            color: #4299e1;
+            font-size: 1.1rem;
+        }
+        
+        .vocab-chinese {
+            color: #718096;
+            font-size: 0.9rem;
+        }
+        
+        .suggestions {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .suggestion-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #4299e1;
+        }
+        
+        .suggestion-item strong {
+            color: #2d3748;
+        }
+        
+        .suggestion-item p {
+            margin: 5px 0 0 0;
+            color: #4a5568;
+            line-height: 1.5;
+        }
+        
+        .game-controls {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .control-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .control-btn:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+        }
+        
+        .pronunciation-btn {
+            background: #38a169;
+            color: white;
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .pronunciation-btn:hover {
+            background: #2f855a;
+            transform: scale(1.1);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .pronunciation-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .question-with-audio {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .option-with-audio {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 20px;
+            background: #4299e1;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            width: 100%;
+        }
+        
+        .option-with-audio:hover {
+            background: #3182ce;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        
+        .option-with-audio.correct {
+            background: #48bb78;
+            animation: bounce 0.5s ease;
+        }
+        
+        .option-with-audio.wrong {
+            background: #f56565;
+            animation: shake 0.5s ease;
+        }
+        
+        .option-with-audio:disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        
+        .option-text {
+            flex: 1;
+            text-align: left;
+        }
+        
+        .option-audio-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .option-audio-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">📚 文具英文學習遊戲 ✏️</h1>
+            <button class="teacher-btn" onclick="showTeacherLogin()">👨‍🏫 老師教學區</button>
+        </div>
+        
+        <div class="score-board">
+            <div class="score-item">
+                <div>題目進度</div>
+                <div id="progress">1 / 20</div>
+            </div>
+            <div class="score-item">
+                <div>正確答案</div>
+                <div id="correct">0</div>
+            </div>
+            <div class="score-item">
+                <div>錯誤答案</div>
+                <div id="wrong">0</div>
+            </div>
+            <div class="score-item">
+                <div>答對率</div>
+                <div id="accuracy">0%</div>
+            </div>
+        </div>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressBar"></div>
+        </div>
+        
+        <div class="question-card" id="questionCard">
+            <div class="question-number" id="questionNumber">第 1 題</div>
+            <div class="stationery-icon" id="stationeryIcon">✏️</div>
+            <div class="question-with-audio">
+                <div class="question-text" id="questionText">這個文具的英文是什麼？</div>
+                <button class="pronunciation-btn" id="questionAudioBtn" onclick="playQuestionAudio()" title="聽發音">🔊</button>
+            </div>
+            <div class="options" id="options">
+                <button class="option-btn" onclick="selectAnswer(0)">pencil</button>
+                <button class="option-btn" onclick="selectAnswer(1)">pen</button>
+                <button class="option-btn" onclick="selectAnswer(2)">eraser</button>
+                <button class="option-btn" onclick="selectAnswer(3)">ruler</button>
+            </div>
+            <button class="next-btn" id="nextBtn" onclick="nextQuestion()">下一題 →</button>
+        </div>
+        
+        <div class="result-card" id="resultCard">
+            <div class="result-title">🎉 遊戲完成！</div>
+            <div class="final-score" id="finalScore"></div>
+            <div id="encouragement"></div>
+            <button class="restart-btn" onclick="restartGame()">重新開始</button>
+        </div>
+        
+        <!-- 老師登入介面 -->
+        <div class="teacher-login" id="teacherLogin" style="display: none;">
+            <div class="login-card">
+                <h2>👨‍🏫 老師教學區登入</h2>
+                <div class="login-form">
+                    <label for="password">請輸入密碼：</label>
+                    <input type="password" id="teacherPassword" placeholder="請輸入密碼">
+                    <div class="login-buttons">
+                        <button class="login-btn" onclick="checkTeacherPassword()">登入</button>
+                        <button class="cancel-btn" onclick="hideTeacherLogin()">取消</button>
+                    </div>
+                    <div id="loginError" class="error-message"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 老師教學區 -->
+        <div class="teacher-panel" id="teacherPanel" style="display: none;">
+            <div class="container">
+                <div class="panel-header">
+                    <h2>👨‍🏫 老師教學區</h2>
+                    <button class="close-btn" onclick="closeTeacherPanel()">✕</button>
+                </div>
+                
+                <div class="teaching-content">
+                    <div class="section">
+                        <h3>📋 文具單字表</h3>
+                        <div class="vocabulary-list" id="vocabularyList"></div>
+                    </div>
+                    
+                    <div class="section">
+                        <h3>📊 學習建議</h3>
+                        <div class="suggestions">
+                            <div class="suggestion-item">
+                                <strong>🎯 教學重點：</strong>
+                                <p>著重於日常生活中常用的文具單字，透過圖像記憶加強學習效果。</p>
+                            </div>
+                            <div class="suggestion-item">
+                                <strong>📚 延伸活動：</strong>
+                                <p>可以讓學生實際拿出文具，邊說英文邊操作，增加記憶連結。</p>
+                            </div>
+                            <div class="suggestion-item">
+                                <strong>🎮 遊戲技巧：</strong>
+                                <p>建議學生先熟悉所有單字後再開始遊戲，可提高答題正確率。</p>
+                            </div>
+                            <div class="suggestion-item">
+                                <strong>🔊 語音功能：</strong>
+                                <p>每個題目和選項都有發音按鈕，學生可以透過聽力來學習正確發音。建議先聽題目發音，再聽各選項發音來做選擇。</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="section">
+                        <h3>🔧 遊戲控制</h3>
+                        <div class="game-controls">
+                            <button class="control-btn" onclick="resetAllProgress()">重置遊戲進度</button>
+                            <button class="control-btn" onclick="showAnswers()">顯示所有答案</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const stationeryData = [
+            { icon: '✏️', english: 'pencil', chinese: '鉛筆' },
+            { icon: '🖊️', english: 'pen', chinese: '原子筆' },
+            { icon: '🖍️', english: 'crayon', chinese: '蠟筆' },
+            { icon: '📏', english: 'ruler', chinese: '尺' },
+            { icon: '✂️', english: 'scissors', chinese: '剪刀' },
+            { icon: '📎', english: 'clip', chinese: '迴紋針' },
+            { icon: '🗂️', english: 'folder', chinese: '資料夾' },
+            { icon: '📚', english: 'book', chinese: '書本' },
+            { icon: '🖇️', english: 'stapler', chinese: '釘書機' },
+            { icon: '🧮', english: 'calculator', chinese: '計算機' }
+        ];
+
+        let questions = [];
+        let currentQuestion = 0;
+        let correctAnswers = 0;
+        let wrongAnswers = 0;
+        let selectedAnswer = null;
+
+        // 語音合成功能
+        function speakText(text, lang = 'en-US') {
+            if ('speechSynthesis' in window) {
+                // 停止當前播放的語音
+                speechSynthesis.cancel();
+                
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = lang;
+                utterance.rate = 0.8; // 稍微慢一點的語速
+                utterance.volume = 0.8;
+                
+                // 嘗試使用英文語音
+                const voices = speechSynthesis.getVoices();
+                const englishVoice = voices.find(voice => 
+                    voice.lang.includes('en') && voice.name.includes('Google')
+                ) || voices.find(voice => voice.lang.includes('en'));
+                
+                if (englishVoice) {
+                    utterance.voice = englishVoice;
+                }
+                
+                speechSynthesis.speak(utterance);
+            } else {
+                // 如果不支援語音合成，顯示提示
+                showAudioNotification('您的瀏覽器不支援語音功能');
+            }
+        }
+
+        function showAudioNotification(message) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #f56565;
+                color: white;
+                padding: 10px 20px;
+                border-radius: 8px;
+                z-index: 1000;
+                font-weight: bold;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        function playQuestionAudio() {
+            const question = questions[currentQuestion];
+            if (question.type === 'icon-to-english') {
+                // 找到對應的英文單字
+                const item = stationeryData.find(item => item.icon === question.icon);
+                if (item) {
+                    speakText(item.english);
+                }
+            } else {
+                // 直接播放英文單字
+                speakText(question.english);
+            }
+        }
+
+        function playOptionAudio(text) {
+            speakText(text);
+        }
+
+        function generateQuestions() {
+            questions = [];
+            
+            // 為每個文具生成2道題目
+            stationeryData.forEach(item => {
+                // 第一種題型：看圖選英文
+                questions.push({
+                    type: 'icon-to-english',
+                    icon: item.icon,
+                    question: '這個文具的英文是什麼？',
+                    correct: item.english,
+                    options: generateOptions(item.english, 'english')
+                });
+                
+                // 第二種題型：看英文選圖
+                questions.push({
+                    type: 'english-to-icon',
+                    english: item.english,
+                    question: `"${item.english}" 是哪個文具？`,
+                    correct: item.icon,
+                    options: generateIconOptions(item.icon)
+                });
+            });
+            
+            // 打亂題目順序
+            questions = shuffleArray(questions);
+        }
+
+        function generateOptions(correct, type) {
+            const allOptions = stationeryData.map(item => item[type]);
+            const wrongOptions = allOptions.filter(option => option !== correct);
+            const selectedWrong = shuffleArray(wrongOptions).slice(0, 3);
+            const options = [correct, ...selectedWrong];
+            return shuffleArray(options);
+        }
+
+        function generateIconOptions(correct) {
+            const allIcons = stationeryData.map(item => item.icon);
+            const wrongIcons = allIcons.filter(icon => icon !== correct);
+            const selectedWrong = shuffleArray(wrongIcons).slice(0, 3);
+            const options = [correct, ...selectedWrong];
+            return shuffleArray(options);
+        }
+
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        function displayQuestion() {
+            const question = questions[currentQuestion];
+            
+            document.getElementById('questionNumber').textContent = `第 ${currentQuestion + 1} 題`;
+            document.getElementById('progress').textContent = `${currentQuestion + 1} / 20`;
+            document.getElementById('questionText').textContent = question.question;
+            
+            // 更新進度條
+            const progress = ((currentQuestion + 1) / 20) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            
+            if (question.type === 'icon-to-english') {
+                document.getElementById('stationeryIcon').textContent = question.icon;
+                document.getElementById('stationeryIcon').style.display = 'block';
+            } else {
+                document.getElementById('stationeryIcon').style.display = 'none';
+            }
+            
+            const optionsContainer = document.getElementById('options');
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.className = 'option-with-audio';
+                
+                const optionText = document.createElement('span');
+                optionText.className = 'option-text';
+                optionText.textContent = option;
+                
+                const audioBtn = document.createElement('button');
+                audioBtn.className = 'option-audio-btn';
+                audioBtn.innerHTML = '🔊';
+                audioBtn.title = '聽發音';
+                audioBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    playOptionAudio(option);
+                };
+                
+                button.appendChild(optionText);
+                button.appendChild(audioBtn);
+                button.onclick = () => selectAnswer(index);
+                optionsContainer.appendChild(button);
+            });
+            
+            document.getElementById('nextBtn').style.display = 'none';
+            selectedAnswer = null;
+        }
+
+        function selectAnswer(index) {
+            if (selectedAnswer !== null) return;
+            
+            selectedAnswer = index;
+            const question = questions[currentQuestion];
+            const buttons = document.querySelectorAll('.option-with-audio');
+            const selectedOption = question.options[index];
+            
+            buttons.forEach(btn => btn.disabled = true);
+            
+            if (selectedOption === question.correct) {
+                buttons[index].classList.add('correct');
+                correctAnswers++;
+                document.getElementById('correct').textContent = correctAnswers;
+            } else {
+                buttons[index].classList.add('wrong');
+                wrongAnswers++;
+                document.getElementById('wrong').textContent = wrongAnswers;
+                
+                // 顯示正確答案
+                buttons.forEach((btn, i) => {
+                    if (question.options[i] === question.correct) {
+                        btn.classList.add('correct');
+                    }
+                });
+            }
+            
+            // 更新答對率
+            updateAccuracy();
+            
+            document.getElementById('nextBtn').style.display = 'block';
+        }
+
+        function updateAccuracy() {
+            const totalAnswered = correctAnswers + wrongAnswers;
+            if (totalAnswered > 0) {
+                const accuracy = Math.round((correctAnswers / totalAnswered) * 100);
+                document.getElementById('accuracy').textContent = accuracy + '%';
+            } else {
+                document.getElementById('accuracy').textContent = '0%';
+            }
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            
+            if (currentQuestion >= 20) {
+                showResults();
+            } else {
+                displayQuestion();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('questionCard').style.display = 'none';
+            document.getElementById('resultCard').style.display = 'block';
+            
+            const percentage = Math.round((correctAnswers / 20) * 100);
+            document.getElementById('finalScore').textContent = 
+                `你答對了 ${correctAnswers} 題，答錯了 ${wrongAnswers} 題\n正確率：${percentage}%`;
+            
+            let encouragement = '';
+            if (percentage >= 90) {
+                encouragement = '🌟 太棒了！你是文具英文小專家！';
+            } else if (percentage >= 70) {
+                encouragement = '👍 很好！繼續加油，你會更棒的！';
+            } else if (percentage >= 50) {
+                encouragement = '💪 不錯的開始！多練習就會進步的！';
+            } else {
+                encouragement = '🌱 沒關係，學習需要時間，再試一次吧！';
+            }
+            
+            document.getElementById('encouragement').textContent = encouragement;
+        }
+
+        function restartGame() {
+            currentQuestion = 0;
+            correctAnswers = 0;
+            wrongAnswers = 0;
+            selectedAnswer = null;
+            
+            document.getElementById('correct').textContent = '0';
+            document.getElementById('wrong').textContent = '0';
+            document.getElementById('accuracy').textContent = '0%';
+            document.getElementById('questionCard').style.display = 'block';
+            document.getElementById('resultCard').style.display = 'none';
+            
+            generateQuestions();
+            displayQuestion();
+        }
+
+        // 老師教學區功能
+        function showTeacherLogin() {
+            document.getElementById('teacherLogin').style.display = 'flex';
+            document.getElementById('teacherPassword').focus();
+        }
+
+        function hideTeacherLogin() {
+            document.getElementById('teacherLogin').style.display = 'none';
+            document.getElementById('teacherPassword').value = '';
+            document.getElementById('loginError').textContent = '';
+        }
+
+        function checkTeacherPassword() {
+            const password = document.getElementById('teacherPassword').value;
+            const errorElement = document.getElementById('loginError');
+            
+            if (password === '000000') {
+                hideTeacherLogin();
+                showTeacherPanel();
+            } else {
+                errorElement.textContent = '密碼錯誤，請重新輸入';
+                document.getElementById('teacherPassword').value = '';
+                document.getElementById('teacherPassword').focus();
+            }
+        }
+
+        function showTeacherPanel() {
+            document.getElementById('teacherPanel').style.display = 'flex';
+            generateVocabularyList();
+        }
+
+        function closeTeacherPanel() {
+            document.getElementById('teacherPanel').style.display = 'none';
+        }
+
+        function generateVocabularyList() {
+            const vocabularyList = document.getElementById('vocabularyList');
+            vocabularyList.innerHTML = '';
+            
+            stationeryData.forEach(item => {
+                const vocabItem = document.createElement('div');
+                vocabItem.className = 'vocab-item';
+                vocabItem.innerHTML = `
+                    <div class="vocab-icon">${item.icon}</div>
+                    <div class="vocab-english">${item.english}</div>
+                    <div class="vocab-chinese">${item.chinese}</div>
+                `;
+                vocabularyList.appendChild(vocabItem);
+            });
+        }
+
+        function resetAllProgress() {
+            // 創建自訂確認對話框
+            const confirmDialog = document.createElement('div');
+            confirmDialog.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.7);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 1002;
+            `;
+            
+            confirmDialog.innerHTML = `
+                <div style="
+                    background: white;
+                    padding: 30px;
+                    border-radius: 15px;
+                    text-align: center;
+                    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+                ">
+                    <h3 style="margin-top: 0; color: #2d3748;">⚠️ 確認重置</h3>
+                    <p style="color: #4a5568; margin-bottom: 20px;">確定要重置所有遊戲進度嗎？</p>
+                    <div style="display: flex; gap: 10px; justify-content: center;">
+                        <button onclick="resetGame(); this.parentElement.parentElement.parentElement.remove();" style="
+                            background: #f56565;
+                            color: white;
+                            border: none;
+                            padding: 10px 20px;
+                            border-radius: 8px;
+                            cursor: pointer;
+                            font-weight: bold;
+                        ">確定重置</button>
+                        <button onclick="this.parentElement.parentElement.parentElement.remove();" style="
+                            background: #e2e8f0;
+                            color: #2d3748;
+                            border: none;
+                            padding: 10px 20px;
+                            border-radius: 8px;
+                            cursor: pointer;
+                            font-weight: bold;
+                        ">取消</button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(confirmDialog);
+        }
+        
+        function resetGame() {
+            restartGame();
+            closeTeacherPanel();
+        }
+
+        function showAnswers() {
+            let answerText = '📋 完整單字表：\n\n';
+            stationeryData.forEach((item, index) => {
+                answerText += `${index + 1}. ${item.icon} ${item.english} (${item.chinese})\n`;
+            });
+            
+            // 創建答案顯示視窗
+            const answerWindow = document.createElement('div');
+            answerWindow.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: white;
+                padding: 30px;
+                border-radius: 15px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+                z-index: 1001;
+                max-width: 400px;
+                max-height: 80%;
+                overflow-y: auto;
+            `;
+            
+            answerWindow.innerHTML = `
+                <h3 style="margin-top: 0; color: #2d3748;">📋 完整單字表</h3>
+                <div style="white-space: pre-line; line-height: 1.8; color: #4a5568;">
+                    ${stationeryData.map((item, index) => 
+                        `${index + 1}. ${item.icon} <strong>${item.english}</strong> (${item.chinese})`
+                    ).join('\n')}
+                </div>
+                <button onclick="this.parentElement.remove()" style="
+                    background: #4299e1;
+                    color: white;
+                    border: none;
+                    padding: 10px 20px;
+                    border-radius: 8px;
+                    margin-top: 20px;
+                    cursor: pointer;
+                    font-weight: bold;
+                ">關閉</button>
+            `;
+            
+            document.body.appendChild(answerWindow);
+        }
+
+        // 支援 Enter 鍵登入
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter' && document.getElementById('teacherLogin').style.display === 'flex') {
+                checkTeacherPassword();
+            }
+        });
+
+        // 初始化遊戲
+        generateQuestions();
+        displayQuestion();
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98ebd00d56568412',t:'MTc2MDQ5NDU2OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
