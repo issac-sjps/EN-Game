@@ -3,1202 +3,572 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>月份翻牌對對碰</title>
+    <title>11405四年級學習扶助題目單字複習</title>
     <style>
         body {
             box-sizing: border-box;
-            font-family: 'Microsoft JhengHei', Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Comic Sans MS', cursive, sans-serif;
             margin: 0;
             padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            color: #333;
         }
-
-        .game-container {
-            display: flex;
-            gap: 30px;
-            align-items: flex-start;
-            max-width: 1200px;
-            width: 100%;
-            justify-content: center;
-        }
-
-        .main-game {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .history-panel {
-            background: rgba(255,255,255,0.1);
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
             border-radius: 20px;
-            padding: 20px;
-            backdrop-filter: blur(10px);
-            width: 280px;
-            max-height: 600px;
-            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
         }
-
-        .history-title {
-            color: white;
-            font-size: 1.3rem;
-            font-weight: bold;
-            margin-bottom: 15px;
-            text-align: center;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
-        }
-
-        .history-list {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .history-item {
-            background: rgba(255,255,255,0.15);
-            border-radius: 10px;
-            padding: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: all 0.3s ease;
-            border-left: 4px solid transparent;
-        }
-
-        .history-item.matched {
-            border-left-color: #4CAF50;
-            background: rgba(76, 175, 80, 0.2);
-        }
-
-        .history-item.failed {
-            border-left-color: #f44336;
-            background: rgba(244, 67, 54, 0.2);
-        }
-
-        .history-content {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            flex: 1;
-        }
-
-        .history-pair {
-            color: white;
-            font-size: 0.9rem;
-            font-weight: bold;
-        }
-
-        .history-time {
-            color: rgba(255,255,255,0.7);
-            font-size: 0.8rem;
-        }
-
-        .history-status {
-            font-size: 1.2rem;
-        }
-
-        .history-empty {
-            color: rgba(255,255,255,0.6);
-            text-align: center;
-            font-style: italic;
-            padding: 20px;
-        }
-
-        .game-header {
+        
+        .header {
+            background: linear-gradient(45deg, #ff6b6b, #feca57);
+            padding: 30px;
             text-align: center;
             color: white;
-            margin-bottom: 20px;
         }
-
-        .game-title {
-            font-size: 2.5rem;
-            font-weight: bold;
-            margin-bottom: 10px;
+        
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
-
-        .game-info {
-            display: flex;
-            gap: 30px;
-            justify-content: center;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
+        
+        .login-screen {
+            padding: 50px;
+            text-align: center;
         }
-
-        .info-item {
-            background: rgba(255,255,255,0.2);
-            padding: 10px 20px;
-            border-radius: 15px;
+        
+        .password-input {
+            font-size: 24px;
+            padding: 15px;
+            border: 3px solid #ddd;
+            border-radius: 10px;
+            margin: 20px;
+            text-align: center;
+            width: 200px;
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
             color: white;
-            font-size: 1.2rem;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            margin: 10px;
+        }
+        
+        .btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .game-screen {
+            display: none;
+            padding: 30px;
+        }
+        
+        .question-area {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .word-display {
+            font-size: 3em;
             font-weight: bold;
-            backdrop-filter: blur(10px);
+            color: #2c3e50;
+            margin: 20px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
         }
-
-        .game-board {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 10px;
-            max-width: 500px;
-            margin: 0 auto;
-            padding: 20px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
-        }
-
-        .card {
+        
+        .sound-btn {
+            background: linear-gradient(45deg, #ff9a9e, #fecfef);
+            border: none;
+            border-radius: 50%;
             width: 80px;
             height: 80px;
-            position: relative;
+            font-size: 30px;
             cursor: pointer;
-            perspective: 1000px;
+            margin: 20px;
+            transition: transform 0.2s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
-
-        .card-inner {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            text-align: center;
-            transition: transform 0.6s;
-            transform-style: preserve-3d;
-        }
-
-        .card.flipped .card-inner {
-            transform: rotateY(180deg);
-        }
-
-        .card-face {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            border-radius: 12px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            transition: all 0.3s ease;
-        }
-
-        .card-front {
-            background: linear-gradient(145deg, #ffffff, #e6e6e6);
-            color: #333;
-            font-size: 2rem;
-        }
-
-        .card-back {
-            background: linear-gradient(145deg, #667eea, #764ba2);
-            color: white;
-            transform: rotateY(180deg);
-            font-size: 0.9rem;
-            gap: 4px;
-        }
-
-        .card:hover {
-            transform: translateY(-2px);
-        }
-
-        .card:hover .card-face {
-            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
-        }
-
-        .card.matched .card-face {
-            background: linear-gradient(145deg, #4CAF50, #45a049) !important;
-            color: white !important;
-            animation: matchSuccess 0.6s ease-in-out;
-        }
-
-        .card.bonus {
-            pointer-events: none;
-        }
-
-        .card.bonus .card-inner {
-            transform: rotateY(180deg);
-        }
-
-        .card.bonus .card-back {
-            background: linear-gradient(145deg, #FFD700, #FFA500);
-            color: #333;
-        }
-
-        .speak-btn {
-            background: rgba(255,255,255,0.9);
-            border: none;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 0.8rem;
-            transition: all 0.2s ease;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            margin-top: 2px;
-        }
-
-        .speak-btn:hover {
-            background: white;
+        
+        .sound-btn:hover {
             transform: scale(1.1);
         }
-
-        .controls {
-            margin-top: 20px;
-            text-align: center;
-        }
-
-        .btn {
-            background: linear-gradient(145deg, #4CAF50, #45a049);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 25px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            margin: 0 10px;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
-        }
-
-        .btn.start-btn {
-            background: linear-gradient(145deg, #FF6B6B, #FF5252);
-            font-size: 1.3rem;
-            padding: 15px 30px;
-            animation: pulse-start 2s infinite;
-        }
-
-        .teacher-btn {
-            background: linear-gradient(145deg, #9C27B0, #7B1FA2);
-        }
-
-        .btn-cancel {
-            background: linear-gradient(145deg, #757575, #616161);
-        }
-
-        .btn-close {
-            background: linear-gradient(145deg, #FF7043, #F4511E);
-            margin-top: 20px;
-        }
-
-        .teacher-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.8);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-
-        .teacher-modal-content {
-            background: white;
-            padding: 30px;
-            border-radius: 20px;
-            text-align: center;
-            max-width: 400px;
-            width: 90%;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-
-        .teacher-content-large {
-            max-width: 800px;
-            max-height: 80%;
-            overflow-y: auto;
-        }
-
-        .teacher-modal h2 {
-            color: #333;
-            margin-bottom: 20px;
-        }
-
-        .teacher-modal input {
-            width: 200px;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 10px;
-            font-size: 1.1rem;
-            text-align: center;
-            margin: 15px 0;
-        }
-
-        .teacher-modal input:focus {
-            outline: none;
-            border-color: #9C27B0;
-        }
-
-        .teacher-buttons {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            margin-top: 20px;
-        }
-
-        .error-message {
-            color: #f44336;
-            font-size: 0.9rem;
-            margin-top: 10px;
-            min-height: 20px;
-        }
-
-        .teacher-tabs {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
-        .tab-btn {
-            background: #f0f0f0;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: bold;
-        }
-
-        .tab-btn.active {
-            background: linear-gradient(145deg, #4CAF50, #45a049);
-            color: white;
-        }
-
-        .tab-content {
-            display: none;
-            text-align: left;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        .vocabulary-grid {
+        
+        .options-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            max-width: 600px;
+            margin: 0 auto;
         }
-
-        .vocab-item {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 10px;
-            border-left: 4px solid #4CAF50;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        
+        .option-card {
+            background: white;
+            border: 3px solid #ddd;
+            border-radius: 15px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
-
-        .vocab-text {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
+        
+        .option-card:hover {
+            border-color: #4ecdc4;
+            transform: translateY(-5px);
         }
-
-        .chinese-text {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #333;
+        
+        .option-card.correct {
+            border-color: #27ae60;
+            background: #d5f4e6;
         }
-
-        .english-text {
-            font-size: 1rem;
-            color: #666;
+        
+        .option-card.wrong {
+            border-color: #e74c3c;
+            background: #fadbd8;
         }
-
-        .vocab-speak {
-            background: #4CAF50;
-            color: white;
+        
+        .option-image {
+            font-size: 4em;
+            margin-bottom: 10px;
+        }
+        
+        .option-sound-btn {
+            background: linear-gradient(45deg, #ff9a9e, #fecfef);
             border: none;
             border-radius: 50%;
-            width: 35px;
-            height: 35px;
+            width: 50px;
+            height: 50px;
+            font-size: 20px;
             cursor: pointer;
-            font-size: 1rem;
+            margin-top: 10px;
+            transition: transform 0.2s;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
         }
-
-        .pronunciation-list {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
+        
+        .option-sound-btn:hover {
+            transform: scale(1.1);
         }
-
-        .pronunciation-item {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .pronunciation-info {
-            flex: 1;
-        }
-
-        .pronunciation-english {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #333;
-        }
-
-        .pronunciation-phonetic {
-            font-size: 1rem;
-            color: #666;
-            font-style: italic;
-        }
-
-        .tips-content {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .tip-section {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 10px;
-            border-left: 4px solid #2196F3;
-        }
-
-        .tip-section h4 {
-            color: #333;
-            margin-bottom: 10px;
-        }
-
-        .tip-section ul {
-            margin: 0;
-            padding-left: 20px;
-        }
-
-        .tip-section li {
-            margin-bottom: 8px;
-            line-height: 1.5;
-        }
-
-        @keyframes pulse-start {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
-        @keyframes matchSuccess {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-
-        .game-status {
+        
+        .score-area {
             text-align: center;
-            color: white;
-            font-size: 1.2rem;
-            margin-bottom: 10px;
+            margin: 20px 0;
+            font-size: 1.5em;
             font-weight: bold;
         }
-
-        .game-over {
-            position: fixed;
-            top: 0;
-            left: 0;
+        
+        .progress-bar {
             width: 100%;
+            height: 20px;
+            background: #ecf0f1;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        .progress-fill {
             height: 100%;
-            background: rgba(0,0,0,0.8);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            width: 0%;
+            transition: width 0.5s;
         }
-
-        .game-over-content {
-            background: white;
-            padding: 40px;
-            border-radius: 20px;
+        
+        .feedback {
             text-align: center;
-            max-width: 400px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-
-        .game-over h2 {
-            color: #333;
-            margin-bottom: 20px;
-            font-size: 2rem;
-        }
-
-        .final-score {
-            font-size: 1.5rem;
-            color: #4CAF50;
+            font-size: 1.5em;
             font-weight: bold;
-            margin-bottom: 20px;
+            margin: 20px 0;
+            min-height: 40px;
         }
-
-        .timer-warning {
-            color: #ff4444 !important;
-            animation: blink 1s infinite;
+        
+        .correct-feedback {
+            color: #27ae60;
         }
-
-        @keyframes blink {
-            0%, 50% { opacity: 1; }
-            51%, 100% { opacity: 0.5; }
+        
+        .wrong-feedback {
+            color: #e74c3c;
         }
-
-        @media (max-width: 1000px) {
-            .game-container {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .history-panel {
-                width: 100%;
-                max-width: 500px;
-                order: 2;
-            }
+        
+        .final-screen {
+            display: none;
+            text-align: center;
+            padding: 50px;
         }
-
-        @media (max-width: 600px) {
-            .game-board {
-                max-width: 350px;
-            }
-            
-            .card {
-                width: 60px;
-                height: 60px;
-            }
-            
-            .card-back {
-                font-size: 0.7rem;
-            }
-            
-            .game-title {
-                font-size: 2rem;
-            }
-            
-            .history-panel {
-                max-height: 300px;
-            }
+        
+        .final-score {
+            font-size: 3em;
+            color: #f39c12;
+            margin: 20px 0;
+        }
+        
+        .wordbank-screen {
+            padding: 30px;
+        }
+        
+        .wordbank-card {
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        
+        .wordbank-card:hover {
+            transform: translateY(-3px);
+            border-color: #4ecdc4;
         }
     </style>
 </head>
 <body>
-    <div class="game-header">
-        <h1 class="game-title">🎯 月份翻牌對對碰</h1>
-        <div class="game-info">
-            <div class="info-item">
-                ⏰ 時間: <span id="timer">3:00</span>
-            </div>
-            <div class="info-item">
-                🏆 分數: <span id="score">0</span>/100
-            </div>
-            <div class="info-item">
-                🎯 配對: <span id="matches">0</span>/12
+    <div class="container">
+        <div class="header">
+            <h1>🎓 11405四年級學習扶助題目單字複習 🎓</h1>
+        </div>
+        
+        <!-- 主選單畫面 -->
+        <div class="main-menu" id="mainMenu">
+            <div style="text-align: center; padding: 50px;">
+                <h2>🎮 歡迎來到英語練習遊戲！</h2>
+                <button class="btn" onclick="startGame()" style="font-size: 24px; padding: 20px 40px; margin: 20px;">
+                    🚀 開始練習
+                </button>
+                <br>
+                <button class="btn" onclick="showTeacherLogin()" style="background: linear-gradient(45deg, #ff6b6b, #feca57);">
+                    👨‍🏫 老師查看題庫
+                </button>
             </div>
         </div>
-    </div>
 
-    <div class="game-status" id="gameStatus">點擊「開始遊戲」來開始挑戰！</div>
-    
-    <div class="game-container">
-        <div class="main-game">
-            <div class="game-board" id="gameBoard"></div>
-            
-            <div class="controls">
-                <button class="btn start-btn" id="startBtn" onclick="startGame()">🚀 開始遊戲</button>
-                <button class="btn" onclick="resetGame()" style="display: none;" id="resetBtn">🔄 重新開始</button>
-                <button class="btn teacher-btn" onclick="showTeacherLogin()">👩‍🏫 老師教學區</button>
+        <!-- 老師登入畫面 -->
+        <div class="login-screen" id="loginScreen" style="display: none;">
+            <h2>👨‍🏫 老師請輸入密碼查看題庫</h2>
+            <input type="password" class="password-input" id="passwordInput" placeholder="請輸入密碼">
+            <br>
+            <button class="btn" onclick="checkPassword()">查看題庫</button>
+            <button class="btn" onclick="backToMenu()" style="background: #95a5a6;">返回</button>
+            <div id="loginError" style="color: red; margin-top: 20px;"></div>
+        </div>
+
+        <!-- 題庫查看畫面 -->
+        <div class="wordbank-screen" id="wordbankScreen" style="display: none;">
+            <div style="padding: 30px;">
+                <h2>📚 題庫內容</h2>
+                <div id="wordbankList" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin: 20px 0;">
+                    <!-- 題庫內容會動態生成 -->
+                </div>
+                <div style="text-align: center;">
+                    <button class="btn" onclick="backToMenu()">返回主選單</button>
+                </div>
             </div>
         </div>
         
-        <div class="history-panel" id="historyPanel" style="display: none;">
-            <div class="history-title">📋 翻牌歷史</div>
-            <div class="history-list" id="historyList">
-                <div class="history-empty">開始遊戲後會顯示翻牌記錄</div>
+        <!-- 遊戲畫面 -->
+        <div class="game-screen" id="gameScreen" style="display: none;">
+            <div class="score-area">
+                <span>分數: <span id="score">0</span></span>
+                <span style="margin-left: 30px;">題目: <span id="currentQuestion">1</span>/<span id="totalQuestions">20</span></span>
+                <span style="margin-left: 30px;">正確率: <span id="accuracy">0%</span></span>
+            </div>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            
+            <div class="question-area">
+                <div class="word-display" id="wordDisplay">cake</div>
+                <button class="sound-btn" onclick="playSound()" title="點擊聽發音">🔊</button>
+            </div>
+            
+            <div class="feedback" id="feedback"></div>
+            
+            <div class="options-grid" id="optionsGrid">
+                <!-- 選項會動態生成 -->
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="btn" onclick="nextQuestion()" id="nextBtn" style="display: none;">下一題</button>
             </div>
         </div>
-    </div>
-
-    <div class="game-over" id="gameOver">
-        <div class="game-over-content">
-            <h2 id="gameOverTitle">遊戲結束！</h2>
-            <div class="final-score" id="finalScore"></div>
-            <p id="gameOverMessage"></p>
-            <button class="btn" onclick="startNewGame()">再玩一次</button>
-        </div>
-    </div>
-
-    <!-- 老師登入介面 -->
-    <div class="teacher-modal" id="teacherLogin">
-        <div class="teacher-modal-content">
-            <h2>👩‍🏫 老師教學區</h2>
-            <p>請輸入密碼以查看題庫內容</p>
-            <input type="password" id="teacherPassword" placeholder="請輸入密碼" maxlength="6">
-            <div class="teacher-buttons">
-                <button class="btn" onclick="checkTeacherPassword()">確認</button>
-                <button class="btn btn-cancel" onclick="hideTeacherLogin()">取消</button>
-            </div>
-            <div id="passwordError" class="error-message"></div>
-        </div>
-    </div>
-
-    <!-- 老師教學內容 -->
-    <div class="teacher-modal" id="teacherContent">
-        <div class="teacher-modal-content teacher-content-large">
-            <h2>📚 月份學習題庫</h2>
-            <div class="teacher-tabs">
-                <button class="tab-btn active" onclick="showTab('vocabulary')">📖 詞彙表</button>
-                <button class="tab-btn" onclick="showTab('pronunciation')">🔊 發音練習</button>
-                <button class="tab-btn" onclick="showTab('tips')">💡 教學建議</button>
-            </div>
-            
-            <div id="vocabularyTab" class="tab-content active">
-                <h3>🗓️ 十二個月份對照表</h3>
-                <div class="vocabulary-grid" id="vocabularyGrid"></div>
-            </div>
-            
-            <div id="pronunciationTab" class="tab-content">
-                <h3>🎵 發音練習指南</h3>
-                <div class="pronunciation-list" id="pronunciationList"></div>
-            </div>
-            
-            <div id="tipsTab" class="tab-content">
-                <h3>🎯 教學建議與技巧</h3>
-                <div class="tips-content">
-                    <div class="tip-section">
-                        <h4>🎮 遊戲教學流程</h4>
-                        <ul>
-                            <li>先讓學生熟悉所有月份的中英文對照</li>
-                            <li>使用發音功能讓學生聽正確發音</li>
-                            <li>建議先練習3-5個月份，再逐步增加</li>
-                            <li>鼓勵學生大聲跟讀英文月份</li>
-                        </ul>
-                    </div>
-                    <div class="tip-section">
-                        <h4>📝 延伸活動建議</h4>
-                        <ul>
-                            <li>讓學生說出自己生日的月份</li>
-                            <li>練習季節與月份的關聯</li>
-                            <li>學習節日與對應月份</li>
-                            <li>製作月份小書或海報</li>
-                        </ul>
-                    </div>
-                    <div class="tip-section">
-                        <h4>🏆 評量方式</h4>
-                        <ul>
-                            <li>觀察學生配對的正確率</li>
-                            <li>聽學生的發音是否正確</li>
-                            <li>測試學生能否快速反應</li>
-                            <li>記錄學生的進步情況</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            
-            <button class="btn btn-close" onclick="hideTeacherContent()">關閉</button>
+        
+        <!-- 結束畫面 -->
+        <div class="final-screen" id="finalScreen">
+            <h2>🎉 遊戲結束！</h2>
+            <div class="final-score" id="finalScore">0/20</div>
+            <div style="font-size: 2em; color: #3498db; margin: 10px 0;">正確率: <span id="finalAccuracy">0%</span></div>
+            <p id="finalMessage"></p>
+            <button class="btn" onclick="restartGame()">重新開始</button>
         </div>
     </div>
 
     <script>
-        const months = [
-            { chinese: '1月', english: 'January' },
-            { chinese: '2月', english: 'February' },
-            { chinese: '3月', english: 'March' },
-            { chinese: '4月', english: 'April' },
-            { chinese: '5月', english: 'May' },
-            { chinese: '6月', english: 'June' },
-            { chinese: '7月', english: 'July' },
-            { chinese: '8月', english: 'August' },
-            { chinese: '9月', english: 'September' },
-            { chinese: '10月', english: 'October' },
-            { chinese: '11月', english: 'November' },
-            { chinese: '12月', english: 'December' }
-        ];
-
-        let gameState = {
-            cards: [],
-            flippedCards: [],
-            matchedPairs: 0,
-            score: 0,
-            timeLeft: 180,
-            gameActive: false,
-            gameStarted: false,
-            timer: null,
-            isProcessing: false,
-            flipHistory: []
+        // 題庫
+        const wordBank = ['cake', 'milk', 'book', 'fish', 'dog', 'lion', 'blue', 'bird', 'yellow', 'white', 'red', 'ruler', 'marker', 'black', 'name', 'banana', 'pen', 'egg', 'rabbit', 'tiger', 'pencil', 'apple'];
+        
+        // 單字對應的圖示
+        const wordEmojis = {
+            'cake': '🎂',
+            'milk': '🥛',
+            'book': '📚',
+            'fish': '🐟',
+            'dog': '🐕',
+            'lion': '🦁',
+            'blue': '🔵',
+            'bird': '🐦',
+            'yellow': '🟡',
+            'white': '⚪',
+            'red': '🔴',
+            'ruler': '📏',
+            'marker': '🖍️',
+            'black': '⚫',
+            'name': '📛',
+            'banana': '🍌',
+            'pen': '🖊️',
+            'egg': '🥚',
+            'rabbit': '🐰',
+            'tiger': '🐅',
+            'pencil': '✏️',
+            'apple': '🍎'
         };
+        
+        let currentWord = '';
+        let score = 0;
+        let questionNumber = 1;
+        let totalQuestions = 20;
+        let gameQuestions = [];
+        let answered = false;
+        
+        function startGame() {
+            document.getElementById('mainMenu').style.display = 'none';
+            document.getElementById('gameScreen').style.display = 'block';
+            initGame();
+        }
 
-        // 語音合成功能
-        function speakEnglish(text) {
+        function showTeacherLogin() {
+            document.getElementById('mainMenu').style.display = 'none';
+            document.getElementById('loginScreen').style.display = 'block';
+            document.getElementById('passwordInput').value = '';
+            document.getElementById('loginError').textContent = '';
+        }
+
+        function checkPassword() {
+            const password = document.getElementById('passwordInput').value;
+            if (password === '000000') {
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('wordbankScreen').style.display = 'block';
+                showWordbank();
+            } else {
+                document.getElementById('loginError').textContent = '密碼錯誤，請重新輸入';
+            }
+        }
+
+        function showWordbank() {
+            const wordbankList = document.getElementById('wordbankList');
+            wordbankList.innerHTML = '';
+            
+            wordBank.forEach(word => {
+                const wordCard = document.createElement('div');
+                wordCard.style.cssText = `
+                    background: white;
+                    border: 2px solid #ddd;
+                    border-radius: 10px;
+                    padding: 15px;
+                    text-align: center;
+                    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+                `;
+                
+                wordCard.innerHTML = `
+                    <div style="font-size: 2em; margin-bottom: 5px;">${wordEmojis[word] || '❓'}</div>
+                    <div style="font-weight: bold; color: #2c3e50;">${word}</div>
+                `;
+                
+                wordbankList.appendChild(wordCard);
+            });
+        }
+
+        function backToMenu() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('wordbankScreen').style.display = 'none';
+            document.getElementById('gameScreen').style.display = 'none';
+            document.getElementById('finalScreen').style.display = 'none';
+            document.getElementById('mainMenu').style.display = 'block';
+        }
+        
+        function initGame() {
+            // 隨機選擇20個單字（可重複）
+            gameQuestions = [];
+            for (let i = 0; i < totalQuestions; i++) {
+                const randomIndex = Math.floor(Math.random() * wordBank.length);
+                gameQuestions.push(wordBank[randomIndex]);
+            }
+            
+            score = 0;
+            questionNumber = 1;
+            answered = false;
+            
+            document.getElementById('score').textContent = score;
+            document.getElementById('totalQuestions').textContent = totalQuestions;
+            
+            loadQuestion();
+        }
+        
+        function loadQuestion() {
+            if (questionNumber > totalQuestions) {
+                endGame();
+                return;
+            }
+            
+            currentWord = gameQuestions[questionNumber - 1];
+            document.getElementById('wordDisplay').textContent = currentWord;
+            document.getElementById('currentQuestion').textContent = questionNumber;
+            document.getElementById('feedback').textContent = '';
+            document.getElementById('nextBtn').style.display = 'none';
+            answered = false;
+            
+            // 更新進度條
+            const progress = ((questionNumber - 1) / totalQuestions) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+            
+            generateOptions();
+        }
+        
+        function generateOptions() {
+            const optionsGrid = document.getElementById('optionsGrid');
+            optionsGrid.innerHTML = '';
+            
+            // 獲取正確答案和3個錯誤選項
+            const correctAnswer = currentWord;
+            const wrongAnswers = wordBank.filter(word => word !== correctAnswer)
+                .sort(() => 0.5 - Math.random())
+                .slice(0, 3);
+            
+            const allOptions = [correctAnswer, ...wrongAnswers].sort(() => 0.5 - Math.random());
+            
+            allOptions.forEach(word => {
+                const optionCard = document.createElement('div');
+                optionCard.className = 'option-card';
+                optionCard.onclick = () => selectOption(word, optionCard);
+                
+                optionCard.innerHTML = `
+                    <div class="option-image">${wordEmojis[word] || '❓'}</div>
+                    <button class="option-sound-btn" onclick="playOptionSound('${word}')" title="點擊聽發音">🔊</button>
+                `;
+                
+                optionsGrid.appendChild(optionCard);
+            });
+        }
+        
+        function selectOption(selectedWord, cardElement) {
+            if (answered) return;
+            
+            answered = true;
+            const feedback = document.getElementById('feedback');
+            
+            // 清除所有選項的樣式
+            document.querySelectorAll('.option-card').forEach(card => {
+                card.classList.remove('correct', 'wrong');
+            });
+            
+            if (selectedWord === currentWord) {
+                cardElement.classList.add('correct');
+                feedback.textContent = '🎉 答對了！';
+                feedback.className = 'feedback correct-feedback';
+                score++;
+                document.getElementById('score').textContent = score;
+            } else {
+                cardElement.classList.add('wrong');
+                // 標示正確答案
+                document.querySelectorAll('.option-card').forEach(card => {
+                    const soundBtn = card.querySelector('.option-sound-btn');
+                    if (soundBtn && soundBtn.onclick.toString().includes(currentWord)) {
+                        card.classList.add('correct');
+                    }
+                });
+                feedback.textContent = '❌ 答錯了，正確答案是 ' + currentWord;
+                feedback.className = 'feedback wrong-feedback';
+            }
+            
+            // 更新正確率
+            const accuracy = Math.round((score / questionNumber) * 100);
+            document.getElementById('accuracy').textContent = accuracy + '%';
+            
+            document.getElementById('nextBtn').style.display = 'inline-block';
+        }
+        
+        function nextQuestion() {
+            questionNumber++;
+            loadQuestion();
+        }
+        
+        function playSound() {
+            // 使用 Web Speech API 進行發音
             if ('speechSynthesis' in window) {
-                const utterance = new SpeechSynthesisUtterance(text);
+                const utterance = new SpeechSynthesisUtterance(currentWord);
                 utterance.lang = 'en-US';
                 utterance.rate = 0.8;
-                utterance.volume = 0.7;
                 speechSynthesis.speak(utterance);
-            }
-        }
-
-        function createGameBoard() {
-            const board = document.getElementById('gameBoard');
-            board.innerHTML = '';
-            
-            // 創建卡片陣列：12對月份 + 1張加分卡
-            let cards = [];
-            
-            // 添加月份配對卡片
-            months.forEach((month, index) => {
-                cards.push({
-                    id: `chinese-${index}`,
-                    text: month.chinese,
-                    type: 'chinese',
-                    matchId: index,
-                    isBonus: false
-                });
-                cards.push({
-                    id: `english-${index}`,
-                    text: month.english,
-                    type: 'english',
-                    matchId: index,
-                    isBonus: false
-                });
-            });
-            
-            // 添加加分卡
-            cards.push({
-                id: 'bonus',
-                text: '🎁\n+4分',
-                type: 'bonus',
-                matchId: -1,
-                isBonus: true
-            });
-            
-            // 洗牌
-            cards = shuffleArray(cards);
-            gameState.cards = cards;
-            
-            // 創建卡片元素
-            cards.forEach((card, index) => {
-                const cardElement = document.createElement('div');
-                cardElement.className = 'card';
-                if (card.isBonus) {
-                    cardElement.classList.add('bonus');
-                }
-                cardElement.dataset.index = index;
-                
-                const cardInner = document.createElement('div');
-                cardInner.className = 'card-inner';
-                
-                const cardFront = document.createElement('div');
-                cardFront.className = 'card-face card-front';
-                cardFront.textContent = '?';
-                
-                const cardBack = document.createElement('div');
-                cardBack.className = 'card-face card-back';
-                
-                if (card.isBonus) {
-                    cardBack.innerHTML = card.text;
-                } else {
-                    const englishText = card.type === 'english' ? card.text : months[card.matchId].english;
-                    cardBack.innerHTML = `
-                        <div>${card.text}</div>
-                        <button class="speak-btn" onclick="event.stopPropagation(); speakEnglish('${englishText}')">🔊</button>
-                    `;
-                }
-                
-                cardInner.appendChild(cardFront);
-                cardInner.appendChild(cardBack);
-                cardElement.appendChild(cardInner);
-                
-                if (!card.isBonus) {
-                    cardElement.addEventListener('click', () => flipCard(index));
-                }
-                
-                board.appendChild(cardElement);
-            });
-        }
-
-        function shuffleArray(array) {
-            const newArray = [...array];
-            for (let i = newArray.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
-            }
-            return newArray;
-        }
-
-        function flipCard(index) {
-            if (!gameState.gameActive || gameState.isProcessing || gameState.flippedCards.length >= 2) {
-                return;
-            }
-            
-            const card = gameState.cards[index];
-            const cardElement = document.querySelector(`[data-index="${index}"]`);
-            
-            if (cardElement.classList.contains('flipped') || cardElement.classList.contains('matched')) {
-                return;
-            }
-            
-            // 第一次翻牌時開始計時
-            if (!gameState.gameStarted) {
-                gameState.gameStarted = true;
-                gameState.timer = setInterval(updateTimer, 1000);
-                document.getElementById('gameStatus').textContent = '遊戲進行中...加油！';
-            }
-            
-            // 翻牌
-            cardElement.classList.add('flipped');
-            gameState.flippedCards.push({ index, card, element: cardElement });
-            
-            // 播放英文發音
-            if (card.type === 'english') {
-                speakEnglish(card.text);
-            }
-            
-            // 檢查配對
-            if (gameState.flippedCards.length === 2) {
-                gameState.isProcessing = true;
-                setTimeout(checkMatch, 1000);
-            }
-        }
-
-        function checkMatch() {
-            const [first, second] = gameState.flippedCards;
-            const isMatch = first.card.matchId === second.card.matchId && first.card.matchId !== -1;
-            
-            // 記錄翻牌歷史
-            const currentTime = new Date();
-            const timeString = currentTime.toLocaleTimeString('zh-TW', { 
-                hour12: false, 
-                hour: '2-digit', 
-                minute: '2-digit', 
-                second: '2-digit' 
-            });
-            
-            const historyItem = {
-                id: Date.now(),
-                card1: first.card.text,
-                card2: second.card.text,
-                isMatch: isMatch,
-                time: timeString,
-                timestamp: currentTime
-            };
-            
-            gameState.flipHistory.unshift(historyItem);
-            updateHistoryDisplay();
-            
-            if (isMatch) {
-                // 配對成功
-                first.element.classList.add('matched');
-                second.element.classList.add('matched');
-                
-                gameState.matchedPairs++;
-                gameState.score += 8;
-                updateScore();
-                updateMatches();
-                
-                // 播放配對成功的英文發音
-                const englishCard = first.card.type === 'english' ? first.card : second.card;
-                speakEnglish(englishCard.text);
-                
-                // 檢查遊戲是否完成
-                if (gameState.matchedPairs === 12) {
-                    setTimeout(() => endGame(true), 500);
-                }
             } else {
-                // 配對失敗 - 翻回正面
-                setTimeout(() => {
-                    if (!first.element.classList.contains('matched')) {
-                        first.element.classList.remove('flipped');
-                    }
-                    if (!second.element.classList.contains('matched')) {
-                        second.element.classList.remove('flipped');
-                    }
-                }, 800);
+                alert('您的瀏覽器不支援語音功能');
             }
-            
-            // 清空翻牌陣列並允許繼續翻牌
-            gameState.flippedCards = [];
-            gameState.isProcessing = false;
         }
-
-        function updateHistoryDisplay() {
-            const historyList = document.getElementById('historyList');
-            
-            if (gameState.flipHistory.length === 0) {
-                historyList.innerHTML = '<div class="history-empty">開始遊戲後會顯示翻牌記錄</div>';
-                return;
-            }
-            
-            historyList.innerHTML = '';
-            
-            gameState.flipHistory.forEach(item => {
-                const historyElement = document.createElement('div');
-                historyElement.className = `history-item ${item.isMatch ? 'matched' : 'failed'}`;
-                
-                historyElement.innerHTML = `
-                    <div class="history-content">
-                        <div class="history-pair">${item.card1} ↔ ${item.card2}</div>
-                        <div class="history-time">${item.time}</div>
-                    </div>
-                    <div class="history-status">${item.isMatch ? '✅' : '❌'}</div>
-                `;
-                
-                historyList.appendChild(historyElement);
-            });
-        }
-
-        function updateTimer() {
-            const minutes = Math.floor(gameState.timeLeft / 60);
-            const seconds = gameState.timeLeft % 60;
-            const timerElement = document.getElementById('timer');
-            timerElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-            
-            if (gameState.timeLeft <= 30) {
-                timerElement.classList.add('timer-warning');
-            }
-            
-            if (gameState.timeLeft <= 0) {
-                endGame(false);
+        
+        function playOptionSound(word) {
+            // 播放選項的發音
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(word);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.8;
+                speechSynthesis.speak(utterance);
             } else {
-                gameState.timeLeft--;
+                alert('您的瀏覽器不支援語音功能');
             }
         }
-
-        function updateScore() {
-            document.getElementById('score').textContent = gameState.score;
-        }
-
-        function updateMatches() {
-            document.getElementById('matches').textContent = gameState.matchedPairs;
-        }
-
-        function startGame() {
-            // 重置遊戲狀態
-            gameState = {
-                cards: [],
-                flippedCards: [],
-                matchedPairs: 0,
-                score: 4, // 預設4分（加分卡）
-                timeLeft: 180,
-                gameActive: true,
-                gameStarted: false,
-                timer: null,
-                isProcessing: false,
-                flipHistory: []
-            };
+        
+        function endGame() {
+            document.getElementById('gameScreen').style.display = 'none';
+            document.getElementById('finalScreen').style.display = 'block';
             
-            // 隱藏遊戲結束畫面
-            document.getElementById('gameOver').style.display = 'none';
+            document.getElementById('finalScore').textContent = score + '/' + totalQuestions;
             
-            // 顯示歷史面板
-            document.getElementById('historyPanel').style.display = 'block';
+            const percentage = (score / totalQuestions) * 100;
+            document.getElementById('finalAccuracy').textContent = Math.round(percentage) + '%';
             
-            // 更新按鈕顯示
-            document.getElementById('startBtn').style.display = 'none';
-            document.getElementById('resetBtn').style.display = 'inline-block';
+            let message = '';
             
-            // 更新狀態顯示
-            document.getElementById('gameStatus').textContent = '翻開第一張卡片開始計時！';
-            
-            // 重置顯示
-            updateScore();
-            updateMatches();
-            updateHistoryDisplay();
-            document.getElementById('timer').classList.remove('timer-warning');
-            
-            // 創建遊戲板
-            createGameBoard();
-        }
-
-        function resetGame() {
-            // 停止計時器
-            if (gameState.timer) {
-                clearInterval(gameState.timer);
-            }
-            
-            // 隱藏歷史面板
-            document.getElementById('historyPanel').style.display = 'none';
-            
-            // 重置按鈕顯示
-            document.getElementById('startBtn').style.display = 'inline-block';
-            document.getElementById('resetBtn').style.display = 'none';
-            
-            // 重置狀態
-            gameState.gameActive = false;
-            gameState.gameStarted = false;
-            gameState.isProcessing = false;
-            gameState.flipHistory = [];
-            
-            // 更新狀態顯示
-            document.getElementById('gameStatus').textContent = '點擊「開始遊戲」來開始挑戰！';
-            
-            // 清空遊戲板
-            document.getElementById('gameBoard').innerHTML = '';
-            
-            // 重置顯示
-            gameState.score = 4;
-            gameState.matchedPairs = 0;
-            gameState.timeLeft = 180;
-            updateScore();
-            updateMatches();
-            updateHistoryDisplay();
-            document.getElementById('timer').textContent = '3:00';
-            document.getElementById('timer').classList.remove('timer-warning');
-        }
-
-        function startNewGame() {
-            resetGame();
-            startGame();
-        }
-
-        function endGame(isWin) {
-            gameState.gameActive = false;
-            gameState.isProcessing = false;
-            clearInterval(gameState.timer);
-            
-            const gameOverElement = document.getElementById('gameOver');
-            const titleElement = document.getElementById('gameOverTitle');
-            const scoreElement = document.getElementById('finalScore');
-            const messageElement = document.getElementById('gameOverMessage');
-            
-            if (isWin) {
-                titleElement.textContent = '🎉 恭喜完成！';
-                titleElement.style.color = '#4CAF50';
-                messageElement.textContent = '你成功配對了所有月份！英語學習真棒！';
+            if (percentage >= 90) {
+                message = '🌟 太棒了！你是英語小天才！';
+            } else if (percentage >= 70) {
+                message = '👍 很好！繼續加油！';
+            } else if (percentage >= 50) {
+                message = '💪 不錯！多練習會更好！';
             } else {
-                titleElement.textContent = '⏰ 時間到！';
-                titleElement.style.color = '#ff4444';
-                messageElement.textContent = '繼續努力學習英語月份吧！';
+                message = '📚 加油！多聽多練習！';
             }
             
-            scoreElement.textContent = `最終分數: ${gameState.score}/100`;
-            gameOverElement.style.display = 'flex';
+            document.getElementById('finalMessage').textContent = message;
         }
-
-        // 老師教學區功能
-        function showTeacherLogin() {
-            document.getElementById('teacherLogin').style.display = 'flex';
-            document.getElementById('teacherPassword').focus();
+        
+        function restartGame() {
+            document.getElementById('finalScreen').style.display = 'none';
+            document.getElementById('mainMenu').style.display = 'block';
         }
-
-        function hideTeacherLogin() {
-            document.getElementById('teacherLogin').style.display = 'none';
-            document.getElementById('teacherPassword').value = '';
-            document.getElementById('passwordError').textContent = '';
-        }
-
-        function checkTeacherPassword() {
-            const password = document.getElementById('teacherPassword').value;
-            const errorElement = document.getElementById('passwordError');
-            
-            if (password === '000000') {
-                hideTeacherLogin();
-                showTeacherContent();
-            } else {
-                errorElement.textContent = '密碼錯誤，請重新輸入';
-                document.getElementById('teacherPassword').value = '';
+        
+        // 允許按Enter鍵登入
+        document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkPassword();
             }
-        }
-
-        function showTeacherContent() {
-            document.getElementById('teacherContent').style.display = 'flex';
-            initializeTeacherContent();
-        }
-
-        function hideTeacherContent() {
-            document.getElementById('teacherContent').style.display = 'none';
-        }
-
-        function showTab(tabName) {
-            // 隱藏所有標籤內容
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            
-            // 移除所有按鈕的active狀態
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            
-            // 顯示選中的標籤
-            document.getElementById(tabName + 'Tab').classList.add('active');
-            event.target.classList.add('active');
-        }
-
-        function initializeTeacherContent() {
-            // 初始化詞彙表
-            const vocabularyGrid = document.getElementById('vocabularyGrid');
-            vocabularyGrid.innerHTML = '';
-            
-            months.forEach(month => {
-                const vocabItem = document.createElement('div');
-                vocabItem.className = 'vocab-item';
-                vocabItem.innerHTML = `
-                    <div class="vocab-text">
-                        <div class="chinese-text">${month.chinese}</div>
-                        <div class="english-text">${month.english}</div>
-                    </div>
-                    <button class="vocab-speak" onclick="speakEnglish('${month.english}')">🔊</button>
-                `;
-                vocabularyGrid.appendChild(vocabItem);
-            });
-            
-            // 初始化發音練習
-            const pronunciationList = document.getElementById('pronunciationList');
-            pronunciationList.innerHTML = '';
-            
-            const phoneticData = [
-                { english: 'January', phonetic: '/ˈdʒænjuˌɛri/' },
-                { english: 'February', phonetic: '/ˈfɛbruˌɛri/' },
-                { english: 'March', phonetic: '/mɑrtʃ/' },
-                { english: 'April', phonetic: '/ˈeɪprəl/' },
-                { english: 'May', phonetic: '/meɪ/' },
-                { english: 'June', phonetic: '/dʒun/' },
-                { english: 'July', phonetic: '/dʒuˈlaɪ/' },
-                { english: 'August', phonetic: '/ˈɔgəst/' },
-                { english: 'September', phonetic: '/sɛpˈtɛmbər/' },
-                { english: 'October', phonetic: '/ɑkˈtoʊbər/' },
-                { english: 'November', phonetic: '/noʊˈvɛmbər/' },
-                { english: 'December', phonetic: '/dɪˈsɛmbər/' }
-            ];
-            
-            phoneticData.forEach(item => {
-                const pronunciationItem = document.createElement('div');
-                pronunciationItem.className = 'pronunciation-item';
-                pronunciationItem.innerHTML = `
-                    <div class="pronunciation-info">
-                        <div class="pronunciation-english">${item.english}</div>
-                        <div class="pronunciation-phonetic">${item.phonetic}</div>
-                    </div>
-                    <button class="vocab-speak" onclick="speakEnglish('${item.english}')">🔊</button>
-                `;
-                pronunciationList.appendChild(pronunciationItem);
-            });
-        }
-
-        // 密碼輸入框按Enter鍵確認
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Enter' && document.getElementById('teacherLogin').style.display === 'flex') {
-                checkTeacherPassword();
-            }
-        });
-
-        // 初始化遊戲
-        window.addEventListener('load', () => {
-            updateScore();
-            updateMatches();
         });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98eb7815b07e8412',t:'MTc2MDQ5MDk2NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98e2fde3c7c6a3ac',t:'MTc2MDQwMjA3NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
