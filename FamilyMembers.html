@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>認識家庭成員遊戲</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            box-sizing: border-box;
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .bounce {
+            animation: bounce 0.6s ease-in-out;
+        }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-pink-100 via-purple-50 to-blue-100 min-h-screen font-sans">
+    <div id="app" class="container mx-auto px-4 py-8">
+        <!-- 主選單 -->
+        <div id="mainMenu" class="text-center fade-in">
+            <h1 class="text-5xl font-bold text-purple-800 mb-8 drop-shadow-lg">🏠 認識家庭成員遊戲 👨‍👩‍👧‍👦</h1>
+            <div class="space-y-6">
+                <button onclick="startGame()" class="bg-gradient-to-r from-green-400 to-green-600 hover:from-green-500 hover:to-green-700 text-white font-bold py-4 px-8 rounded-full text-xl shadow-lg transform hover:scale-105 transition-all duration-200">
+                    🎮 開始遊戲
+                </button>
+                <button onclick="showTeacherLogin()" class="bg-gradient-to-r from-orange-400 to-orange-600 hover:from-orange-500 hover:to-orange-700 text-white font-bold py-4 px-8 rounded-full text-xl shadow-lg transform hover:scale-105 transition-all duration-200">
+                    👩‍🏫 老師教學區
+                </button>
+            </div>
+        </div>
+
+        <!-- 老師登入 -->
+        <div id="teacherLogin" class="hidden text-center fade-in">
+            <h2 class="text-3xl font-bold text-purple-800 mb-8">👩‍🏫 老師教學區登入</h2>
+            <div class="bg-white rounded-lg shadow-xl p-8 max-w-md mx-auto">
+                <label for="password" class="block text-lg font-semibold text-gray-700 mb-4">請輸入密碼：</label>
+                <input type="password" id="password" class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none text-center text-xl mb-6" placeholder="輸入密碼">
+                <div class="space-y-4">
+                    <button onclick="checkPassword()" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg">
+                        🔓 登入
+                    </button>
+                    <button onclick="backToMenu()" class="w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-lg">
+                        ← 返回主選單
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 老師教學區 -->
+        <div id="teacherArea" class="hidden fade-in">
+            <h2 class="text-3xl font-bold text-purple-800 mb-8 text-center">👩‍🏫 老師教學區</h2>
+            
+            <!-- 統計和建議區域 -->
+            <div class="bg-white rounded-lg shadow-xl p-6 mb-8">
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">📊 學習統計</h3>
+                        <div class="space-y-3">
+                            <div class="bg-green-100 p-3 rounded-lg">
+                                <span class="font-semibold">總答題數：</span><span id="totalAnswers">0</span>
+                            </div>
+                            <div class="bg-blue-100 p-3 rounded-lg">
+                                <span class="font-semibold">正確率：</span><span id="accuracy">0%</span>
+                            </div>
+                            <div class="bg-yellow-100 p-3 rounded-lg">
+                                <span class="font-semibold">最高分數：</span><span id="highScore">0</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">🎯 教學建議</h3>
+                        <div class="bg-purple-50 p-4 rounded-lg">
+                            <ul class="space-y-2 text-sm">
+                                <li>• 鼓勵學生多練習詞庫學習</li>
+                                <li>• 可以搭配家庭照片進行教學</li>
+                                <li>• 建議每日練習10-15分鐘</li>
+                                <li>• 可以角色扮演增加趣味性</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 詞庫學習區域 -->
+            <div class="bg-white rounded-lg shadow-xl p-6 mb-8">
+                <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">📚 家庭成員詞庫</h3>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg shadow-md p-4 text-center hover:shadow-lg transition-shadow">
+                        <div class="text-4xl mb-2">👨</div>
+                        <h4 class="text-lg font-bold text-gray-800">Father</h4>
+                        <p class="text-purple-700 font-semibold text-base">爸爸</p>
+                        <p class="text-gray-600 text-sm mt-1">Dad, the head of family</p>
+                        <button onclick="pronounceWord('Father')" class="mt-3 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-full text-sm shadow-lg transform hover:scale-105 transition-all duration-200">
+                            🔊 發音
+                        </button>
+                    </div>
+                    <div class="bg-gradient-to-br from-pink-50 to-pink-100 rounded-lg shadow-md p-4 text-center hover:shadow-lg transition-shadow">
+                        <div class="text-4xl mb-2">👩</div>
+                        <h4 class="text-lg font-bold text-gray-800">Mother</h4>
+                        <p class="text-purple-700 font-semibold text-base">媽媽</p>
+                        <p class="text-gray-600 text-sm mt-1">Mom, gives love and care</p>
+                        <button onclick="pronounceWord('Mother')" class="mt-3 bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded-full text-sm shadow-lg transform hover:scale-105 transition-all duration-200">
+                            🔊 發音
+                        </button>
+                    </div>
+                    <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-lg shadow-md p-4 text-center hover:shadow-lg transition-shadow">
+                        <div class="text-4xl mb-2">👦</div>
+                        <h4 class="text-lg font-bold text-gray-800">Brother</h4>
+                        <p class="text-purple-700 font-semibold text-base">哥哥</p>
+                        <p class="text-gray-600 text-sm mt-1">Older brother</p>
+                        <button onclick="pronounceWord('Brother')" class="mt-3 bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-full text-sm shadow-lg transform hover:scale-105 transition-all duration-200">
+                            🔊 發音
+                        </button>
+                    </div>
+                    <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg shadow-md p-4 text-center hover:shadow-lg transition-shadow">
+                        <div class="text-4xl mb-2">👧</div>
+                        <h4 class="text-lg font-bold text-gray-800">Sister</h4>
+                        <p class="text-purple-700 font-semibold text-base">姐姐</p>
+                        <p class="text-gray-600 text-sm mt-1">Older sister</p>
+                        <button onclick="pronounceWord('Sister')" class="mt-3 bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded-full text-sm shadow-lg transform hover:scale-105 transition-all duration-200">
+                            🔊 發音
+                        </button>
+                    </div>
+                    <div class="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-lg shadow-md p-4 text-center hover:shadow-lg transition-shadow">
+                        <div class="text-4xl mb-2">👶</div>
+                        <h4 class="text-lg font-bold text-gray-800">Little Brother</h4>
+                        <p class="text-purple-700 font-semibold text-base">弟弟</p>
+                        <p class="text-gray-600 text-sm mt-1">Younger brother</p>
+                        <button onclick="pronounceWord('Little Brother')" class="mt-3 bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-full text-sm shadow-lg transform hover:scale-105 transition-all duration-200">
+                            🔊 發音
+                        </button>
+                    </div>
+                    <div class="bg-gradient-to-br from-red-50 to-red-100 rounded-lg shadow-md p-4 text-center hover:shadow-lg transition-shadow">
+                        <div class="text-4xl mb-2">👧</div>
+                        <h4 class="text-lg font-bold text-gray-800">Little Sister</h4>
+                        <p class="text-purple-700 font-semibold text-base">妹妹</p>
+                        <p class="text-gray-600 text-sm mt-1">Younger sister</p>
+                        <button onclick="pronounceWord('Little Sister')" class="mt-3 bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-full text-sm shadow-lg transform hover:scale-105 transition-all duration-200">
+                            🔊 發音
+                        </button>
+                    </div>
+                    <div class="bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-lg shadow-md p-4 text-center hover:shadow-lg transition-shadow">
+                        <div class="text-4xl mb-2">👴</div>
+                        <h4 class="text-lg font-bold text-gray-800">Grandfather</h4>
+                        <p class="text-purple-700 font-semibold text-base">爺爺</p>
+                        <p class="text-gray-600 text-sm mt-1">Father's father</p>
+                        <button onclick="pronounceWord('Grandfather')" class="mt-3 bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-full text-sm shadow-lg transform hover:scale-105 transition-all duration-200">
+                            🔊 發音
+                        </button>
+                    </div>
+                    <div class="bg-gradient-to-br from-teal-50 to-teal-100 rounded-lg shadow-md p-4 text-center hover:shadow-lg transition-shadow">
+                        <div class="text-4xl mb-2">👵</div>
+                        <h4 class="text-lg font-bold text-gray-800">Grandmother</h4>
+                        <p class="text-purple-700 font-semibold text-base">奶奶</p>
+                        <p class="text-gray-600 text-sm mt-1">Father's mother</p>
+                        <button onclick="pronounceWord('Grandmother')" class="mt-3 bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-4 rounded-full text-sm shadow-lg transform hover:scale-105 transition-all duration-200">
+                            🔊 發音
+                        </button>
+                    </div>
+                    <div class="bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg shadow-md p-4 text-center hover:shadow-lg transition-shadow">
+                        <div class="text-4xl mb-2">👨</div>
+                        <h4 class="text-lg font-bold text-gray-800">Uncle</h4>
+                        <p class="text-purple-700 font-semibold text-base">叔叔</p>
+                        <p class="text-gray-600 text-sm mt-1">Father or mother's brother</p>
+                        <button onclick="pronounceWord('Uncle')" class="mt-3 bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded-full text-sm shadow-lg transform hover:scale-105 transition-all duration-200">
+                            🔊 發音
+                        </button>
+                    </div>
+                    <div class="bg-gradient-to-br from-cyan-50 to-cyan-100 rounded-lg shadow-md p-4 text-center hover:shadow-lg transition-shadow">
+                        <div class="text-4xl mb-2">👩</div>
+                        <h4 class="text-lg font-bold text-gray-800">Aunt</h4>
+                        <p class="text-purple-700 font-semibold text-base">阿姨</p>
+                        <p class="text-gray-600 text-sm mt-1">Father or mother's sister</p>
+                        <button onclick="pronounceWord('Aunt')" class="mt-3 bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-2 px-4 rounded-full text-sm shadow-lg transform hover:scale-105 transition-all duration-200">
+                            🔊 發音
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <button onclick="backToMenu()" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-lg">
+                    ← 返回主選單
+                </button>
+            </div>
+        </div>
+
+
+
+        <!-- 遊戲區域 -->
+        <div id="gameArea" class="hidden fade-in">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-purple-800 mb-4">🎮 認識家庭成員遊戲</h2>
+                <div class="bg-white rounded-lg shadow-lg p-4 inline-block">
+                    <span class="text-xl font-bold">分數: <span id="score" class="text-green-600">0</span></span>
+                    <span class="mx-4">|</span>
+                    <span class="text-xl font-bold">題目: <span id="questionNumber">1</span>/20</span>
+                    <span class="mx-4">|</span>
+                    <span class="text-xl font-bold">答對率: <span id="currentAccuracy" class="text-blue-600">0%</span></span>
+                </div>
+            </div>
+
+            <div id="questionCard" class="bg-white rounded-lg shadow-xl p-8 max-w-2xl mx-auto">
+                <div class="text-center mb-8">
+                    <div id="questionEmoji" class="text-8xl mb-4">👨</div>
+                    <div class="flex items-center justify-center gap-4 mb-6">
+                        <h3 id="questionText" class="text-2xl font-bold text-gray-800">這是誰？</h3>
+                        <button id="questionPronounceBtn" onclick="pronounceQuestion()" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-full text-sm shadow-lg transform hover:scale-105 transition-all duration-200">
+                            🔊 發音
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="options" class="grid grid-cols-1 gap-4">
+                    <!-- 選項會動態生成 -->
+                </div>
+                
+                <div id="feedback" class="hidden mt-6 p-4 rounded-lg text-center">
+                    <p id="feedbackText" class="text-xl font-bold"></p>
+                </div>
+            </div>
+
+            <div class="text-center mt-8">
+                <button onclick="backToMenu()" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-lg">
+                    ← 返回主選單
+                </button>
+            </div>
+        </div>
+
+        <!-- 遊戲結束 -->
+        <div id="gameEnd" class="hidden text-center fade-in">
+            <h2 class="text-4xl font-bold text-purple-800 mb-8">🎉 遊戲結束！</h2>
+            <div class="bg-white rounded-lg shadow-xl p-8 max-w-md mx-auto">
+                <div class="text-6xl mb-4">🏆</div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-4">你的分數</h3>
+                <div class="text-4xl font-bold text-green-600 mb-6" id="finalScore">0</div>
+                <div class="text-lg text-gray-600 mb-6" id="finalMessage">太棒了！</div>
+                <div class="space-y-4">
+                    <button onclick="startGame()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg">
+                        🔄 再玩一次
+                    </button>
+                    <button onclick="backToMenu()" class="w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-lg">
+                        ← 返回主選單
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 遊戲數據
+        const familyMembers = [
+            { emoji: '👨', name: 'Father', description: 'Dad, the head of family' },
+            { emoji: '👩', name: 'Mother', description: 'Mom, gives love and care' },
+            { emoji: '👦', name: 'Brother', description: 'Older brother' },
+            { emoji: '👧', name: 'Sister', description: 'Older sister' },
+            { emoji: '👶', name: 'Little Brother', description: 'Younger brother' },
+            { emoji: '👧', name: 'Little Sister', description: 'Younger sister' },
+            { emoji: '👴', name: 'Grandfather', description: 'Father\'s father' },
+            { emoji: '👵', name: 'Grandmother', description: 'Father\'s mother' },
+            { emoji: '👨', name: 'Uncle', description: 'Father or mother\'s brother' },
+            { emoji: '👩', name: 'Aunt', description: 'Father or mother\'s sister' }
+        ];
+
+        // 20個題目
+        const questions = [
+            { emoji: '👨', correct: 'Father', options: ['Father', 'Brother', 'Grandfather', 'Uncle'] },
+            { emoji: '👩', correct: 'Mother', options: ['Mother', 'Sister', 'Grandmother', 'Aunt'] },
+            { emoji: '👦', correct: 'Brother', options: ['Brother', 'Little Brother', 'Father', 'Uncle'] },
+            { emoji: '👧', correct: 'Sister', options: ['Sister', 'Little Sister', 'Mother', 'Aunt'] },
+            { emoji: '👶', correct: 'Little Brother', options: ['Little Brother', 'Brother', 'Father', 'Uncle'] },
+            { emoji: '👧', correct: 'Little Sister', options: ['Little Sister', 'Sister', 'Mother', 'Aunt'] },
+            { emoji: '👴', correct: 'Grandfather', options: ['Grandfather', 'Uncle', 'Father', 'Brother'] },
+            { emoji: '👵', correct: 'Grandmother', options: ['Grandmother', 'Aunt', 'Mother', 'Sister'] },
+            { emoji: '👨', correct: 'Uncle', options: ['Uncle', 'Father', 'Grandfather', 'Brother'] },
+            { emoji: '👩', correct: 'Aunt', options: ['Aunt', 'Mother', 'Grandmother', 'Sister'] },
+            { emoji: '👨', correct: 'Father', options: ['Father', 'Uncle', 'Grandfather', 'Brother'] },
+            { emoji: '👩', correct: 'Mother', options: ['Mother', 'Aunt', 'Grandmother', 'Sister'] },
+            { emoji: '👦', correct: 'Brother', options: ['Brother', 'Little Brother', 'Father', 'Uncle'] },
+            { emoji: '👧', correct: 'Sister', options: ['Sister', 'Little Sister', 'Mother', 'Aunt'] },
+            { emoji: '👶', correct: 'Little Brother', options: ['Little Brother', 'Brother', 'Father', 'Uncle'] },
+            { emoji: '👧', correct: 'Little Sister', options: ['Little Sister', 'Sister', 'Mother', 'Aunt'] },
+            { emoji: '👴', correct: 'Grandfather', options: ['Grandfather', 'Uncle', 'Father', 'Brother'] },
+            { emoji: '👵', correct: 'Grandmother', options: ['Grandmother', 'Aunt', 'Mother', 'Sister'] },
+            { emoji: '👨', correct: 'Uncle', options: ['Uncle', 'Father', 'Grandfather', 'Brother'] },
+            { emoji: '👩', correct: 'Aunt', options: ['Aunt', 'Mother', 'Grandmother', 'Sister'] }
+        ];
+
+        // 遊戲狀態
+        let currentQuestion = 0;
+        let score = 0;
+        let currentGameCorrect = 0;
+        let currentGameTotal = 0;
+        let shuffledQuestions = [];
+        let gameStats = {
+            totalAnswers: parseInt(localStorage.getItem('totalAnswers') || '0'),
+            correctAnswers: parseInt(localStorage.getItem('correctAnswers') || '0'),
+            highScore: parseInt(localStorage.getItem('highScore') || '0')
+        };
+
+        // 顯示不同區域
+        function showSection(sectionId) {
+            const sections = ['mainMenu', 'teacherLogin', 'teacherArea', 'gameArea', 'gameEnd'];
+            sections.forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+            document.getElementById(sectionId).classList.remove('hidden');
+        }
+
+        function startGame() {
+            currentQuestion = 0;
+            score = 0;
+            currentGameCorrect = 0;
+            currentGameTotal = 0;
+            
+            // 隨機排列題目
+            shuffledQuestions = [...questions];
+            for (let i = shuffledQuestions.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffledQuestions[i], shuffledQuestions[j]] = [shuffledQuestions[j], shuffledQuestions[i]];
+            }
+            
+            document.getElementById('score').textContent = score;
+            document.getElementById('questionNumber').textContent = '1';
+            document.getElementById('currentAccuracy').textContent = '0%';
+            showSection('gameArea');
+            showQuestion();
+        }
+
+
+
+        function showTeacherLogin() {
+            showSection('teacherLogin');
+            document.getElementById('password').value = '';
+        }
+
+        function checkPassword() {
+            const password = document.getElementById('password').value;
+            if (password === '000000') {
+                showTeacherArea();
+            } else {
+                const feedback = document.createElement('div');
+                feedback.className = 'text-red-600 mt-2 font-semibold';
+                feedback.textContent = '密碼錯誤，請重新輸入！';
+                
+                const existingFeedback = document.querySelector('#teacherLogin .text-red-600');
+                if (existingFeedback) {
+                    existingFeedback.remove();
+                }
+                
+                document.querySelector('#teacherLogin .bg-white').appendChild(feedback);
+                document.getElementById('password').value = '';
+            }
+        }
+
+        function showTeacherArea() {
+            showSection('teacherArea');
+            updateTeacherStats();
+        }
+
+        function updateTeacherStats() {
+            document.getElementById('totalAnswers').textContent = gameStats.totalAnswers;
+            const accuracy = gameStats.totalAnswers > 0 ? Math.round((gameStats.correctAnswers / gameStats.totalAnswers) * 100) : 0;
+            document.getElementById('accuracy').textContent = accuracy + '%';
+            document.getElementById('highScore').textContent = gameStats.highScore;
+        }
+
+        function backToMenu() {
+            showSection('mainMenu');
+        }
+
+        function showQuestion() {
+            if (currentQuestion >= shuffledQuestions.length) {
+                endGame();
+                return;
+            }
+
+            const question = shuffledQuestions[currentQuestion];
+            document.getElementById('questionEmoji').textContent = question.emoji;
+            document.getElementById('questionText').textContent = 'Who is this?';
+            document.getElementById('questionNumber').textContent = currentQuestion + 1;
+            
+            // 隱藏反饋
+            document.getElementById('feedback').classList.add('hidden');
+            
+            // 生成選項 - 隨機排列
+            const optionsContainer = document.getElementById('options');
+            optionsContainer.innerHTML = '';
+            
+            // 複製選項陣列並隨機排列
+            const shuffledOptions = [...question.options];
+            for (let i = shuffledOptions.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffledOptions[i], shuffledOptions[j]] = [shuffledOptions[j], shuffledOptions[i]];
+            }
+            
+            shuffledOptions.forEach(option => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'flex items-center gap-3';
+                
+                const button = document.createElement('button');
+                button.className = 'flex-1 bg-blue-500 hover:bg-blue-600 text-white font-bold py-4 px-6 rounded-lg text-xl transform hover:scale-105 transition-all duration-200';
+                button.textContent = option;
+                button.onclick = () => selectAnswer(option);
+                
+                const pronounceBtn = document.createElement('button');
+                pronounceBtn.className = 'bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-4 rounded-lg text-sm shadow-lg transform hover:scale-105 transition-all duration-200';
+                pronounceBtn.innerHTML = '🔊';
+                pronounceBtn.onclick = () => pronounceWord(option);
+                
+                optionDiv.appendChild(button);
+                optionDiv.appendChild(pronounceBtn);
+                optionsContainer.appendChild(optionDiv);
+            });
+        }
+
+        function pronounceQuestion() {
+            const question = shuffledQuestions[currentQuestion];
+            const correctAnswer = question.correct;
+            pronounceWord(correctAnswer);
+        }
+
+        function pronounceWord(word) {
+            if ('speechSynthesis' in window) {
+                // 停止任何正在播放的語音
+                speechSynthesis.cancel();
+                
+                const utterance = new SpeechSynthesisUtterance(word);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.8;
+                utterance.pitch = 1;
+                utterance.volume = 1;
+                
+                speechSynthesis.speak(utterance);
+            } else {
+                // 如果瀏覽器不支援語音合成，顯示提示
+                const notification = document.createElement('div');
+                notification.className = 'fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50';
+                notification.textContent = '您的瀏覽器不支援語音功能';
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 3000);
+            }
+        }
+
+        function selectAnswer(selectedAnswer) {
+            const question = shuffledQuestions[currentQuestion];
+            const isCorrect = selectedAnswer === question.correct;
+            
+            // 更新統計
+            gameStats.totalAnswers++;
+            currentGameTotal++;
+            if (isCorrect) {
+                gameStats.correctAnswers++;
+                currentGameCorrect++;
+                score += 10;
+            }
+            
+            // 更新當前遊戲答對率
+            const currentAccuracy = Math.round((currentGameCorrect / currentGameTotal) * 100);
+            document.getElementById('currentAccuracy').textContent = currentAccuracy + '%';
+            
+            // 保存統計到本地存儲
+            localStorage.setItem('totalAnswers', gameStats.totalAnswers.toString());
+            localStorage.setItem('correctAnswers', gameStats.correctAnswers.toString());
+            
+            // 顯示反饋
+            const feedback = document.getElementById('feedback');
+            const feedbackText = document.getElementById('feedbackText');
+            
+            if (isCorrect) {
+                feedback.className = 'mt-6 p-4 rounded-lg text-center bg-green-100 border-2 border-green-300';
+                feedbackText.textContent = '🎉 Correct! Well done!';
+                feedbackText.className = 'text-xl font-bold text-green-700';
+            } else {
+                feedback.className = 'mt-6 p-4 rounded-lg text-center bg-red-100 border-2 border-red-300';
+                feedbackText.textContent = `❌ Wrong! The correct answer is: ${question.correct}`;
+                feedbackText.className = 'text-xl font-bold text-red-700';
+            }
+            
+            feedback.classList.remove('hidden');
+            document.getElementById('score').textContent = score;
+            
+            // 禁用所有選項按鈕
+            const optionButtons = document.querySelectorAll('#options .flex-1');
+            const pronounceButtons = document.querySelectorAll('#options .bg-green-500');
+            optionButtons.forEach(button => {
+                button.disabled = true;
+                button.classList.add('opacity-50', 'cursor-not-allowed');
+            });
+            pronounceButtons.forEach(button => {
+                button.disabled = true;
+                button.classList.add('opacity-50', 'cursor-not-allowed');
+            });
+            
+            // 2秒後顯示下一題
+            setTimeout(() => {
+                currentQuestion++;
+                showQuestion();
+            }, 2000);
+        }
+
+        function endGame() {
+            // 更新最高分
+            if (score > gameStats.highScore) {
+                gameStats.highScore = score;
+                localStorage.setItem('highScore', score.toString());
+            }
+            
+            document.getElementById('finalScore').textContent = score + ' 分';
+            
+            let message = '';
+            if (score >= 180) {
+                message = '🌟 Perfect! You are a family member expert!';
+            } else if (score >= 150) {
+                message = '👏 Great! You know family members well!';
+            } else if (score >= 100) {
+                message = '😊 Good job! Keep it up!';
+            } else {
+                message = '💪 Keep trying! Practice makes perfect!';
+            }
+            
+            document.getElementById('finalMessage').textContent = message;
+            showSection('gameEnd');
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            showSection('mainMenu');
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98f3a9e59045a3ab',t:'MTc2MDU3Njg5Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
