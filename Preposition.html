@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>英文介系詞學習遊戲</title>
+    <style>
+        body {
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .mode-selector {
+            padding: 30px;
+            text-align: center;
+            background: #f8f9fa;
+        }
+        
+        .mode-btn {
+            background: linear-gradient(45deg, #2196F3, #1976D2);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            margin: 10px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+        }
+        
+        .mode-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(33, 150, 243, 0.4);
+        }
+        
+        .teacher-login {
+            padding: 30px;
+            text-align: center;
+            display: none;
+        }
+        
+        .password-input {
+            padding: 12px 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1.1em;
+            margin: 10px;
+            width: 200px;
+        }
+        
+        .login-btn {
+            background: #FF9800;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-size: 1.1em;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        
+        .teacher-area, .student-area {
+            display: none;
+            padding: 30px;
+        }
+        
+        .flashcard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            padding: 20px 0;
+        }
+        
+        .flashcard-mini {
+            background: linear-gradient(135deg, #FFE082, #FFB74D);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 3px solid transparent;
+        }
+        
+        .flashcard-mini:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+            border-color: #FF9800;
+        }
+        
+        .flashcard-mini h3 {
+            font-size: 1.8em;
+            margin: 0 0 10px 0;
+            color: #E65100;
+        }
+        
+        .flashcard-mini p {
+            font-size: 1em;
+            margin: 8px 0;
+            color: #333;
+        }
+        
+        .flashcard-mini .chinese {
+            font-weight: bold;
+            color: #D84315;
+        }
+        
+        .flashcard {
+            background: linear-gradient(135deg, #FFE082, #FFB74D);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        
+        .flashcard h3 {
+            font-size: 2em;
+            margin: 0 0 15px 0;
+            color: #E65100;
+        }
+        
+        .flashcard p {
+            font-size: 1.2em;
+            margin: 10px 0;
+            color: #333;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease;
+        }
+        
+        @keyframes modalSlideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .modal-header {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            padding: 20px;
+            border-radius: 20px 20px 0 0;
+            text-align: center;
+        }
+        
+        .modal-body {
+            padding: 30px;
+        }
+        
+        .close {
+            color: white;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+        }
+        
+        .close:hover {
+            opacity: 0.7;
+        }
+        
+        .speak-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 1em;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .speak-btn:hover {
+            background: #45a049;
+            transform: scale(1.05);
+        }
+        
+        .navigation {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .nav-btn {
+            background: #2196F3;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            margin: 0 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        
+        .nav-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .quiz-container {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+        }
+        
+        .question {
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            color: #333;
+            text-align: center;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .option {
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-size: 1.1em;
+        }
+        
+        .option:hover {
+            border-color: #2196F3;
+            background: #e3f2fd;
+        }
+        
+        .option.correct {
+            background: #c8e6c9;
+            border-color: #4CAF50;
+        }
+        
+        .option.incorrect {
+            background: #ffcdd2;
+            border-color: #f44336;
+        }
+        
+        .score {
+            text-align: center;
+            font-size: 1.5em;
+            margin: 20px 0;
+            color: #2196F3;
+            font-weight: bold;
+        }
+        
+        .progress {
+            background: #e0e0e0;
+            border-radius: 10px;
+            height: 20px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+        
+        .back-btn {
+            background: #757575;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        
+        .final-score {
+            text-align: center;
+            padding: 30px;
+            background: linear-gradient(135deg, #81C784, #66BB6A);
+            border-radius: 15px;
+            color: white;
+            margin: 20px 0;
+        }
+        
+        .final-score h2 {
+            margin: 0 0 15px 0;
+            font-size: 2em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 英文介系詞學習遊戲</h1>
+            <p>學習常用英文介系詞，提升英語能力！</p>
+        </div>
+        
+        <div id="modeSelector" class="mode-selector">
+            <h2>選擇模式</h2>
+            <button class="mode-btn" onclick="showTeacherLogin()">👨‍🏫 教師教學區</button>
+            <button class="mode-btn" onclick="showStudentArea()">👨‍🎓 學生練習區</button>
+        </div>
+        
+        <div id="teacherLogin" class="teacher-login">
+            <h2>教師登入</h2>
+            <p>請輸入密碼進入教學區</p>
+            <input type="password" id="passwordInput" class="password-input" placeholder="輸入密碼">
+            <button class="login-btn" onclick="checkPassword()">登入</button>
+            <br>
+            <button class="back-btn" onclick="showModeSelector()">返回</button>
+        </div>
+        
+        <div id="teacherArea" class="teacher-area">
+            <h2>📚 教師教學區 - 介系詞字卡</h2>
+            <p style="text-align: center; color: #666; margin-bottom: 30px;">點擊任一字卡查看詳細內容和發音</p>
+            <div id="flashcardGrid" class="flashcard-grid"></div>
+            <button class="back-btn" onclick="showModeSelector()">返回主選單</button>
+        </div>
+        
+        <div id="studentArea" class="student-area">
+            <h2>🎮 學生練習區</h2>
+            <div class="score">得分: <span id="score">0</span> / 20</div>
+            <div class="progress">
+                <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+            </div>
+            <div id="quizContainer"></div>
+            <button class="back-btn" onclick="showModeSelector()">返回主選單</button>
+        </div>
+    </div>
+
+    <!-- 字卡詳細資訊彈出視窗 -->
+    <div id="cardModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <h2 id="modalTitle">介系詞詳細資訊</h2>
+            </div>
+            <div class="modal-body">
+                <div id="modalCardContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 介系詞資料庫
+        const prepositions = [
+            {
+                word: "in",
+                chinese: "在...裡面",
+                example: "The cat is in the box.",
+                exampleChinese: "貓在盒子裡。"
+            },
+            {
+                word: "on",
+                chinese: "在...上面",
+                example: "The book is on the table.",
+                exampleChinese: "書在桌子上。"
+            },
+            {
+                word: "at",
+                chinese: "在...地點/時間",
+                example: "I am at school.",
+                exampleChinese: "我在學校。"
+            },
+            {
+                word: "under",
+                chinese: "在...下面",
+                example: "The dog is under the chair.",
+                exampleChinese: "狗在椅子下面。"
+            },
+            {
+                word: "behind",
+                chinese: "在...後面",
+                example: "The car is behind the house.",
+                exampleChinese: "車子在房子後面。"
+            },
+            {
+                word: "between",
+                chinese: "在...之間",
+                example: "The park is between two buildings.",
+                exampleChinese: "公園在兩棟建築物之間。"
+            },
+            {
+                word: "next to",
+                chinese: "在...旁邊",
+                example: "The shop is next to the bank.",
+                exampleChinese: "商店在銀行旁邊。"
+            },
+            {
+                word: "above",
+                chinese: "在...上方",
+                example: "The plane is above the clouds.",
+                exampleChinese: "飛機在雲層上方。"
+            },
+            {
+                word: "below",
+                chinese: "在...下方",
+                example: "The fish swim below the surface.",
+                exampleChinese: "魚在水面下方游泳。"
+            },
+            {
+                word: "across",
+                chinese: "穿過/橫跨",
+                example: "Walk across the street carefully.",
+                exampleChinese: "小心地穿過街道。"
+            }
+        ];
+
+        // 題目資料庫
+        const questions = [
+            {
+                question: "The apple is ___ the tree.",
+                questionChinese: "蘋果在樹上。",
+                options: ["in", "on", "at", "under"],
+                correct: 1
+            },
+            {
+                question: "I live ___ Taipei.",
+                questionChinese: "我住在台北。",
+                options: ["in", "on", "at", "above"],
+                correct: 0
+            },
+            {
+                question: "Meet me ___ the library.",
+                questionChinese: "在圖書館見面。",
+                options: ["in", "on", "at", "between"],
+                correct: 2
+            },
+            {
+                question: "The cat is hiding ___ the bed.",
+                questionChinese: "貓躲在床下面。",
+                options: ["above", "on", "under", "next to"],
+                correct: 2
+            },
+            {
+                question: "The garden is ___ the house.",
+                questionChinese: "花園在房子後面。",
+                options: ["behind", "in", "on", "at"],
+                correct: 0
+            },
+            {
+                question: "The restaurant is ___ the bank and the post office.",
+                questionChinese: "餐廳在銀行和郵局之間。",
+                options: ["behind", "between", "above", "under"],
+                correct: 1
+            },
+            {
+                question: "Sit ___ me in the movie theater.",
+                questionChinese: "在電影院坐我旁邊。",
+                options: ["behind", "between", "next to", "above"],
+                correct: 2
+            },
+            {
+                question: "The helicopter flies ___ the building.",
+                questionChinese: "直升機在建築物上方飛行。",
+                options: ["under", "below", "above", "behind"],
+                correct: 2
+            },
+            {
+                question: "The submarine is ___ the ocean surface.",
+                questionChinese: "潛水艇在海面下方。",
+                options: ["above", "below", "next to", "behind"],
+                correct: 1
+            },
+            {
+                question: "Walk ___ the bridge to get to the other side.",
+                questionChinese: "走過橋到另一邊。",
+                options: ["under", "behind", "across", "between"],
+                correct: 2
+            },
+            {
+                question: "The keys are ___ my pocket.",
+                questionChinese: "鑰匙在我的口袋裡。",
+                options: ["in", "on", "at", "above"],
+                correct: 0
+            },
+            {
+                question: "The picture hangs ___ the wall.",
+                questionChinese: "圖片掛在牆上。",
+                options: ["in", "on", "under", "behind"],
+                correct: 1
+            },
+            {
+                question: "We will meet ___ 3 o'clock.",
+                questionChinese: "我們三點見面。",
+                options: ["in", "on", "at", "above"],
+                correct: 2
+            },
+            {
+                question: "The mouse ran ___ the table.",
+                questionChinese: "老鼠跑到桌子下面。",
+                options: ["above", "on", "under", "across"],
+                correct: 2
+            },
+            {
+                question: "The tree is ___ our house.",
+                questionChinese: "樹在我們房子後面。",
+                options: ["behind", "in", "at", "below"],
+                correct: 0
+            },
+            {
+                question: "Choose a seat ___ Tom and Mary.",
+                questionChinese: "選擇湯姆和瑪麗之間的座位。",
+                options: ["behind", "between", "above", "across"],
+                correct: 1
+            },
+            {
+                question: "The pharmacy is ___ the hospital.",
+                questionChinese: "藥局在醫院旁邊。",
+                options: ["behind", "between", "next to", "below"],
+                correct: 2
+            },
+            {
+                question: "Birds fly ___ the trees.",
+                questionChinese: "鳥在樹上方飛翔。",
+                options: ["under", "below", "above", "behind"],
+                correct: 2
+            },
+            {
+                question: "The treasure is buried ___ the ground.",
+                questionChinese: "寶藏埋在地下。",
+                options: ["above", "below", "next to", "across"],
+                correct: 1
+            },
+            {
+                question: "Swimming ___ the river is dangerous.",
+                questionChinese: "游泳橫渡河流很危險。",
+                options: ["under", "behind", "across", "between"],
+                correct: 2
+            }
+        ];
+
+        // 全域變數
+        let currentCard = 0;
+        let currentQuestion = 0;
+        let score = 0;
+        let answered = false;
+
+        // 語音合成函數
+        function speak(text, lang = 'en-US') {
+            if ('speechSynthesis' in window) {
+                // 停止當前正在播放的語音
+                speechSynthesis.cancel();
+                
+                // 短暫延遲後播放新語音，避免衝突
+                setTimeout(() => {
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    utterance.lang = lang;
+                    utterance.rate = 0.8;
+                    utterance.volume = 1;
+                    speechSynthesis.speak(utterance);
+                }, 100);
+            }
+        }
+
+        // 顯示模式選擇器
+        function showModeSelector() {
+            document.getElementById('modeSelector').style.display = 'block';
+            document.getElementById('teacherLogin').style.display = 'none';
+            document.getElementById('teacherArea').style.display = 'none';
+            document.getElementById('studentArea').style.display = 'none';
+        }
+
+        // 顯示教師登入
+        function showTeacherLogin() {
+            document.getElementById('modeSelector').style.display = 'none';
+            document.getElementById('teacherLogin').style.display = 'block';
+        }
+
+        // 檢查密碼
+        function checkPassword() {
+            const password = document.getElementById('passwordInput').value;
+            if (password === '000000') {
+                showTeacherArea();
+            } else {
+                alert('密碼錯誤！請重新輸入。');
+            }
+        }
+
+        // 顯示教師區域
+        function showTeacherArea() {
+            document.getElementById('teacherLogin').style.display = 'none';
+            document.getElementById('teacherArea').style.display = 'block';
+            displayFlashcardGrid();
+        }
+
+        // 顯示學生區域
+        function showStudentArea() {
+            document.getElementById('modeSelector').style.display = 'none';
+            document.getElementById('studentArea').style.display = 'block';
+            currentQuestion = 0;
+            score = 0;
+            answered = false;
+            shuffleQuestions();
+            displayQuestion();
+        }
+
+        // 隨機打亂題目順序
+        function shuffleQuestions() {
+            for (let i = questions.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [questions[i], questions[j]] = [questions[j], questions[i]];
+            }
+        }
+
+        // 顯示字卡網格
+        function displayFlashcardGrid() {
+            const container = document.getElementById('flashcardGrid');
+            let gridHtml = '';
+            
+            prepositions.forEach((prep, index) => {
+                gridHtml += `
+                    <div class="flashcard-mini" onclick="openCardModal(${index})">
+                        <h3>${prep.word} <button class="speak-btn" onclick="event.stopPropagation(); speak('${prep.word}')">🔊</button></h3>
+                        <p class="chinese">${prep.chinese}</p>
+                        <p style="font-size: 0.9em; color: #666;">點擊查看詳細內容</p>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = gridHtml;
+        }
+
+        // 開啟字卡詳細資訊彈出視窗
+        function openCardModal(index) {
+            const prep = prepositions[index];
+            const modalContent = document.getElementById('modalCardContent');
+            
+            modalContent.innerHTML = `
+                <div class="flashcard">
+                    <h3>${prep.word} <button class="speak-btn" onclick="speak('${prep.word}')">🔊</button></h3>
+                    <p><strong>中文意思：</strong>${prep.chinese}</p>
+                    <p><strong>例句：</strong>${prep.example} <button class="speak-btn" onclick="speak('${prep.example}')">🔊</button></p>
+                    <p><strong>中文翻譯：</strong>${prep.exampleChinese}</p>
+                </div>
+            `;
+            
+            document.getElementById('cardModal').style.display = 'block';
+        }
+
+        // 關閉彈出視窗
+        function closeModal() {
+            document.getElementById('cardModal').style.display = 'none';
+        }
+
+        // 點擊彈出視窗外部關閉
+        window.onclick = function(event) {
+            const modal = document.getElementById('cardModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // 顯示題目
+        function displayQuestion() {
+            if (currentQuestion >= questions.length) {
+                showFinalScore();
+                return;
+            }
+
+            const question = questions[currentQuestion];
+            const container = document.getElementById('quizContainer');
+            
+            let optionsHtml = '';
+            question.options.forEach((option, index) => {
+                optionsHtml += `
+                    <div class="option" onclick="selectAnswer(${index})">
+                        ${option} <button class="speak-btn" onclick="event.stopPropagation(); speak('${option}')">🔊</button>
+                    </div>
+                `;
+            });
+
+            // 建立完整句子（用正確答案替換底線）
+            const correctAnswer = question.options[question.correct];
+            const completeSentence = question.question.replace('___', correctAnswer);
+            
+            container.innerHTML = `
+                <div class="quiz-container">
+                    <div class="question">
+                        <strong>第 ${currentQuestion + 1} 題：</strong><br>
+                        ${question.question} <button class="speak-btn" onclick="speak('${completeSentence}')">🔊</button><br>
+                        <small style="color: #666;">${question.questionChinese}</small>
+                    </div>
+                    <div class="options">
+                        ${optionsHtml}
+                    </div>
+                </div>
+            `;
+
+            answered = false;
+            updateProgress();
+        }
+
+        // 選擇答案
+        function selectAnswer(selectedIndex) {
+            if (answered) return;
+
+            answered = true;
+            const question = questions[currentQuestion];
+            const options = document.querySelectorAll('.option');
+
+            options.forEach((option, index) => {
+                if (index === question.correct) {
+                    option.classList.add('correct');
+                } else if (index === selectedIndex && index !== question.correct) {
+                    option.classList.add('incorrect');
+                }
+                option.style.pointerEvents = 'none';
+            });
+
+            if (selectedIndex === question.correct) {
+                score++;
+                document.getElementById('score').textContent = score;
+            }
+
+            setTimeout(() => {
+                currentQuestion++;
+                displayQuestion();
+            }, 2000);
+        }
+
+        // 更新進度條
+        function updateProgress() {
+            const progress = (currentQuestion / questions.length) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        // 顯示最終分數
+        function showFinalScore() {
+            const container = document.getElementById('quizContainer');
+            const percentage = Math.round((score / questions.length) * 100);
+            
+            let message = '';
+            if (percentage >= 90) {
+                message = '🏆 太棒了！你是介系詞大師！';
+            } else if (percentage >= 70) {
+                message = '👍 很好！繼續加油！';
+            } else if (percentage >= 50) {
+                message = '📚 不錯！多練習會更好！';
+            } else {
+                message = '💪 加油！多複習介系詞用法！';
+            }
+
+            container.innerHTML = `
+                <div class="final-score">
+                    <h2>🎉 測驗完成！</h2>
+                    <p style="font-size: 1.5em; margin: 15px 0;">最終得分：${score} / ${questions.length} (${percentage}%)</p>
+                    <p style="font-size: 1.2em;">${message}</p>
+                    <button class="mode-btn" onclick="restartQuiz()" style="margin-top: 20px;">🔄 重新測驗</button>
+                </div>
+            `;
+        }
+
+        // 重新開始測驗
+        function restartQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            answered = false;
+            document.getElementById('score').textContent = score;
+            shuffleQuestions();
+            displayQuestion();
+        }
+
+        // 初始化
+        showModeSelector();
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98f3dc17f357a3ab',t:'MTc2MDU3ODk0OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
