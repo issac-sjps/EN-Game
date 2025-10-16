@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>人物形容詞學習遊戲</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            box-sizing: border-box;
+        }
+        .speak-btn {
+            transition: all 0.2s ease;
+        }
+        .speak-btn:hover {
+            transform: scale(1.1);
+        }
+        .card-flip {
+            transform: rotateY(180deg);
+            transition: transform 0.6s;
+        }
+        .teacher-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .student-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-blue-100 to-purple-100">
+    <div class="container mx-auto px-4 py-8">
+        <!-- 主選單 -->
+        <div id="mainMenu" class="text-center">
+            <h1 class="text-4xl font-bold text-purple-800 mb-8">人物形容詞學習遊戲</h1>
+            <div class="flex flex-col md:flex-row gap-6 justify-center items-center">
+                <div class="teacher-card p-8 rounded-xl shadow-lg text-white cursor-pointer hover:shadow-xl transition-shadow" onclick="showPasswordInput()">
+                    <div class="text-6xl mb-4">👩‍🏫</div>
+                    <h2 class="text-2xl font-bold mb-2">教師教學區</h2>
+                    <p class="text-lg">查看所有詞彙卡片</p>
+                </div>
+                <div class="student-card p-8 rounded-xl shadow-lg text-white cursor-pointer hover:shadow-xl transition-shadow" onclick="startGame()">
+                    <div class="text-6xl mb-4">🎮</div>
+                    <h2 class="text-2xl font-bold mb-2">學生練習區</h2>
+                    <p class="text-lg">開始練習測驗</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 密碼輸入 -->
+        <div id="passwordInput" class="hidden text-center">
+            <div class="bg-white p-8 rounded-xl shadow-lg max-w-md mx-auto">
+                <h2 class="text-2xl font-bold text-purple-800 mb-6">請輸入教師密碼</h2>
+                <input type="password" id="password" class="w-full p-3 border-2 border-purple-300 rounded-lg mb-4 text-center text-xl" placeholder="請輸入密碼">
+                <div class="flex gap-4">
+                    <button onclick="checkPassword()" class="flex-1 bg-purple-600 text-white py-3 rounded-lg hover:bg-purple-700 transition-colors">確認</button>
+                    <button onclick="backToMenu()" class="flex-1 bg-gray-500 text-white py-3 rounded-lg hover:bg-gray-600 transition-colors">返回</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 教師教學區 -->
+        <div id="teacherArea" class="hidden">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-3xl font-bold text-purple-800">教師教學區 - 詞彙卡片</h2>
+                <button onclick="backToMenu()" class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition-colors">返回主選單</button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="teacherCards">
+                <!-- 教師卡片將在這裡生成 -->
+            </div>
+        </div>
+
+        <!-- 學生遊戲區 -->
+        <div id="gameArea" class="hidden">
+            <div class="flex justify-between items-center mb-8">
+                <div>
+                    <h2 class="text-3xl font-bold text-purple-800">學生練習區</h2>
+                    <p class="text-lg text-purple-600">題目 <span id="currentQuestion">1</span> / 20 | 得分: <span id="score">0</span></p>
+                </div>
+                <button onclick="backToMenu()" class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition-colors">返回主選單</button>
+            </div>
+            
+            <div class="bg-white p-8 rounded-xl shadow-lg max-w-4xl mx-auto">
+                <div class="text-center mb-8">
+                    <div class="flex items-center justify-center gap-4 mb-4">
+                        <h3 class="text-2xl font-bold text-gray-800" id="questionText">這個形容詞的中文意思是什麼？</h3>
+                        <button onclick="speakText(currentWord.english)" class="speak-btn bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600">
+                            🔊
+                        </button>
+                    </div>
+                    <div class="text-4xl font-bold text-purple-600 mb-6" id="englishWord">tall</div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="options">
+                    <!-- 選項將在這裡生成 -->
+                </div>
+                
+                <div id="feedback" class="hidden mt-6 p-4 rounded-lg text-center text-lg font-bold">
+                    <!-- 回饋訊息 -->
+                </div>
+                
+                <div id="nextButton" class="hidden text-center mt-6">
+                    <button onclick="nextQuestion()" class="bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700 transition-colors text-lg">下一題</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 結果頁面 -->
+        <div id="resultArea" class="hidden text-center">
+            <div class="bg-white p-8 rounded-xl shadow-lg max-w-md mx-auto">
+                <div class="text-6xl mb-4">🎉</div>
+                <h2 class="text-3xl font-bold text-purple-800 mb-4">測驗完成！</h2>
+                <p class="text-xl text-gray-700 mb-6">你的得分：<span id="finalScore" class="text-purple-600 font-bold">0</span> / 20</p>
+                <div class="flex gap-4">
+                    <button onclick="startGame()" class="flex-1 bg-purple-600 text-white py-3 rounded-lg hover:bg-purple-700 transition-colors">重新開始</button>
+                    <button onclick="backToMenu()" class="flex-1 bg-gray-500 text-white py-3 rounded-lg hover:bg-gray-600 transition-colors">返回主選單</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 詞彙資料
+        const vocabulary = [
+            { english: 'tall', chinese: '高的', emoji: '🏀' },
+            { english: 'short', chinese: '矮的', emoji: '🧒' },
+            { english: 'fat', chinese: '胖的', emoji: '🐻' },
+            { english: 'thin', chinese: '瘦的', emoji: '🦒' },
+            { english: 'young', chinese: '年輕的', emoji: '👶' },
+            { english: 'old', chinese: '年老的', emoji: '👴' },
+            { english: 'beautiful', chinese: '美麗的', emoji: '👸' },
+            { english: 'handsome', chinese: '帥氣的', emoji: '🤴' },
+            { english: 'smart', chinese: '聰明的', emoji: '🧠' },
+            { english: 'kind', chinese: '善良的', emoji: '😇' }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let questions = [];
+        let currentWord = null;
+
+        // 語音合成功能
+        function speakText(text) {
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.8;
+                speechSynthesis.speak(utterance);
+            }
+        }
+
+        // 顯示密碼輸入
+        function showPasswordInput() {
+            document.getElementById('mainMenu').classList.add('hidden');
+            document.getElementById('passwordInput').classList.remove('hidden');
+        }
+
+        // 檢查密碼
+        function checkPassword() {
+            const password = document.getElementById('password').value;
+            if (password === '000000') {
+                showTeacherArea();
+            } else {
+                alert('密碼錯誤！');
+            }
+        }
+
+        // 顯示教師區域
+        function showTeacherArea() {
+            document.getElementById('passwordInput').classList.add('hidden');
+            document.getElementById('teacherArea').classList.remove('hidden');
+            generateTeacherCards();
+        }
+
+        // 生成教師卡片
+        function generateTeacherCards() {
+            const container = document.getElementById('teacherCards');
+            container.innerHTML = '';
+            
+            vocabulary.forEach(word => {
+                const card = document.createElement('div');
+                card.className = 'bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow';
+                card.innerHTML = `
+                    <div class="text-center">
+                        <div class="text-4xl mb-4">${word.emoji}</div>
+                        <div class="flex items-center justify-center gap-2 mb-2">
+                            <h3 class="text-2xl font-bold text-purple-600">${word.english}</h3>
+                            <button onclick="speakText('${word.english}')" class="speak-btn bg-blue-500 text-white p-1 rounded-full hover:bg-blue-600 text-sm">
+                                🔊
+                            </button>
+                        </div>
+                        <p class="text-xl text-gray-700">${word.chinese}</p>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // 開始遊戲
+        function startGame() {
+            document.getElementById('mainMenu').classList.add('hidden');
+            document.getElementById('resultArea').classList.add('hidden');
+            document.getElementById('gameArea').classList.remove('hidden');
+            
+            currentQuestionIndex = 0;
+            score = 0;
+            generateQuestions();
+            showQuestion();
+        }
+
+        // 生成題目
+        function generateQuestions() {
+            questions = [];
+            const usedWords = new Set();
+            
+            // 生成20個題目
+            for (let i = 0; i < 20; i++) {
+                let correctWord;
+                do {
+                    correctWord = vocabulary[Math.floor(Math.random() * vocabulary.length)];
+                } while (usedWords.has(correctWord.english) && usedWords.size < vocabulary.length);
+                
+                if (usedWords.size < vocabulary.length) {
+                    usedWords.add(correctWord.english);
+                }
+                
+                // 生成錯誤選項
+                const wrongOptions = [];
+                while (wrongOptions.length < 3) {
+                    const randomWord = vocabulary[Math.floor(Math.random() * vocabulary.length)];
+                    if (randomWord.english !== correctWord.english && !wrongOptions.includes(randomWord.chinese)) {
+                        wrongOptions.push(randomWord.chinese);
+                    }
+                }
+                
+                // 混合選項
+                const options = [correctWord.chinese, ...wrongOptions];
+                shuffleArray(options);
+                
+                questions.push({
+                    word: correctWord,
+                    options: options,
+                    correct: correctWord.chinese
+                });
+            }
+        }
+
+        // 洗牌函數
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        // 顯示題目
+        function showQuestion() {
+            if (currentQuestionIndex >= questions.length) {
+                showResult();
+                return;
+            }
+            
+            const question = questions[currentQuestionIndex];
+            currentWord = question.word;
+            
+            document.getElementById('currentQuestion').textContent = currentQuestionIndex + 1;
+            document.getElementById('score').textContent = score;
+            document.getElementById('englishWord').textContent = question.word.english;
+            
+            const optionsContainer = document.getElementById('options');
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach(option => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'bg-purple-100 hover:bg-purple-200 p-4 rounded-lg border-2 border-transparent hover:border-purple-300 transition-colors cursor-pointer';
+                optionDiv.onclick = () => selectAnswer(option, question.correct);
+                
+                // 找到對應的英文單詞
+                const englishWord = vocabulary.find(word => word.chinese === option)?.english || '';
+                
+                optionDiv.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <span class="text-lg font-medium flex-1">${option}</span>
+                        ${englishWord ? `<button onclick="event.stopPropagation(); speakText('${englishWord}')" class="speak-btn bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 ml-2">🔊</button>` : ''}
+                    </div>
+                `;
+                optionsContainer.appendChild(optionDiv);
+            });
+            
+            document.getElementById('feedback').classList.add('hidden');
+            document.getElementById('nextButton').classList.add('hidden');
+        }
+
+        // 選擇答案
+        function selectAnswer(selected, correct) {
+            const optionDivs = document.querySelectorAll('#options > div');
+            optionDivs.forEach(div => {
+                div.style.pointerEvents = 'none';
+                const optionText = div.querySelector('span').textContent;
+                if (optionText === correct) {
+                    div.className = 'bg-green-500 text-white p-4 rounded-lg border-2 border-green-600 cursor-pointer';
+                } else if (optionText === selected && selected !== correct) {
+                    div.className = 'bg-red-500 text-white p-4 rounded-lg border-2 border-red-600 cursor-pointer';
+                }
+                // 保持發音按鍵可用
+                const speakBtn = div.querySelector('button');
+                if (speakBtn) {
+                    speakBtn.style.pointerEvents = 'auto';
+                }
+            });
+            
+            const feedback = document.getElementById('feedback');
+            if (selected === correct) {
+                score++;
+                feedback.className = 'mt-6 p-4 rounded-lg text-center text-lg font-bold bg-green-100 text-green-800';
+                feedback.textContent = '正確！太棒了！ 🎉';
+            } else {
+                feedback.className = 'mt-6 p-4 rounded-lg text-center text-lg font-bold bg-red-100 text-red-800';
+                feedback.textContent = `錯誤！正確答案是：${correct}`;
+            }
+            
+            feedback.classList.remove('hidden');
+            document.getElementById('nextButton').classList.remove('hidden');
+        }
+
+        // 下一題
+        function nextQuestion() {
+            currentQuestionIndex++;
+            showQuestion();
+        }
+
+        // 顯示結果
+        function showResult() {
+            document.getElementById('gameArea').classList.add('hidden');
+            document.getElementById('resultArea').classList.remove('hidden');
+            document.getElementById('finalScore').textContent = score;
+        }
+
+        // 返回主選單
+        function backToMenu() {
+            document.getElementById('passwordInput').classList.add('hidden');
+            document.getElementById('teacherArea').classList.add('hidden');
+            document.getElementById('gameArea').classList.add('hidden');
+            document.getElementById('resultArea').classList.add('hidden');
+            document.getElementById('mainMenu').classList.remove('hidden');
+            document.getElementById('password').value = '';
+        }
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98f3e59964cea3ab',t:'MTc2MDU3OTMzNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
