@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>動詞副詞訓練遊戲</title>
+    <style>
+        body {
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(45deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            font-weight: bold;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .nav-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            background: white;
+            color: #4facfe;
+        }
+
+        .nav-btn.active {
+            background: white;
+            color: #4facfe;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .game-section {
+            text-align: center;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #4facfe;
+        }
+
+        .stat-label {
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .question-card {
+            background: #fff;
+            border: 3px solid #e9ecef;
+            border-radius: 20px;
+            padding: 40px;
+            margin: 30px 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .question-text {
+            font-size: 1.8em;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .option-btn {
+            background: #f8f9fa;
+            border: 2px solid #dee2e6;
+            padding: 20px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+
+        .option-btn:hover {
+            background: #e9ecef;
+            border-color: #4facfe;
+        }
+
+        .option-btn.correct {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+
+        .option-btn.incorrect {
+            background: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+
+        .next-btn {
+            background: linear-gradient(45deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 25px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .next-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .next-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .teacher-section {
+            display: none;
+        }
+
+        .login-form {
+            max-width: 400px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .login-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            font-size: 18px;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+        }
+
+        .login-btn {
+            background: linear-gradient(45deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 25px;
+            font-size: 18px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .vocabulary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .vocab-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            border: 2px solid #e9ecef;
+        }
+
+        .vocab-word {
+            font-size: 2em;
+            font-weight: bold;
+            color: #4facfe;
+            margin-bottom: 10px;
+        }
+
+        .vocab-meaning {
+            color: #666;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .speak-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .speak-btn:hover {
+            background: #218838;
+            transform: scale(1.05);
+        }
+
+        .question-speak-btn {
+            font-size: 18px;
+            padding: 12px 25px;
+            margin-bottom: 10px;
+        }
+
+        .option-speak-btn {
+            background: #17a2b8;
+            font-size: 14px;
+            padding: 8px 15px;
+            margin-left: 10px;
+        }
+
+        .option-speak-btn:hover {
+            background: #138496;
+        }
+
+        .result-section {
+            display: none;
+            text-align: center;
+        }
+
+        .final-score {
+            font-size: 3em;
+            font-weight: bold;
+            color: #4facfe;
+            margin: 20px 0;
+        }
+
+        .restart-btn {
+            background: linear-gradient(45deg, #ff6b6b 0%, #ffa500 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 25px;
+            font-size: 18px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .reset-btn {
+            background: linear-gradient(45deg, #ff9a56 0%, #ffad56 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 20px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .reset-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 154, 86, 0.4);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .options {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .nav-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>🎯 動詞副詞訓練遊戲</h1>
+            <div class="nav-buttons">
+                <button class="nav-btn active" onclick="showSection('game')">開始遊戲</button>
+                <button class="nav-btn" onclick="showSection('teacher')">教師區</button>
+            </div>
+        </header>
+
+        <main class="content">
+            <!-- 遊戲區域 -->
+            <section id="game-section" class="game-section">
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-number" id="current-question">1</div>
+                        <div class="stat-label">題目</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="correct-count">0</div>
+                        <div class="stat-label">答對</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="accuracy">0%</div>
+                        <div class="stat-label">答對率</div>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <button class="reset-btn" onclick="resetGame()">🔄 重置遊戲</button>
+                </div>
+
+                <div class="question-card">
+                    <div class="question-text" id="question-text">請選擇正確的副詞意思：</div>
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <button class="speak-btn question-speak-btn" id="question-speak-btn" onclick="speakQuestionWord()">🔊 聽發音</button>
+                    </div>
+                    <div class="options" id="options-container">
+                        <!-- 選項會動態生成 -->
+                    </div>
+                    <button class="next-btn" id="next-btn" onclick="nextQuestion()" disabled>下一題</button>
+                </div>
+            </section>
+
+            <!-- 結果區域 -->
+            <section id="result-section" class="result-section">
+                <h2>🎉 遊戲結束！</h2>
+                <div class="final-score" id="final-score">85%</div>
+                <div class="result-details">
+                    <p style="font-size: 1.2em; color: #666; margin: 20px 0;">
+                        答對 <span id="final-correct" style="color: #28a745; font-weight: bold;">0</span> 題，
+                        共 <span style="color: #4facfe; font-weight: bold;">20</span> 題
+                    </p>
+                    <p style="color: #888;">恭喜你完成了所有題目！</p>
+                </div>
+                <button class="restart-btn" onclick="restartGame()">重新開始</button>
+            </section>
+
+            <!-- 教師區域 -->
+            <section id="teacher-section" class="teacher-section">
+                <div id="teacher-login" class="login-form">
+                    <h2>教師登入</h2>
+                    <input type="password" class="login-input" id="teacher-password" placeholder="請輸入密碼">
+                    <button class="login-btn" onclick="teacherLogin()">登入</button>
+                </div>
+
+                <div id="teacher-content" class="hidden">
+                    <h2>📚 詞彙教學區</h2>
+                    <p>點擊發音按鈕聽取正確發音</p>
+                    <div class="vocabulary-grid" id="vocabulary-grid">
+                        <!-- 詞彙卡片會動態生成 -->
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // 詞彙數據
+        const vocabulary = [
+            { word: 'slowly', meaning: '慢慢地' },
+            { word: 'easily', meaning: '容易地' },
+            { word: 'quickly', meaning: '快速地' },
+            { word: 'loudly', meaning: '大聲地' },
+            { word: 'quietly', meaning: '安靜地' },
+            { word: 'carefully', meaning: '小心地' },
+            { word: 'happily', meaning: '快樂地' },
+            { word: 'sadly', meaning: '悲傷地' },
+            { word: 'clearly', meaning: '清楚地' },
+            { word: 'softly', meaning: '輕柔地' }
+        ];
+
+        // 遊戲狀態
+        let currentQuestionIndex = 0;
+        let correctAnswers = 0;
+        let totalQuestions = 20;
+        let gameQuestions = [];
+        let answered = false;
+        let currentQuestionWord = '';
+
+        // 初始化遊戲
+        function initGame() {
+            currentQuestionIndex = 0;
+            correctAnswers = 0;
+            answered = false;
+            gameQuestions = generateQuestions();
+            updateStats();
+            showQuestion();
+        }
+
+        // 生成20道題目
+        function generateQuestions() {
+            const questions = [];
+            for (let i = 0; i < totalQuestions; i++) {
+                const correctAnswer = vocabulary[Math.floor(Math.random() * vocabulary.length)];
+                const wrongAnswers = vocabulary
+                    .filter(v => v.word !== correctAnswer.word)
+                    .sort(() => Math.random() - 0.5)
+                    .slice(0, 3);
+                
+                const options = [correctAnswer, ...wrongAnswers].sort(() => Math.random() - 0.5);
+                
+                questions.push({
+                    word: correctAnswer.word,
+                    correct: correctAnswer.meaning,
+                    options: options
+                });
+            }
+            return questions;
+        }
+
+        // 顯示題目
+        function showQuestion() {
+            if (currentQuestionIndex >= totalQuestions) {
+                showResults();
+                return;
+            }
+
+            const question = gameQuestions[currentQuestionIndex];
+            currentQuestionWord = question.word;
+            document.getElementById('question-text').textContent = `"${question.word}" 的中文意思是？`;
+            
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach((option, index) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.style.display = 'flex';
+                optionDiv.style.alignItems = 'center';
+                optionDiv.style.justifyContent = 'space-between';
+                
+                const button = document.createElement('button');
+                button.className = 'option-btn';
+                button.textContent = option.meaning;
+                button.onclick = () => selectAnswer(option.meaning, question.correct);
+                button.style.flex = '1';
+                button.style.marginRight = '10px';
+                
+                const speakBtn = document.createElement('button');
+                speakBtn.className = 'speak-btn option-speak-btn';
+                speakBtn.textContent = '🔊';
+                speakBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    speakWord(option.word);
+                };
+                
+                optionDiv.appendChild(button);
+                optionDiv.appendChild(speakBtn);
+                optionsContainer.appendChild(optionDiv);
+            });
+
+            document.getElementById('next-btn').disabled = true;
+            answered = false;
+        }
+
+        // 選擇答案
+        function selectAnswer(selected, correct) {
+            if (answered) return;
+            
+            answered = true;
+            const buttons = document.querySelectorAll('.option-btn');
+            
+            buttons.forEach(btn => {
+                if (btn.textContent === correct) {
+                    btn.classList.add('correct');
+                } else if (btn.textContent === selected && selected !== correct) {
+                    btn.classList.add('incorrect');
+                }
+                btn.style.pointerEvents = 'none';
+            });
+
+            // 禁用所有發音按鈕
+            const speakButtons = document.querySelectorAll('.option-speak-btn');
+            speakButtons.forEach(btn => {
+                btn.style.pointerEvents = 'none';
+                btn.style.opacity = '0.5';
+            });
+
+            if (selected === correct) {
+                correctAnswers++;
+            }
+
+            updateStats();
+            document.getElementById('next-btn').disabled = false;
+        }
+
+        // 下一題
+        function nextQuestion() {
+            currentQuestionIndex++;
+            showQuestion();
+        }
+
+        // 更新統計
+        function updateStats() {
+            document.getElementById('current-question').textContent = currentQuestionIndex + 1;
+            document.getElementById('correct-count').textContent = correctAnswers;
+            
+            const accuracy = currentQuestionIndex > 0 ? Math.round((correctAnswers / (currentQuestionIndex + (answered ? 1 : 0))) * 100) : 0;
+            document.getElementById('accuracy').textContent = accuracy + '%';
+        }
+
+        // 顯示結果
+        function showResults() {
+            const accuracy = Math.round((correctAnswers / totalQuestions) * 100);
+            document.getElementById('final-score').textContent = accuracy + '%';
+            document.getElementById('final-correct').textContent = correctAnswers;
+            document.getElementById('game-section').style.display = 'none';
+            document.getElementById('result-section').style.display = 'block';
+        }
+
+        // 重新開始遊戲
+        function restartGame() {
+            document.getElementById('result-section').style.display = 'none';
+            document.getElementById('game-section').style.display = 'block';
+            initGame();
+        }
+
+        // 重置遊戲
+        function resetGame() {
+            showResetModal();
+        }
+
+        // 顯示重置確認彈窗
+        function showResetModal() {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.5);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 1000;
+            `;
+            
+            const modalContent = document.createElement('div');
+            modalContent.style.cssText = `
+                background: white;
+                padding: 30px;
+                border-radius: 15px;
+                text-align: center;
+                max-width: 400px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            `;
+            
+            modalContent.innerHTML = `
+                <h3 style="margin-top: 0; color: #333;">確認重置</h3>
+                <p style="color: #666; margin-bottom: 25px;">確定要重置遊戲嗎？目前進度將會清除。</p>
+                <button onclick="confirmReset()" style="background: #dc3545; color: white; border: none; padding: 10px 20px; border-radius: 8px; margin-right: 10px; cursor: pointer;">確定重置</button>
+                <button onclick="closeResetModal()" style="background: #6c757d; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;">取消</button>
+            `;
+            
+            modal.appendChild(modalContent);
+            document.body.appendChild(modal);
+            modal.id = 'resetModal';
+        }
+
+        // 確認重置
+        function confirmReset() {
+            closeResetModal();
+            initGame();
+        }
+
+        // 關閉重置彈窗
+        function closeResetModal() {
+            const modal = document.getElementById('resetModal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        // 切換區域
+        function showSection(section) {
+            // 更新導航按鈕
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // 隱藏所有區域
+            document.getElementById('game-section').style.display = 'none';
+            document.getElementById('result-section').style.display = 'none';
+            document.getElementById('teacher-section').style.display = 'none';
+
+            // 顯示選中的區域
+            if (section === 'game') {
+                document.getElementById('game-section').style.display = 'block';
+            } else if (section === 'teacher') {
+                document.getElementById('teacher-section').style.display = 'block';
+            }
+        }
+
+        // 教師登入
+        function teacherLogin() {
+            const password = document.getElementById('teacher-password').value;
+            if (password === '000000') {
+                document.getElementById('teacher-login').style.display = 'none';
+                document.getElementById('teacher-content').classList.remove('hidden');
+                generateVocabularyCards();
+            } else {
+                // 創建錯誤提示
+                const errorMsg = document.createElement('div');
+                errorMsg.textContent = '密碼錯誤，請重新輸入';
+                errorMsg.style.color = '#dc3545';
+                errorMsg.style.marginTop = '10px';
+                
+                // 移除之前的錯誤訊息
+                const existingError = document.querySelector('.error-message');
+                if (existingError) {
+                    existingError.remove();
+                }
+                
+                errorMsg.className = 'error-message';
+                document.getElementById('teacher-password').parentNode.appendChild(errorMsg);
+                
+                // 清空密碼欄位
+                document.getElementById('teacher-password').value = '';
+            }
+        }
+
+        // 生成詞彙卡片
+        function generateVocabularyCards() {
+            const container = document.getElementById('vocabulary-grid');
+            container.innerHTML = '';
+
+            vocabulary.forEach(vocab => {
+                const card = document.createElement('div');
+                card.className = 'vocab-card';
+                card.innerHTML = `
+                    <div class="vocab-word">${vocab.word}</div>
+                    <div class="vocab-meaning">${vocab.meaning}</div>
+                    <button class="speak-btn" onclick="speakWord('${vocab.word}')">🔊 發音</button>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // 語音播放
+        function speakWord(word) {
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(word);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.8;
+                speechSynthesis.speak(utterance);
+            }
+        }
+
+        // 播放題目單字發音
+        function speakQuestionWord() {
+            speakWord(currentQuestionWord);
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            initGame();
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98f3bf5f25b0a3ab',t:'MTc2MDU3Nzc3MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
