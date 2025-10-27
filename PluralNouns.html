@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>名詞複數練習遊戲</title>
+    <style>
+        body {
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100%;
+            color: #333;
+        }
+        
+        html, body {
+            height: 100%;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(45deg, #ff6b6b, #ffa726);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+        
+        .score-board {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            font-size: 1.2rem;
+        }
+        
+        .rules-section {
+            background: #f8f9ff;
+            padding: 30px;
+            border-bottom: 3px solid #667eea;
+        }
+        
+        .rules-title {
+            color: #667eea;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .rules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+        }
+        
+        .rule-item {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #4caf50;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .rule-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .rule-example {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .game-area {
+            padding: 40px;
+        }
+        
+        .question-card {
+            background: #f8f9ff;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-left: 5px solid #667eea;
+        }
+        
+        .question-number {
+            color: #667eea;
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+        
+        .question-text {
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        .singular-word {
+            background: #e3f2fd;
+            padding: 8px 16px;
+            border-radius: 25px;
+            font-weight: bold;
+            color: #1976d2;
+            display: inline-block;
+            margin: 0 5px;
+        }
+        
+        .options-container {
+            display: grid;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .option-btn {
+            background: white;
+            border: 3px solid #e0e0e0;
+            padding: 15px 20px;
+            font-size: 1.2rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: left;
+            display: flex;
+            align-items: center;
+        }
+        
+        .option-btn:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+        
+        .option-btn.selected {
+            border-color: #667eea;
+            background: #e3f2fd;
+        }
+        
+        .option-btn.correct {
+            border-color: #4caf50;
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+        
+        .option-btn.incorrect {
+            border-color: #f44336;
+            background: #ffebee;
+            color: #c62828;
+        }
+        
+        .option-btn.disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        
+        .option-letter {
+            background: #667eea;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        .option-btn.correct .option-letter {
+            background: #4caf50;
+        }
+        
+        .option-btn.incorrect .option-letter {
+            background: #f44336;
+        }
+        
+        .submit-btn {
+            background: linear-gradient(45deg, #4caf50, #45a049);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            margin-right: 10px;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .next-btn {
+            background: linear-gradient(45deg, #2196f3, #1976d2);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            display: none;
+        }
+        
+        .next-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: bold;
+            display: none;
+        }
+        
+        .correct {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .incorrect {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .rule-explanation {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+            margin-top: 10px;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 0.95rem;
+        }
+        
+        .progress-bar {
+            background: #e0e0e0;
+            height: 8px;
+            border-radius: 4px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            background: linear-gradient(45deg, #4caf50, #45a049);
+            height: 100%;
+            transition: width 0.3s ease;
+            border-radius: 4px;
+        }
+        
+        .final-score {
+            text-align: center;
+            padding: 40px;
+            display: none;
+        }
+        
+        .final-score h2 {
+            color: #667eea;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+        
+        .restart-btn {
+            background: linear-gradient(45deg, #ff6b6b, #ffa726);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .restart-btn:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <main class="container">
+        <header class="header">
+            <h1>🎯 名詞複數練習遊戲</h1>
+            <div class="score-board">
+                <div>題目: <span id="current-question">1</span>/20</div>
+                <div>分數: <span id="score">0</span></div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress"></div>
+            </div>
+        </header>
+        
+        <div class="rules-section">
+            <div class="rules-title">📚 名詞複數變化規則</div>
+            <div class="rules-grid">
+                <div class="rule-item">
+                    <div class="rule-title">1. 一般規則</div>
+                    <div class="rule-example">直接加 -s：cat → cats, dog → dogs</div>
+                </div>
+                <div class="rule-item">
+                    <div class="rule-title">2. s, x, ch, sh 結尾</div>
+                    <div class="rule-example">加 -es：box → boxes, class → classes</div>
+                </div>
+                <div class="rule-item">
+                    <div class="rule-title">3. 子音 + y 結尾</div>
+                    <div class="rule-example">去 y 加 -ies：baby → babies, city → cities</div>
+                </div>
+                <div class="rule-item">
+                    <div class="rule-title">4. 母音 + y 結尾</div>
+                    <div class="rule-example">直接加 -s：boy → boys, toy → toys</div>
+                </div>
+                <div class="rule-item">
+                    <div class="rule-title">5. f/fe 結尾</div>
+                    <div class="rule-example">去 f/fe 加 -ves：leaf → leaves, knife → knives</div>
+                </div>
+                <div class="rule-item">
+                    <div class="rule-title">6. 子音 + o 結尾</div>
+                    <div class="rule-example">加 -es：potato → potatoes, tomato → tomatoes</div>
+                </div>
+                <div class="rule-item">
+                    <div class="rule-title">7. 母音 + o 結尾</div>
+                    <div class="rule-example">直接加 -s：photo → photos, piano → pianos</div>
+                </div>
+                <div class="rule-item">
+                    <div class="rule-title">8. 不規則變化</div>
+                    <div class="rule-example">特殊形式：child → children, foot → feet</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="game-area" id="game-area">
+            <div class="question-card">
+                <div class="question-number" id="question-number">第 1 題</div>
+                <div class="question-text" id="question-text">
+                    請選出 <span class="singular-word" id="singular-word">cat</span> 的正確複數形式：
+                </div>
+                
+                <div class="options-container" id="options-container">
+                    <!-- 選項會由 JavaScript 動態生成 -->
+                </div>
+                
+                <button id="submit-btn" class="submit-btn" style="display: none;">確認答案</button>
+                <button id="next-btn" class="next-btn">下一題</button>
+                
+                <div id="feedback" class="feedback"></div>
+                <div id="rule-explanation" class="rule-explanation" style="display: none;"></div>
+            </div>
+        </div>
+        
+        <div class="final-score" id="final-score">
+            <h2>🎉 遊戲完成！</h2>
+            <p id="final-message"></p>
+            <button id="restart-btn" class="restart-btn">重新開始</button>
+        </div>
+    </main>
+
+    <script>
+        const questions = [
+            { word: "cat", answer: "cats", rule: "一般名詞直接加 -s", options: ["cats", "cates", "caties", "catses"] },
+            { word: "dog", answer: "dogs", rule: "一般名詞直接加 -s", options: ["dogs", "doges", "dogies", "dogses"] },
+            { word: "box", answer: "boxes", rule: "以 s, x, ch, sh 結尾的名詞加 -es", options: ["boxs", "boxes", "boxies", "boxeses"] },
+            { word: "class", answer: "classes", rule: "以 s, x, ch, sh 結尾的名詞加 -es", options: ["classs", "classes", "classies", "classis"] },
+            { word: "watch", answer: "watches", rule: "以 s, x, ch, sh 結尾的名詞加 -es", options: ["watchs", "watches", "watchies", "watcheses"] },
+            { word: "dish", answer: "dishes", rule: "以 s, x, ch, sh 結尾的名詞加 -es", options: ["dishs", "dishes", "dishies", "disheses"] },
+            { word: "baby", answer: "babies", rule: "以子音字母 + y 結尾，去 y 加 -ies", options: ["babys", "babies", "babyes", "babyies"] },
+            { word: "city", answer: "cities", rule: "以子音字母 + y 結尾，去 y 加 -ies", options: ["citys", "cities", "cityes", "cityies"] },
+            { word: "boy", answer: "boys", rule: "以母音字母 + y 結尾，直接加 -s", options: ["boys", "boies", "boyes", "boyies"] },
+            { word: "toy", answer: "toys", rule: "以母音字母 + y 結尾，直接加 -s", options: ["toys", "toies", "toyes", "toyies"] },
+            { word: "leaf", answer: "leaves", rule: "以 f 或 fe 結尾，去 f/fe 加 -ves", options: ["leafs", "leaves", "leafes", "leafies"] },
+            { word: "knife", answer: "knives", rule: "以 f 或 fe 結尾，去 f/fe 加 -ves", options: ["knifes", "knives", "knifees", "knifves"] },
+            { word: "potato", answer: "potatoes", rule: "以子音字母 + o 結尾，加 -es", options: ["potatos", "potatoes", "potatoies", "potatoses"] },
+            { word: "tomato", answer: "tomatoes", rule: "以子音字母 + o 結尾，加 -es", options: ["tomatos", "tomatoes", "tomatoies", "tomatoses"] },
+            { word: "photo", answer: "photos", rule: "以母音字母 + o 結尾，直接加 -s", options: ["photos", "photoes", "photoies", "photoses"] },
+            { word: "piano", answer: "pianos", rule: "以母音字母 + o 結尾，直接加 -s", options: ["pianos", "pianoes", "pianoies", "pianoses"] },
+            { word: "child", answer: "children", rule: "不規則變化", options: ["childs", "children", "childes", "childies"] },
+            { word: "foot", answer: "feet", rule: "不規則變化", options: ["foots", "feet", "footes", "footies"] },
+            { word: "mouse", answer: "mice", rule: "不規則變化", options: ["mouses", "mice", "mooses", "mousies"] },
+            { word: "person", answer: "people", rule: "不規則變化", options: ["persons", "people", "persones", "personies"] }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let answered = false;
+        let selectedOption = null;
+
+        function displayQuestion() {
+            const question = questions[currentQuestion];
+            document.getElementById('question-number').textContent = `第 ${currentQuestion + 1} 題`;
+            document.getElementById('question-text').innerHTML = `請選出 <span class="singular-word">${question.word}</span> 的正確複數形式：`;
+            
+            // 生成選項
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+            
+            // 打亂選項順序
+            const shuffledOptions = [...question.options].sort(() => Math.random() - 0.5);
+            
+            shuffledOptions.forEach((option, index) => {
+                const optionBtn = document.createElement('button');
+                optionBtn.className = 'option-btn';
+                optionBtn.innerHTML = `
+                    <div class="option-letter">${String.fromCharCode(65 + index)}</div>
+                    <div>${option}</div>
+                `;
+                optionBtn.addEventListener('click', () => selectOption(optionBtn, option));
+                optionsContainer.appendChild(optionBtn);
+            });
+            
+            document.getElementById('feedback').style.display = 'none';
+            document.getElementById('rule-explanation').style.display = 'none';
+            document.getElementById('submit-btn').style.display = 'none';
+            document.getElementById('next-btn').style.display = 'none';
+            answered = false;
+            selectedOption = null;
+            
+            // 更新進度條
+            const progress = ((currentQuestion) / questions.length) * 100;
+            document.getElementById('progress').style.width = progress + '%';
+            
+            // 更新題目計數
+            document.getElementById('current-question').textContent = currentQuestion + 1;
+        }
+        
+        function selectOption(button, option) {
+            if (answered) return;
+            
+            // 移除其他選項的選中狀態
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            
+            // 選中當前選項
+            button.classList.add('selected');
+            selectedOption = option;
+            
+            // 顯示確認按鈕
+            document.getElementById('submit-btn').style.display = 'inline-block';
+        }
+
+        function checkAnswer() {
+            if (answered || !selectedOption) return;
+            
+            const correctAnswer = questions[currentQuestion].answer;
+            const feedback = document.getElementById('feedback');
+            const ruleExplanation = document.getElementById('rule-explanation');
+            
+            answered = true;
+            
+            // 標記所有選項
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                const optionText = btn.querySelector('div:last-child').textContent;
+                btn.classList.add('disabled');
+                
+                if (optionText === correctAnswer) {
+                    btn.classList.add('correct');
+                } else if (optionText === selectedOption && optionText !== correctAnswer) {
+                    btn.classList.add('incorrect');
+                }
+            });
+            
+            if (selectedOption === correctAnswer) {
+                score++;
+                feedback.textContent = '🎉 答對了！';
+                feedback.className = 'feedback correct';
+                document.getElementById('score').textContent = score;
+            } else {
+                feedback.textContent = `❌ 答錯了！正確答案是：${correctAnswer}`;
+                feedback.className = 'feedback incorrect';
+            }
+            
+            feedback.style.display = 'block';
+            ruleExplanation.textContent = `💡 規則：${questions[currentQuestion].rule}`;
+            ruleExplanation.style.display = 'block';
+            
+            document.getElementById('submit-btn').style.display = 'none';
+            
+            if (currentQuestion < questions.length - 1) {
+                document.getElementById('next-btn').style.display = 'inline-block';
+            } else {
+                setTimeout(showFinalScore, 2000);
+            }
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+                displayQuestion();
+            } else {
+                showFinalScore();
+            }
+        }
+
+        function showFinalScore() {
+            document.getElementById('game-area').style.display = 'none';
+            document.getElementById('final-score').style.display = 'block';
+            
+            const percentage = Math.round((score / questions.length) * 100);
+            let message = '';
+            
+            if (percentage >= 90) {
+                message = `太棒了！你答對了 ${score}/${questions.length} 題 (${percentage}%)！你已經完全掌握了名詞複數規則！🏆`;
+            } else if (percentage >= 70) {
+                message = `很好！你答對了 ${score}/${questions.length} 題 (${percentage}%)！繼續練習會更棒！⭐`;
+            } else if (percentage >= 50) {
+                message = `不錯！你答對了 ${score}/${questions.length} 題 (${percentage}%)！多練習幾次就能進步！💪`;
+            } else {
+                message = `你答對了 ${score}/${questions.length} 題 (${percentage}%)。別灰心，多練習就會進步！加油！🌟`;
+            }
+            
+            document.getElementById('final-message').textContent = message;
+            
+            // 更新進度條到100%
+            document.getElementById('progress').style.width = '100%';
+        }
+
+        function restartGame() {
+            currentQuestion = 0;
+            score = 0;
+            document.getElementById('score').textContent = '0';
+            document.getElementById('game-area').style.display = 'block';
+            document.getElementById('final-score').style.display = 'none';
+            displayQuestion();
+        }
+
+        // 事件監聽器
+        document.getElementById('submit-btn').addEventListener('click', checkAnswer);
+        document.getElementById('next-btn').addEventListener('click', nextQuestion);
+        document.getElementById('restart-btn').addEventListener('click', restartGame);
+
+        // 鍵盤快捷鍵支援
+        document.addEventListener('keydown', function(e) {
+            // 空白鍵進入下一題
+            if (e.code === 'Space') {
+                e.preventDefault(); // 防止頁面滾動
+                
+                if (answered && currentQuestion < questions.length - 1) {
+                    // 如果已經回答且不是最後一題，進入下一題
+                    nextQuestion();
+                } else if (!answered && selectedOption) {
+                    // 如果已選擇但未確認答案，確認答案
+                    checkAnswer();
+                }
+                return;
+            }
+            
+            // A-D 鍵選擇選項
+            if (!answered) {
+                const key = e.key.toUpperCase();
+                if (key >= 'A' && key <= 'D') {
+                    const options = document.querySelectorAll('.option-btn');
+                    const index = key.charCodeAt(0) - 65;
+                    if (options[index]) {
+                        const optionText = options[index].querySelector('div:last-child').textContent;
+                        selectOption(options[index], optionText);
+                    }
+                }
+            }
+        });
+
+        // 初始化遊戲
+        displayQuestion();
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9950054036a3073c',t:'MTc2MTU0NTMyNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
