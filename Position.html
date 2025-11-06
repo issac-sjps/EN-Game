@@ -3,8 +3,9 @@
  <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Preposition Practice Game</title>
+  <title>Preposition Learning System</title>
   <script src="/_sdk/element_sdk.js"></script>
+  <script src="/_sdk/data_sdk.js"></script>
   <style>
     body {
       box-sizing: border-box;
@@ -19,7 +20,7 @@
     }
 
     .container {
-      max-width: 900px;
+      max-width: 1000px;
       width: 100%;
       background: white;
       border-radius: 20px;
@@ -31,9 +32,207 @@
       text-align: center;
       color: #667eea;
       margin: 0 0 10px 0;
-      font-size: 32px;
+      font-size: 36px;
     }
 
+    .subtitle {
+      text-align: center;
+      color: #666;
+      font-size: 18px;
+      margin-bottom: 30px;
+    }
+
+    .nav-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin: 30px 0;
+      flex-wrap: wrap;
+    }
+
+    .nav-button {
+      padding: 15px 30px;
+      font-size: 18px;
+      font-weight: bold;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s;
+      min-width: 150px;
+    }
+
+    .nav-button.primary {
+      background: #667eea;
+      color: white;
+    }
+
+    .nav-button.primary:hover {
+      background: #5568d3;
+      transform: translateY(-2px);
+    }
+
+    .nav-button.secondary {
+      background: #28a745;
+      color: white;
+    }
+
+    .nav-button.secondary:hover {
+      background: #218838;
+      transform: translateY(-2px);
+    }
+
+    .nav-button.danger {
+      background: #dc3545;
+      color: white;
+    }
+
+    .nav-button.danger:hover {
+      background: #c82333;
+      transform: translateY(-2px);
+    }
+
+    .section {
+      margin: 30px 0;
+      padding: 25px;
+      background: #f8f9fa;
+      border-radius: 15px;
+      border-left: 5px solid #667eea;
+    }
+
+    .section h2 {
+      color: #667eea;
+      margin: 0 0 20px 0;
+      font-size: 24px;
+    }
+
+    .question-bank {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .preposition-group {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .preposition-title {
+      font-size: 20px;
+      font-weight: bold;
+      color: #dc3545;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    .example-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .example-list li {
+      padding: 8px 0;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .example-list li:last-child {
+      border-bottom: none;
+    }
+
+    .emoji {
+      font-size: 24px;
+    }
+
+    .chinese {
+      color: #666;
+      font-size: 14px;
+      margin-left: auto;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin: 20px 0;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .stat-number {
+      font-size: 36px;
+      font-weight: bold;
+      color: #667eea;
+      margin-bottom: 10px;
+    }
+
+    .stat-label {
+      color: #666;
+      font-size: 14px;
+    }
+
+    .records-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .records-table th,
+    .records-table td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+
+    .records-table th {
+      background: #667eea;
+      color: white;
+      font-weight: bold;
+    }
+
+    .records-table tr:hover {
+      background: #f8f9fa;
+    }
+
+    .correct {
+      color: #28a745;
+      font-weight: bold;
+    }
+
+    .incorrect {
+      color: #dc3545;
+      font-weight: bold;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #666;
+    }
+
+    .no-records {
+      text-align: center;
+      padding: 40px;
+      color: #666;
+      font-style: italic;
+    }
+
+    /* Game Styles */
     .score-board {
       display: flex;
       justify-content: space-around;
@@ -172,20 +371,6 @@
       transform: scale(1.15);
     }
 
-    .drop-zone {
-      position: absolute;
-      width: 80px;
-      height: 80px;
-      border: 3px dashed transparent;
-      border-radius: 10px;
-      transition: all 0.3s;
-    }
-
-    .drop-zone.highlight {
-      border-color: #4CAF50;
-      background: rgba(76, 175, 80, 0.1);
-    }
-
     .feedback {
       text-align: center;
       padding: 15px;
@@ -277,67 +462,211 @@
     .restart-button:hover {
       background: #218838;
     }
+
+    .hidden {
+      display: none;
+    }
   </style>
   <style>@view-transition { navigation: auto; }</style>
-  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
   <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
  </head>
  <body>
   <div class="container">
-   <h1 id="game-title">Preposition Practice Game</h1>
-   <div class="score-board">
-    <div class="score-item">
-     <div class="score-label">
-      Question
-     </div>
-     <div class="score-value">
-      <span id="current-question">1</span> / 20
+   <h1 id="system-title">Preposition Learning System</h1>
+   <div class="subtitle">
+    Interactive English Preposition Practice with Student Tracking
+   </div><!-- Homepage -->
+   <div id="homepage">
+    <div class="nav-buttons"><button class="nav-button primary" onclick="showGame()">🎮 Start Practice</button> <button class="nav-button secondary" onclick="showRecords()">📊 View Records</button> <button class="nav-button danger" onclick="clearAllRecords()">🗑️ Clear Records</button>
+    </div>
+    <div class="section">
+     <h2>📚 Question Bank Overview</h2>
+     <p>This system contains <strong>20 interactive questions</strong> covering 5 essential prepositions:</p>
+     <div class="question-bank">
+      <div class="preposition-group">
+       <div class="preposition-title">
+        ON (在...上面)
+       </div>
+       <ul class="example-list">
+        <li><span class="emoji">🍎</span> Put the apple ON the table <span class="chinese">在桌子上</span></li>
+        <li><span class="emoji">📱</span> Put the phone ON the table <span class="chinese">在桌子上</span></li>
+        <li><span class="emoji">🍰</span> Put the cake ON the table <span class="chinese">在桌子上</span></li>
+        <li><span class="emoji">🎁</span> Put the gift ON the table <span class="chinese">在桌子上</span></li>
+       </ul>
+      </div>
+      <div class="preposition-group">
+       <div class="preposition-title">
+        UNDER (在...下面)
+       </div>
+       <ul class="example-list">
+        <li><span class="emoji">📚</span> Put the book UNDER the table <span class="chinese">在桌子下面</span></li>
+        <li><span class="emoji">🐱</span> Put the cat UNDER the table <span class="chinese">在桌子下面</span></li>
+        <li><span class="emoji">👟</span> Put the shoe UNDER the table <span class="chinese">在桌子下面</span></li>
+        <li><span class="emoji">🎩</span> Put the hat UNDER the table <span class="chinese">在桌子下面</span></li>
+       </ul>
+      </div>
+      <div class="preposition-group">
+       <div class="preposition-title">
+        LEFT (在...左邊)
+       </div>
+       <ul class="example-list">
+        <li><span class="emoji">☕</span> Put the cup to the LEFT of the table <span class="chinese">在桌子左邊</span></li>
+        <li><span class="emoji">🧸</span> Put the toy to the LEFT of the table <span class="chinese">在桌子左邊</span></li>
+        <li><span class="emoji">🌿</span> Put the plant to the LEFT of the table <span class="chinese">在桌子左邊</span></li>
+        <li><span class="emoji">✏️</span> Put the pencil to the LEFT of the table <span class="chinese">在桌子左邊</span></li>
+       </ul>
+      </div>
+      <div class="preposition-group">
+       <div class="preposition-title">
+        RIGHT (在...右邊)
+       </div>
+       <ul class="example-list">
+        <li><span class="emoji">⚽</span> Put the ball to the RIGHT of the table <span class="chinese">在桌子右邊</span></li>
+        <li><span class="emoji">💡</span> Put the lamp to the RIGHT of the table <span class="chinese">在桌子右邊</span></li>
+        <li><span class="emoji">👜</span> Put the bag to the RIGHT of the table <span class="chinese">在桌子右邊</span></li>
+        <li><span class="emoji">⭐</span> Put the star to the RIGHT of the table <span class="chinese">在桌子右邊</span></li>
+       </ul>
+      </div>
+      <div class="preposition-group">
+       <div class="preposition-title">
+        IN (在...裡面)
+       </div>
+       <ul class="example-list">
+        <li><span class="emoji">🌸</span> Put the flower IN the drawer <span class="chinese">在抽屜裡</span></li>
+        <li><span class="emoji">📦</span> Put the box IN the drawer <span class="chinese">在抽屜裡</span></li>
+        <li><span class="emoji">⏰</span> Put the clock IN the drawer <span class="chinese">在抽屜裡</span></li>
+        <li><span class="emoji">🔑</span> Put the key IN the drawer <span class="chinese">在抽屜裡</span></li>
+       </ul>
+      </div>
      </div>
     </div>
-    <div class="score-item">
-     <div class="score-label">
-      Correct
-     </div>
-     <div class="score-value" id="correct-count">
-      0
+    <div class="section">
+     <h2>🎯 How It Works</h2>
+     <p><strong>For Students:</strong> Drag and drop objects to the correct positions based on the English instructions. Each question shows the preposition in <span style="color: #dc3545; font-weight: bold;">red</span> to help you focus on the key word.</p>
+     <p><strong>For Teachers:</strong> All student answers are automatically recorded with timestamps. You can view detailed reports and clear records as needed.</p>
+    </div>
+   </div><!-- Records Page -->
+   <div id="records-page" class="hidden">
+    <div class="nav-buttons"><button class="nav-button primary" onclick="showHomepage()">🏠 Back to Home</button> <button class="nav-button secondary" onclick="refreshRecords()">🔄 Refresh</button> <button class="nav-button danger" onclick="clearAllRecords()">🗑️ Clear All Records</button>
+    </div>
+    <div class="section">
+     <h2>📊 Student Performance Statistics</h2>
+     <div class="stats-grid">
+      <div class="stat-card">
+       <div class="stat-number" id="total-attempts">
+        0
+       </div>
+       <div class="stat-label">
+        Total Attempts
+       </div>
+      </div>
+      <div class="stat-card">
+       <div class="stat-number" id="correct-answers">
+        0
+       </div>
+       <div class="stat-label">
+        Correct Answers
+       </div>
+      </div>
+      <div class="stat-card">
+       <div class="stat-number" id="accuracy-rate">
+        0%
+       </div>
+       <div class="stat-label">
+        Accuracy Rate
+       </div>
+      </div>
+      <div class="stat-card">
+       <div class="stat-number" id="total-students">
+        0
+       </div>
+       <div class="stat-label">
+        Active Sessions
+       </div>
+      </div>
      </div>
     </div>
-    <div class="score-item">
-     <div class="score-label">
-      Accuracy
+    <div class="section">
+     <h2>📝 Detailed Answer Records</h2>
+     <div id="records-loading" class="loading">
+      Loading records...
      </div>
-     <div class="score-value" id="accuracy">
-      0%
+     <div id="no-records" class="no-records hidden">
+      No records found. Students haven't started practicing yet.
+     </div>
+     <table id="records-table" class="records-table hidden">
+      <thead>
+       <tr>
+        <th>Time</th>
+        <th>Question</th>
+        <th>Object</th>
+        <th>Correct Position</th>
+        <th>Result</th>
+        <th>Student Answer</th>
+       </tr>
+      </thead>
+      <tbody id="records-tbody">
+      </tbody>
+     </table>
+    </div>
+   </div><!-- Game Page -->
+   <div id="game-page" class="hidden">
+    <div class="nav-buttons"><button class="nav-button primary" onclick="showHomepage()">🏠 Back to Home</button>
+    </div>
+    <div class="score-board">
+     <div class="score-item">
+      <div class="score-label">
+       Question
+      </div>
+      <div class="score-value">
+       <span id="current-question">1</span> / 20
+      </div>
+     </div>
+     <div class="score-item">
+      <div class="score-label">
+       Correct
+      </div>
+      <div class="score-value" id="correct-count">
+       0
+      </div>
+     </div>
+     <div class="score-item">
+      <div class="score-label">
+       Accuracy
+      </div>
+      <div class="score-value" id="accuracy">
+       0%
+      </div>
      </div>
     </div>
-   </div>
-   <div id="game-content">
-    <div class="question-area">
-     <div class="question-text" id="question-text">
-      Put the apple ON the table
+    <div id="game-content">
+     <div class="question-area">
+      <div class="question-text" id="question-text">
+       Put the apple ON the table
+      </div>
      </div>
-    </div>
-    <div class="game-area" id="game-area">
-     <div class="table"></div>
-     <div class="drawer"></div>
-     <div class="draggable-object" id="draggable">
-      🍎
+     <div class="game-area" id="game-area">
+      <div class="table"></div>
+      <div class="drawer"></div>
+      <div class="draggable-object" id="draggable">
+       🍎
+      </div>
      </div>
+     <div class="feedback hidden" id="feedback"></div><button class="next-button" id="next-button" disabled>Next Question (按下空白鍵)</button>
     </div>
-    <div class="feedback hidden" id="feedback"></div><button class="next-button" id="next-button" disabled>Next Question (按下空白鍵)</button>
-   </div>
-   <div id="completion-screen" style="display: none;" class="completion-screen">
-    <h2>🎉 Congratulations! 🎉</h2>
-    <div class="final-score" id="final-score">
-     20 / 20
+    <div id="completion-screen" style="display: none;" class="completion-screen">
+     <h2>🎉 Congratulations! 🎉</h2>
+     <div class="final-score" id="final-score">
+      20 / 20
+     </div>
+     <p style="font-size: 20px; color: #666;">You've completed all questions!</p><button class="restart-button" onclick="restartGame()">Play Again</button> <button class="nav-button primary" onclick="showHomepage()" style="margin-left: 20px;">Back to Home</button>
     </div>
-    <p style="font-size: 20px; color: #666;">You've completed all questions!</p><button class="restart-button" onclick="restartGame()">Play Again</button>
    </div>
   </div>
   <script>
     const defaultConfig = {
-      game_title: "Preposition Practice Game",
-      instruction_text: "Drag the object to the correct position",
+      system_title: "Preposition Learning System",
+      teacher_name: "Teacher",
       primary_color: "#667eea",
       secondary_color: "#764ba2",
       text_color: "#333333",
@@ -371,12 +700,178 @@
     let currentQuestionIndex = 0;
     let correctCount = 0;
     let hasAnswered = false;
-
     let draggedElement = null;
     let offsetX = 0;
     let offsetY = 0;
+    let allRecords = [];
 
+    // Data SDK Handler
+    const dataHandler = {
+      onDataChanged(data) {
+        allRecords = data;
+        updateRecordsDisplay();
+      }
+    };
+
+    // Initialize Data SDK
+    async function initDataSdk() {
+      if (window.dataSdk) {
+        const result = await window.dataSdk.init(dataHandler);
+        if (!result.isOk) {
+          console.error("Failed to initialize data SDK");
+        }
+      }
+    }
+
+    // Navigation Functions
+    function showHomepage() {
+      document.getElementById('homepage').classList.remove('hidden');
+      document.getElementById('records-page').classList.add('hidden');
+      document.getElementById('game-page').classList.add('hidden');
+    }
+
+    function showRecords() {
+      document.getElementById('homepage').classList.add('hidden');
+      document.getElementById('records-page').classList.remove('hidden');
+      document.getElementById('game-page').classList.add('hidden');
+      refreshRecords();
+    }
+
+    function showGame() {
+      document.getElementById('homepage').classList.add('hidden');
+      document.getElementById('records-page').classList.add('hidden');
+      document.getElementById('game-page').classList.remove('hidden');
+      initGame();
+    }
+
+    // Records Functions
+    function refreshRecords() {
+      updateRecordsDisplay();
+    }
+
+    async function clearAllRecords() {
+      if (allRecords.length === 0) {
+        showCustomMessage("No records to clear!", "info");
+        return;
+      }
+
+      const confirmDiv = document.createElement('div');
+      confirmDiv.style.cssText = `
+        position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+        background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        z-index: 1000; text-align: center; max-width: 400px;
+      `;
+      confirmDiv.innerHTML = `
+        <h3 style="color: #dc3545; margin-bottom: 20px;">⚠️ Confirm Delete</h3>
+        <p style="margin-bottom: 25px;">Are you sure you want to delete all ${allRecords.length} student records? This action cannot be undone.</p>
+        <button onclick="executeDeleteAll()" style="background: #dc3545; color: white; border: none; padding: 10px 20px; border-radius: 5px; margin-right: 10px; cursor: pointer;">Delete All</button>
+        <button onclick="cancelDelete()" style="background: #6c757d; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">Cancel</button>
+      `;
+
+      const backdrop = document.createElement('div');
+      backdrop.style.cssText = `
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.5); z-index: 999;
+      `;
+      backdrop.onclick = cancelDelete;
+
+      document.body.appendChild(backdrop);
+      document.body.appendChild(confirmDiv);
+
+      window.executeDeleteAll = async function() {
+        const deletePromises = allRecords.map(record => window.dataSdk.delete(record));
+        await Promise.all(deletePromises);
+        cancelDelete();
+        showCustomMessage("All records deleted successfully!", "success");
+      };
+
+      window.cancelDelete = function() {
+        document.body.removeChild(backdrop);
+        document.body.removeChild(confirmDiv);
+        delete window.executeDeleteAll;
+        delete window.cancelDelete;
+      };
+    }
+
+    function showCustomMessage(message, type) {
+      const messageDiv = document.createElement('div');
+      const bgColor = type === 'success' ? '#d4edda' : type === 'error' ? '#f8d7da' : '#d1ecf1';
+      const textColor = type === 'success' ? '#155724' : type === 'error' ? '#721c24' : '#0c5460';
+      
+      messageDiv.style.cssText = `
+        position: fixed; top: 20px; right: 20px; z-index: 1000;
+        background: ${bgColor}; color: ${textColor}; padding: 15px 25px;
+        border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        font-weight: bold; max-width: 300px;
+      `;
+      messageDiv.textContent = message;
+      
+      document.body.appendChild(messageDiv);
+      setTimeout(() => document.body.removeChild(messageDiv), 3000);
+    }
+
+    function updateRecordsDisplay() {
+      const loadingEl = document.getElementById('records-loading');
+      const noRecordsEl = document.getElementById('no-records');
+      const tableEl = document.getElementById('records-table');
+      const tbodyEl = document.getElementById('records-tbody');
+
+      loadingEl.classList.add('hidden');
+
+      if (allRecords.length === 0) {
+        noRecordsEl.classList.remove('hidden');
+        tableEl.classList.add('hidden');
+        updateStats(0, 0, 0);
+        return;
+      }
+
+      noRecordsEl.classList.add('hidden');
+      tableEl.classList.remove('hidden');
+
+      // Update statistics
+      const totalAttempts = allRecords.length;
+      const correctAnswers = allRecords.filter(r => r.is_correct).length;
+      const accuracyRate = totalAttempts > 0 ? Math.round((correctAnswers / totalAttempts) * 100) : 0;
+      const uniqueSessions = new Set(allRecords.map(r => r.timestamp.split('T')[0])).size;
+
+      updateStats(totalAttempts, correctAnswers, accuracyRate, uniqueSessions);
+
+      // Update table
+      tbodyEl.innerHTML = '';
+      const sortedRecords = [...allRecords].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+      
+      sortedRecords.forEach(record => {
+        const row = document.createElement('tr');
+        const time = new Date(record.timestamp).toLocaleString();
+        const resultClass = record.is_correct ? 'correct' : 'incorrect';
+        const resultText = record.is_correct ? '✓ Correct' : '✗ Incorrect';
+        
+        row.innerHTML = `
+          <td>${time}</td>
+          <td>${record.question_text}</td>
+          <td style="font-size: 20px;">${record.emoji}</td>
+          <td><strong>${record.position.toUpperCase()}</strong></td>
+          <td class="${resultClass}">${resultText}</td>
+          <td>${record.student_answer || 'Unknown'}</td>
+        `;
+        tbodyEl.appendChild(row);
+      });
+    }
+
+    function updateStats(total, correct, accuracy, sessions = 0) {
+      document.getElementById('total-attempts').textContent = total;
+      document.getElementById('correct-answers').textContent = correct;
+      document.getElementById('accuracy-rate').textContent = accuracy + '%';
+      document.getElementById('total-students').textContent = sessions;
+    }
+
+    // Game Functions
     function initGame() {
+      currentQuestionIndex = 0;
+      correctCount = 0;
+      hasAnswered = false;
+      document.getElementById('game-content').style.display = 'block';
+      document.getElementById('completion-screen').style.display = 'none';
       loadQuestion();
       setupDragAndDrop();
     }
@@ -384,7 +879,6 @@
     function loadQuestion() {
       const question = questions[currentQuestionIndex];
       
-      // Highlight keywords in red
       let questionText = question.text;
       const keywords = ['ON', 'UNDER', 'LEFT', 'RIGHT', 'IN'];
       keywords.forEach(keyword => {
@@ -405,7 +899,6 @@
 
     function setupDragAndDrop() {
       const draggable = document.getElementById('draggable');
-      const gameArea = document.getElementById('game-area');
 
       draggable.addEventListener('mousedown', startDrag);
       draggable.addEventListener('touchstart', startDrag);
@@ -458,58 +951,125 @@
       if (!draggedElement || hasAnswered) return;
 
       draggedElement.classList.remove('dragging');
-
       checkAnswer();
-
       draggedElement = null;
     }
 
-    function checkAnswer() {
+    async function checkAnswer() {
       const question = questions[currentQuestionIndex];
       const draggable = document.getElementById('draggable');
-      const gameArea = document.getElementById('game-area');
       const table = document.querySelector('.table');
       const drawer = document.querySelector('.drawer');
 
       const draggableRect = draggable.getBoundingClientRect();
       const tableRect = table.getBoundingClientRect();
       const drawerRect = drawer.getBoundingClientRect();
-      const gameAreaRect = gameArea.getBoundingClientRect();
 
       const draggableCenterX = draggableRect.left + draggableRect.width / 2;
       const draggableCenterY = draggableRect.top + draggableRect.height / 2;
 
       let isCorrect = false;
+      let studentAnswer = 'unknown';
 
       if (question.position === 'on') {
-        // ON the table
         if (draggableCenterY < tableRect.bottom && draggableCenterY > tableRect.top - 40 &&
             draggableCenterX > tableRect.left && draggableCenterX < tableRect.right) {
           isCorrect = true;
+          studentAnswer = 'on';
+        } else if (draggableCenterY > tableRect.bottom && draggableCenterY < tableRect.bottom + 100 &&
+                   draggableCenterX > tableRect.left && draggableCenterX < tableRect.right) {
+          studentAnswer = 'under';
+        } else if (draggableCenterX < tableRect.left - 20) {
+          studentAnswer = 'left';
+        } else if (draggableCenterX > tableRect.right + 20) {
+          studentAnswer = 'right';
+        } else if (draggableCenterX > drawerRect.left && draggableCenterX < drawerRect.right &&
+                   draggableCenterY > drawerRect.top && draggableCenterY < drawerRect.bottom) {
+          studentAnswer = 'in';
         }
       } else if (question.position === 'under') {
-        // UNDER the table
         if (draggableCenterY > tableRect.bottom && draggableCenterY < tableRect.bottom + 100 &&
             draggableCenterX > tableRect.left && draggableCenterX < tableRect.right) {
           isCorrect = true;
+          studentAnswer = 'under';
+        } else if (draggableCenterY < tableRect.bottom && draggableCenterY > tableRect.top - 40 &&
+                   draggableCenterX > tableRect.left && draggableCenterX < tableRect.right) {
+          studentAnswer = 'on';
+        } else if (draggableCenterX < tableRect.left - 20) {
+          studentAnswer = 'left';
+        } else if (draggableCenterX > tableRect.right + 20) {
+          studentAnswer = 'right';
+        } else if (draggableCenterX > drawerRect.left && draggableCenterX < drawerRect.right &&
+                   draggableCenterY > drawerRect.top && draggableCenterY < drawerRect.bottom) {
+          studentAnswer = 'in';
         }
       } else if (question.position === 'left') {
-        // LEFT of the table
         if (draggableCenterX < tableRect.left - 20 &&
             draggableCenterY > tableRect.top - 50 && draggableCenterY < tableRect.bottom + 50) {
           isCorrect = true;
+          studentAnswer = 'left';
+        } else if (draggableCenterX > tableRect.right + 20) {
+          studentAnswer = 'right';
+        } else if (draggableCenterY < tableRect.bottom && draggableCenterY > tableRect.top - 40 &&
+                   draggableCenterX > tableRect.left && draggableCenterX < tableRect.right) {
+          studentAnswer = 'on';
+        } else if (draggableCenterY > tableRect.bottom && draggableCenterY < tableRect.bottom + 100 &&
+                   draggableCenterX > tableRect.left && draggableCenterX < tableRect.right) {
+          studentAnswer = 'under';
+        } else if (draggableCenterX > drawerRect.left && draggableCenterX < drawerRect.right &&
+                   draggableCenterY > drawerRect.top && draggableCenterY < drawerRect.bottom) {
+          studentAnswer = 'in';
         }
       } else if (question.position === 'right') {
-        // RIGHT of the table
         if (draggableCenterX > tableRect.right + 20 &&
             draggableCenterY > tableRect.top - 50 && draggableCenterY < tableRect.bottom + 50) {
           isCorrect = true;
+          studentAnswer = 'right';
+        } else if (draggableCenterX < tableRect.left - 20) {
+          studentAnswer = 'left';
+        } else if (draggableCenterY < tableRect.bottom && draggableCenterY > tableRect.top - 40 &&
+                   draggableCenterX > tableRect.left && draggableCenterX < tableRect.right) {
+          studentAnswer = 'on';
+        } else if (draggableCenterY > tableRect.bottom && draggableCenterY < tableRect.bottom + 100 &&
+                   draggableCenterX > tableRect.left && draggableCenterX < tableRect.right) {
+          studentAnswer = 'under';
+        } else if (draggableCenterX > drawerRect.left && draggableCenterX < drawerRect.right &&
+                   draggableCenterY > drawerRect.top && draggableCenterY < drawerRect.bottom) {
+          studentAnswer = 'in';
         }
       } else if (question.position === 'in') {
-        // IN the drawer
         if (draggableCenterX > drawerRect.left && draggableCenterX < drawerRect.right &&
             draggableCenterY > drawerRect.top && draggableCenterY < drawerRect.bottom) {
           isCorrect = true;
+          studentAnswer = 'in';
+        } else if (draggableCenterY < tableRect.bottom && draggableCenterY > tableRect.top - 40 &&
+                   draggableCenterX > tableRect.left && draggableCenterX < tableRect.right) {
+          studentAnswer = 'on';
+        } else if (draggableCenterY > tableRect.bottom && draggableCenterY < tableRect.bottom + 100 &&
+                   draggableCenterX > tableRect.left && draggableCenterX < tableRect.right) {
+          studentAnswer = 'under';
+        } else if (draggableCenterX < tableRect.left - 20) {
+          studentAnswer = 'left';
+        } else if (draggableCenterX > tableRect.right + 20) {
+          studentAnswer = 'right';
+        }
+      }
+
+      // Save to database
+      if (window.dataSdk) {
+        const record = {
+          question_index: currentQuestionIndex,
+          question_text: question.text,
+          position: question.position,
+          emoji: question.emoji,
+          is_correct: isCorrect,
+          timestamp: new Date().toISOString(),
+          student_answer: studentAnswer
+        };
+
+        const result = await window.dataSdk.create(record);
+        if (!result.isOk) {
+          console.error("Failed to save record");
         }
       }
 
@@ -555,17 +1115,12 @@
     }
 
     function restartGame() {
-      currentQuestionIndex = 0;
-      correctCount = 0;
-      document.getElementById('game-content').style.display = 'block';
-      document.getElementById('completion-screen').style.display = 'none';
-      loadQuestion();
-      updateScore();
+      initGame();
     }
 
+    // Event Listeners
     document.getElementById('next-button').addEventListener('click', nextQuestion);
 
-    // Add keyboard support for spacebar
     document.addEventListener('keydown', function(e) {
       if (e.code === 'Space' && !document.getElementById('next-button').disabled) {
         e.preventDefault();
@@ -573,13 +1128,14 @@
       }
     });
 
+    // Element SDK Configuration
     async function onConfigChange(config) {
-      const gameTitle = config.game_title || defaultConfig.game_title;
+      const systemTitle = config.system_title || defaultConfig.system_title;
       const primaryColor = config.primary_color || defaultConfig.primary_color;
       const accentColor = config.accent_color || defaultConfig.accent_color;
       const successColor = config.success_color || defaultConfig.success_color;
 
-      document.getElementById('game-title').textContent = gameTitle;
+      document.getElementById('system-title').textContent = systemTitle;
       document.querySelector('h1').style.color = primaryColor;
       document.querySelectorAll('.score-value').forEach(el => el.style.color = primaryColor);
       document.querySelector('.question-area').style.borderColor = accentColor;
@@ -628,13 +1184,14 @@
           fontSizeable: undefined
         }),
         mapToEditPanelValues: (config) => new Map([
-          ["game_title", config.game_title || defaultConfig.game_title],
-          ["instruction_text", config.instruction_text || defaultConfig.instruction_text]
+          ["system_title", config.system_title || defaultConfig.system_title],
+          ["teacher_name", config.teacher_name || defaultConfig.teacher_name]
         ])
       });
     }
 
-    initGame();
+    // Initialize
+    initDataSdk();
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99a281b4e5aba9cd',t:'MTc2MjQxMDI1My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99a3151f33b34a61',t:'MTc2MjQxNjI5Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
