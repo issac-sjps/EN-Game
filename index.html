@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EN-Game 首頁</title>
-    <style>
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EN-Game 首頁</title>
+  <style>
         body {
             box-sizing: border-box;
             margin: 0;
@@ -153,83 +153,94 @@
             }
         }
     </style>
-</head>
-<body>
-    <div class="container">
-        <h1 class="title">🎮 EN-Game</h1>
-        <p class="subtitle">歡迎來到英語學習遊戲世界！</p>
-        
-        <div class="games-grid">
-            <a href="https://issac-sjps.github.io/EN-Game/4Grade" target="_blank" rel="noopener noreferrer" class="game-card">
-                <span class="game-icon">📚</span>
-                <div class="game-title">4年級學扶英語</div>
-                <div class="game-description">適合四年級學生的英語學習遊戲，包含基礎單字和句型練習</div>
-            </a>
-            
-            <a href="https://issac-sjps.github.io/EN-Game/Color" target="_blank" rel="noopener noreferrer" class="game-card">
-                <span class="game-icon">🌈</span>
-                <div class="game-title">顏色遊戲</div>
-                <div class="game-description">學習各種顏色的英文單字，透過互動遊戲加深記憶</div>
-            </a>
-            
-            <a href="https://issac-sjps.github.io/EN-Game/Shape" target="_blank" rel="noopener noreferrer" class="game-card">
-                <span class="game-icon">🔷</span>
-                <div class="game-title">形狀遊戲</div>
-                <div class="game-description">認識各種幾何形狀的英文名稱，寓教於樂的學習體驗</div>
-            </a>
-            
-            <a href="https://issac-sjps.github.io/EN-Game/Stationery" target="_blank" rel="noopener noreferrer" class="game-card">
-                <span class="game-icon">✏️</span>
-                <div class="game-title">文具遊戲</div>
-                <div class="game-description">學習各種文具用品的英文單字，豐富你的日常詞彙</div>
-            </a>
-            
-            <a href="https://issac-sjps.github.io/EN-Game/Month" target="_blank" rel="noopener noreferrer" class="game-card">
-                <span class="game-icon">📅</span>
-                <div class="game-title">月份遊戲</div>
-                <div class="game-description">掌握十二個月份的英文名稱，學會時間相關表達</div>
-            </a>
-            
-            <a href="https://issac-sjps.github.io/EN-Game/ThreePersonVerbs" target="_blank" rel="noopener noreferrer" class="game-card">
-                <span class="game-icon">🏃</span>
-                <div class="game-title">第三人稱動詞</div>
-                <div class="game-description">練習第三人稱單數動詞變化，提升英語文法能力</div>
-            </a>
-            
-            <a href="https://issac-sjps.github.io/EN-Game/FamilyMembers" target="_blank" rel="noopener noreferrer" class="game-card">
-                <span class="game-icon">👨‍👩‍👧‍👦</span>
-                <div class="game-title">家庭成員</div>
-                <div class="game-description">學習家庭成員的英文稱呼，認識親屬關係詞彙</div>
-            </a>
-            
-            <a href="https://issac-sjps.github.io/EN-Game/MannerAdverbs" target="_blank" rel="noopener noreferrer" class="game-card">
-                <span class="game-icon">⚡</span>
-                <div class="game-title">動作副詞</div>
-                <div class="game-description">掌握描述動作方式的副詞，讓英語表達更生動</div>
-            </a>
-            
-            <a href="https://issac-sjps.github.io/EN-Game/Preposition" target="_blank" rel="noopener noreferrer" class="game-card">
-                <span class="game-icon">📍</span>
-                <div class="game-title">介系詞遊戲</div>
-                <div class="game-description">學習位置和方向的介系詞，掌握空間關係表達</div>
-            </a>
-            
-            <a href="https://issac-sjps.github.io/EN-Game/PersonAdjective" target="_blank" rel="noopener noreferrer" class="game-card">
-                <span class="game-icon">😊</span>
-                <div class="game-title">人物形容詞</div>
-                <div class="game-description">學習描述人物特徵的形容詞，豐富人物描述詞彙</div>
-            </a>
-            
-            <div class="game-card coming-soon">
-                <span class="game-icon">🚀</span>
-                <div class="game-title">更多遊戲</div>
-                <div class="game-description">敬請期待更多精彩的英語學習遊戲！</div>
-            </div>
-        </div>
-        
-        <div class="footer">
-            點擊遊戲卡片開始你的英語學習之旅！
-        </div>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="/_sdk/element_sdk.js" type="text/javascript"></script>
+  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+ </head>
+ <body>
+  <div class="container">
+   <h1 class="title">🎮 EN-Game</h1>
+   <p class="subtitle">歡迎來到英語學習遊戲世界！</p>
+   <div class="games-grid"><a href="https://issac-sjps.github.io/EN-Game/4Grade" target="_blank" rel="noopener noreferrer" class="game-card"> <span class="game-icon">📚</span>
+     <div class="game-title">
+      1. 4年級學扶英語
+     </div>
+     <div class="game-description">
+      適合四年級學生的英語學習遊戲，包含基礎單字和句型練習
+     </div></a> <a href="https://issac-sjps.github.io/EN-Game/Color" target="_blank" rel="noopener noreferrer" class="game-card"> <span class="game-icon">🌈</span>
+     <div class="game-title">
+      2. 顏色遊戲
+     </div>
+     <div class="game-description">
+      學習各種顏色的英文單字，透過互動遊戲加深記憶
+     </div></a> <a href="https://issac-sjps.github.io/EN-Game/Shape" target="_blank" rel="noopener noreferrer" class="game-card"> <span class="game-icon">🔷</span>
+     <div class="game-title">
+      3. 形狀遊戲
+     </div>
+     <div class="game-description">
+      認識各種幾何形狀的英文名稱，寓教於樂的學習體驗
+     </div></a> <a href="https://issac-sjps.github.io/EN-Game/Stationery" target="_blank" rel="noopener noreferrer" class="game-card"> <span class="game-icon">✏️</span>
+     <div class="game-title">
+      4. 文具遊戲
+     </div>
+     <div class="game-description">
+      學習各種文具用品的英文單字，豐富你的日常詞彙
+     </div></a> <a href="https://issac-sjps.github.io/EN-Game/Month" target="_blank" rel="noopener noreferrer" class="game-card"> <span class="game-icon">📅</span>
+     <div class="game-title">
+      5. 月份遊戲
+     </div>
+     <div class="game-description">
+      掌握十二個月份的英文名稱，學會時間相關表達
+     </div></a> <a href="https://issac-sjps.github.io/EN-Game/ThreePersonVerbs" target="_blank" rel="noopener noreferrer" class="game-card"> <span class="game-icon">🏃</span>
+     <div class="game-title">
+      6. 第三人稱動詞
+     </div>
+     <div class="game-description">
+      練習第三人稱單數動詞變化，提升英語文法能力
+     </div></a> <a href="https://issac-sjps.github.io/EN-Game/FamilyMembers" target="_blank" rel="noopener noreferrer" class="game-card"> <span class="game-icon">👨‍👩‍👧‍👦</span>
+     <div class="game-title">
+      7. 家庭成員
+     </div>
+     <div class="game-description">
+      學習家庭成員的英文稱呼，認識親屬關係詞彙
+     </div></a> <a href="https://issac-sjps.github.io/EN-Game/MannerAdverbs" target="_blank" rel="noopener noreferrer" class="game-card"> <span class="game-icon">⚡</span>
+     <div class="game-title">
+      8. 動作副詞
+     </div>
+     <div class="game-description">
+      掌握描述動作方式的副詞，讓英語表達更生動
+     </div></a> <a href="https://issac-sjps.github.io/EN-Game/Preposition" target="_blank" rel="noopener noreferrer" class="game-card"> <span class="game-icon">📍</span>
+     <div class="game-title">
+      9. 介系詞遊戲
+     </div>
+     <div class="game-description">
+      學習位置和方向的介系詞，掌握空間關係表達
+     </div></a> <a href="https://issac-sjps.github.io/EN-Game/PersonAdjective" target="_blank" rel="noopener noreferrer" class="game-card"> <span class="game-icon">😊</span>
+     <div class="game-title">
+      10. 人物形容詞
+     </div>
+     <div class="game-description">
+      學習描述人物特徵的形容詞，豐富人物描述詞彙
+     </div></a> <a href="https://issac-sjps.github.io/EN-Game/Position" target="_blank" rel="noopener noreferrer" class="game-card"> <span class="game-icon">🧭</span>
+     <div class="game-title">
+      11. 位置遊戲
+     </div>
+     <div class="game-description">
+      學習位置和方向詞彙，掌握空間位置的英文表達
+     </div></a>
+    <div class="game-card coming-soon"><span class="game-icon">🚀</span>
+     <div class="game-title">
+      更多遊戲
+     </div>
+     <div class="game-description">
+      敬請期待更多精彩的英語學習遊戲！
+     </div>
     </div>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98f3eabbc50ea3ab',t:'MTc2MDU3OTU0Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+   </div>
+   <div class="footer">
+    點擊遊戲卡片開始你的英語學習之旅！
+   </div>
+  </div>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99a31487539f4a61',t:'MTc2MjQxNjI2Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
