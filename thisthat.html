@@ -40,10 +40,10 @@
     }
     
     .hidden {
-      display: none;
+      display: none !important;
     }
     
-    /* Welcome Screen Styles */
+    /* Welcome Screen */
     .welcome-header {
       text-align: center;
       margin-bottom: 32px;
@@ -66,16 +66,6 @@
       font-size: 72px;
       text-align: center;
       margin-bottom: 24px;
-      animation: bounce 2s infinite;
-    }
-    
-    @keyframes bounce {
-      0%, 100% {
-        transform: translateY(0);
-      }
-      50% {
-        transform: translateY(-10px);
-      }
     }
     
     .welcome-heading {
@@ -150,7 +140,7 @@
       transform: translateY(0);
     }
     
-    /* Game Screen Styles */
+    /* Game Screen */
     .game-header {
       text-align: center;
       margin-bottom: 32px;
@@ -191,12 +181,19 @@
     .question-box {
       background: #fef3c7;
       border-radius: 16px;
-      padding: 40px 32px;
+      padding: 32px 24px;
       margin-bottom: 32px;
-      min-height: 120px;
+      min-height: 140px;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
+      gap: 16px;
+    }
+    
+    .question-emoji {
+      font-size: 64px;
+      margin-bottom: 8px;
     }
     
     .question-text {
@@ -205,16 +202,35 @@
       text-align: center;
       font-weight: 500;
       line-height: 1.5;
+      margin: 0;
+    }
+    
+    .question-chinese {
+      font-size: 18px;
+      color: #b45309;
+      text-align: center;
+      line-height: 1.6;
+      margin: 0;
+      font-weight: 400;
     }
     
     .answer-buttons {
-      display: flex;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
       gap: 16px;
       margin-bottom: 24px;
     }
     
-    .answer-btn {
+    .answer-option {
       flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: center;
+    }
+    
+    .answer-btn {
+      width: 100%;
       padding: 20px 32px;
       font-size: 20px;
       font-weight: bold;
@@ -224,6 +240,13 @@
       transition: all 0.3s ease;
       text-transform: uppercase;
       color: white;
+    }
+    
+    .answer-label {
+      font-size: 16px;
+      color: #64748b;
+      font-weight: 500;
+      text-align: center;
     }
     
     .answer-btn.this-btn {
@@ -246,13 +269,29 @@
       box-shadow: 0 8px 16px rgba(59, 130, 246, 0.3);
     }
     
+    .answer-btn.these-btn {
+      background: #f59e0b;
+    }
+    
+    .answer-btn.these-btn:hover:not(:disabled) {
+      background: #d97706;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(245, 158, 11, 0.3);
+    }
+    
+    .answer-btn.those-btn {
+      background: #8b5cf6;
+    }
+    
+    .answer-btn.those-btn:hover:not(:disabled) {
+      background: #7c3aed;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(139, 92, 246, 0.3);
+    }
+    
     .answer-btn:disabled {
       opacity: 0.5;
       cursor: not-allowed;
-    }
-    
-    .answer-btn:active:not(:disabled) {
-      transform: translateY(0);
     }
     
     .feedback-area {
@@ -317,10 +356,6 @@
       opacity: 0.5;
       cursor: not-allowed;
     }
-    
-    .next-btn:active:not(:disabled) {
-      transform: translateY(0);
-    }
   </style>
   <style>@view-transition { navigation: auto; }</style>
   <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
@@ -339,16 +374,16 @@
      </div>
      <h2 class="welcome-heading">歡迎來到 This/That 練習遊戲!</h2>
      <div class="rules-box">
-      <p class="rules-intro">這個遊戲將幫助你學習如何正確使用:</p>
+      <p class="rules-intro">這個遊戲將幫助你練習如何正確使用:</p>
       <ul class="rules-list">
        <li><strong>This</strong> - 指近處的事物 (單數)</li>
        <li><strong>That</strong> - 指遠處的事物 (單數)</li>
        <li><strong>These</strong> - 指近處的事物 (複數)</li>
        <li><strong>Those</strong> - 指遠處的事物 (複數)</li>
       </ul>
-      <p class="game-info">🎯 共有 10 道題目，每題都會有詳細解釋</p>
+      <p class="game-info">🎯 共有 20 道題目，每題都會有詳細解釋</p>
       <p class="game-info">💡 答對會有鼓勵，答錯也能學習!</p>
-     </div><button class="start-btn" id="startBtn">開始遊戲 🚀</button>
+     </div><button class="start-btn" id="startBtn" type="button">開始遊戲 🚀</button>
     </div><!-- Game Screen -->
     <div id="gameScreen" class="hidden">
      <header class="game-header">
@@ -373,15 +408,38 @@
       </div>
      </div>
      <div class="question-box">
-      <p class="question-text" id="questionDisplay">___ book on the table is mine.</p>
+      <div class="question-emoji" id="questionEmoji"></div>
+      <p class="question-text" id="questionDisplay"></p>
+      <p class="question-chinese" id="chineseDisplay"></p>
      </div>
-     <div class="answer-buttons"><button class="answer-btn this-btn" id="thisBtn">THIS</button> <button class="answer-btn that-btn" id="thatBtn">THAT</button>
+     <div class="answer-buttons">
+      <div class="answer-option"><button class="answer-btn this-btn" id="thisBtn" type="button">THIS</button>
+       <div class="answer-label">
+        這個
+       </div>
+      </div>
+      <div class="answer-option"><button class="answer-btn that-btn" id="thatBtn" type="button">THAT</button>
+       <div class="answer-label">
+        那個
+       </div>
+      </div>
+      <div class="answer-option"><button class="answer-btn these-btn" id="theseBtn" type="button">THESE</button>
+       <div class="answer-label">
+        這些
+       </div>
+      </div>
+      <div class="answer-option"><button class="answer-btn those-btn" id="thoseBtn" type="button">THOSE</button>
+       <div class="answer-label">
+        那些
+       </div>
+      </div>
      </div>
-     <div class="feedback-area" id="feedbackArea"></div><button class="next-btn" id="nextBtn" disabled>下一題</button>
+     <div class="feedback-area" id="feedbackArea"></div><button class="next-btn" id="nextBtn" type="button" disabled>下一題</button>
     </div>
    </div>
   </main>
   <script>
+    // Configuration
     const defaultConfig = {
       game_title: 'This / That 練習遊戲',
       instruction_text: '選擇正確的答案來完成句子!',
@@ -398,269 +456,311 @@
       font_size: 16
     };
 
+    // Questions with Chinese translations and emojis
     const questions = [
-      {
-        question: '___ book on the table is mine.',
-        answer: 'that',
-        explanation: '使用 "that" 因為書在桌子上(離說話者較遠的地方)。'
+      { 
+        emoji: '📖',
+        question: '___ book on the table is mine.', 
+        chinese: '桌上的___本書是我的。', 
+        answer: 'that', 
+        explanation: '使用 "that" 因為書在桌子上(離說話者較遠的地方)。' 
       },
-      {
-        question: '___ pen in my hand is blue.',
-        answer: 'this',
-        explanation: '使用 "this" 因為筆在我的手中(靠近說話者)。'
+      { 
+        emoji: '✏️',
+        question: '___ pen in my hand is blue.', 
+        chinese: '我手中的___支筆是藍色的。', 
+        answer: 'this', 
+        explanation: '使用 "this" 因為筆在我的手中(靠近說話者)。' 
       },
-      {
-        question: 'Look at ___ birds over there!',
-        answer: 'those',
-        explanation: '使用 "those" 因為鳥群在那裡(遠處且為複數)。'
+      { 
+        emoji: '🐦',
+        question: 'Look at ___ birds over there!', 
+        chinese: '看___些在那邊的鳥!', 
+        answer: 'those', 
+        explanation: '使用 "those" 因為鳥群在那裡(遠處且為複數)。' 
       },
-      {
-        question: '___ shoes I'm wearing are comfortable.',
-        answer: 'these',
-        explanation: '使用 "these" 因為鞋子是我正穿著的(近處且為複數)。'
+      { 
+        emoji: '👟',
+        question: '___ shoes I\'m wearing are comfortable.', 
+        chinese: '我正穿著的___雙鞋子很舒服。', 
+        answer: 'these', 
+        explanation: '使用 "these" 因為鞋子是我正穿著的(近處且為複數)。' 
       },
-      {
-        question: 'Who is ___ person standing near the door?',
-        answer: 'that',
-        explanation: '使用 "that" 因為那個人站在門邊(離說話者較遠)。'
+      { 
+        emoji: '🚪',
+        question: 'Who is ___ person standing near the door?', 
+        chinese: '站在門邊的___個人是誰?', 
+        answer: 'that', 
+        explanation: '使用 "that" 因為那個人站在門邊(離說話者較遠)。' 
       },
-      {
-        question: '___ cookies here smell delicious.',
-        answer: 'these',
-        explanation: '使用 "these" 因為餅乾就在這裡(近處且為複數)。'
+      { 
+        emoji: '🍪',
+        question: '___ cookies here smell delicious.', 
+        chinese: '這裡的___些餅乾聞起來很香。', 
+        answer: 'these', 
+        explanation: '使用 "these" 因為餅乾就在這裡(近處且為複數)。' 
       },
-      {
-        question: 'Can you pass me ___ cup over there?',
-        answer: 'that',
-        explanation: '使用 "that" 因為杯子在那裡(需要遞過來)。'
+      { 
+        emoji: '☕',
+        question: 'Can you pass me ___ cup over there?', 
+        chinese: '你可以把___個在那邊的杯子遞給我嗎?', 
+        answer: 'that', 
+        explanation: '使用 "that" 因為杯子在那裡(需要遞過來)。' 
       },
-      {
-        question: '___ is my favorite song.',
-        answer: 'this',
-        explanation: '使用 "this" 指現在正在聽的或談論的歌(當下的情境)。'
+      { 
+        emoji: '🎵',
+        question: '___ is my favorite song.', 
+        chinese: '___是我最喜歡的歌。', 
+        answer: 'this', 
+        explanation: '使用 "this" 指現在正在聽的或談論的歌(當下的情境)。' 
       },
-      {
-        question: '___ flowers in the garden are beautiful.',
-        answer: 'those',
-        explanation: '使用 "those" 因為花在花園裡(遠處且為複數)。'
+      { 
+        emoji: '🌸',
+        question: '___ flowers in the garden are beautiful.', 
+        chinese: '花園裡的___些花很漂亮。', 
+        answer: 'those', 
+        explanation: '使用 "those" 因為花在花園裡(遠處且為複數)。' 
       },
-      {
-        question: 'I like ___ watch you're holding.',
-        answer: 'that',
-        explanation: '使用 "that" 因為手錶在你手上(不在說話者手中)。'
+      { 
+        emoji: '⌚',
+        question: 'I like ___ watch you\'re holding.', 
+        chinese: '我喜歡你拿著的___隻手錶。', 
+        answer: 'that', 
+        explanation: '使用 "that" 因為手錶在你手上(不在說話者手中)。' 
+      },
+      { 
+        emoji: '🎒',
+        question: '___ bag next to me is heavy.', 
+        chinese: '我旁邊的___個包包很重。', 
+        answer: 'this', 
+        explanation: '使用 "this" 因為包包就在說話者旁邊(近處)。' 
+      },
+      { 
+        emoji: '🌳',
+        question: '___ trees across the street are tall.', 
+        chinese: '街對面的___些樹很高。', 
+        answer: 'those', 
+        explanation: '使用 "those" 因為樹在街對面(遠處且為複數)。' 
+      },
+      { 
+        emoji: '🍎',
+        question: '___ apple in the basket looks fresh.', 
+        chinese: '籃子裡的___個蘋果看起來很新鮮。', 
+        answer: 'that', 
+        explanation: '使用 "that" 因為蘋果在籃子裡(離說話者有一段距離)。' 
+      },
+      { 
+        emoji: '📱',
+        question: '___ phones we bought yesterday work well.', 
+        chinese: '我們昨天買的___些手機運作良好。', 
+        answer: 'these', 
+        explanation: '使用 "these" 因為是我們擁有的手機(近處且為複數)。' 
+      },
+      { 
+        emoji: '🏠',
+        question: '___ house at the end of the road is old.', 
+        chinese: '路盡頭的___棟房子很舊。', 
+        answer: 'that', 
+        explanation: '使用 "that" 因為房子在路的盡頭(遠處)。' 
+      },
+      { 
+        emoji: '🖼️',
+        question: '___ pictures on this wall are mine.', 
+        chinese: '這面牆上的___些照片是我的。', 
+        answer: 'these', 
+        explanation: '使用 "these" 因為照片就在這面牆上(近處且為複數)。' 
+      },
+      { 
+        emoji: '🐱',
+        question: '___ cat sleeping on the sofa is lazy.', 
+        chinese: '睡在沙發上的___隻貓很懶。', 
+        answer: 'that', 
+        explanation: '使用 "that" 因為貓在沙發上(離說話者有距離)。' 
+      },
+      { 
+        emoji: '📚',
+        question: '___ books in my backpack are for school.', 
+        chinese: '我背包裡的___些書是上課用的。', 
+        answer: 'these', 
+        explanation: '使用 "these" 因為書在我的背包裡(隨身攜帶，近處且為複數)。' 
+      },
+      { 
+        emoji: '🌟',
+        question: '___ stars in the sky are bright tonight.', 
+        chinese: '天上的___些星星今晚很亮。', 
+        answer: 'those', 
+        explanation: '使用 "those" 因為星星在天上(遠處且為複數)。' 
+      },
+      { 
+        emoji: '🎁',
+        question: '___ gift in my hand is for you.', 
+        chinese: '我手中的___個禮物是給你的。', 
+        answer: 'this', 
+        explanation: '使用 "this" 因為禮物在我手中(近處)。' 
       }
     ];
 
     // Game state
-    let currentIndex = 0;
-    let correctScore = 0;
-    let totalScore = 0;
-    let hasAnswered = false;
+    const gameState = {
+      currentIndex: 0,
+      correctScore: 0,
+      totalScore: 0,
+      hasAnswered: false
+    };
 
-    // Get DOM elements
-    const welcomeScreen = document.getElementById('welcomeScreen');
-    const gameScreen = document.getElementById('gameScreen');
-    const startBtn = document.getElementById('startBtn');
-    const thisBtn = document.getElementById('thisBtn');
-    const thatBtn = document.getElementById('thatBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    const questionDisplay = document.getElementById('questionDisplay');
-    const feedbackArea = document.getElementById('feedbackArea');
-    const correctCount = document.getElementById('correctCount');
-    const totalCount = document.getElementById('totalCount');
-
-    // Shuffle array function
-    function shuffle(array) {
-      for (let i = array.length - 1; i > 0; i--) {
+    // Shuffle function
+    function shuffleArray(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
+        [arr[i], arr[j]] = [arr[j], arr[i]];
       }
     }
 
-    // Start game
-    function startGame() {
-      welcomeScreen.classList.add('hidden');
-      gameScreen.classList.remove('hidden');
-      shuffle(questions);
-      showQuestion();
-    }
-
-    // Show current question
-    function showQuestion() {
-      hasAnswered = false;
-      const question = questions[currentIndex];
-      questionDisplay.textContent = question.question;
+    // Show question
+    function displayQuestion() {
+      gameState.hasAnswered = false;
+      const q = questions[gameState.currentIndex];
       
-      feedbackArea.classList.remove('visible', 'correct', 'incorrect');
-      feedbackArea.textContent = '';
+      document.getElementById('questionEmoji').textContent = q.emoji;
+      document.getElementById('questionDisplay').textContent = q.question;
+      document.getElementById('chineseDisplay').textContent = q.chinese;
+      document.getElementById('feedbackArea').className = 'feedback-area';
+      document.getElementById('feedbackArea').textContent = '';
+      document.getElementById('thisBtn').disabled = false;
+      document.getElementById('thatBtn').disabled = false;
+      document.getElementById('theseBtn').disabled = false;
+      document.getElementById('thoseBtn').disabled = false;
+      document.getElementById('nextBtn').disabled = true;
       
-      const existingExplanation = document.querySelector('.explanation-box');
-      if (existingExplanation) {
-        existingExplanation.remove();
-      }
-      
-      thisBtn.disabled = false;
-      thatBtn.disabled = false;
-      nextBtn.disabled = true;
+      const oldExplanation = document.querySelector('.explanation-box');
+      if (oldExplanation) oldExplanation.remove();
     }
 
     // Check answer
-    function checkAnswer(userAnswer) {
-      if (hasAnswered) return;
+    function handleAnswer(userAns) {
+      if (gameState.hasAnswered) return;
       
-      hasAnswered = true;
-      totalScore++;
+      gameState.hasAnswered = true;
+      gameState.totalScore++;
       
-      const question = questions[currentIndex];
-      const isCorrect = userAnswer === question.answer || 
-                       (userAnswer === 'this' && question.answer === 'these') ||
-                       (userAnswer === 'that' && question.answer === 'those');
+      const q = questions[gameState.currentIndex];
+      const correct = userAns === q.answer;
       
-      if (isCorrect) {
-        correctScore++;
-        feedbackArea.textContent = '✓ 正確!太棒了!';
-        feedbackArea.classList.add('correct');
+      const feedback = document.getElementById('feedbackArea');
+      
+      if (correct) {
+        gameState.correctScore++;
+        feedback.textContent = '✓ 正確!太棒了!';
+        feedback.className = 'feedback-area visible correct';
       } else {
-        feedbackArea.textContent = `✗ 答案是: ${question.answer.toUpperCase()}`;
-        feedbackArea.classList.add('incorrect');
+        feedback.textContent = '✗ 答案是: ' + q.answer.toUpperCase();
+        feedback.className = 'feedback-area visible incorrect';
       }
       
-      feedbackArea.classList.add('visible');
+      const expBox = document.createElement('div');
+      expBox.className = 'explanation-box';
+      expBox.textContent = q.explanation;
+      document.getElementById('nextBtn').parentElement.insertBefore(expBox, document.getElementById('nextBtn'));
       
-      const explanationBox = document.createElement('div');
-      explanationBox.className = 'explanation-box';
-      explanationBox.textContent = question.explanation;
-      feedbackArea.parentElement.insertBefore(explanationBox, nextBtn);
-      
-      correctCount.textContent = correctScore;
-      totalCount.textContent = totalScore;
-      
-      thisBtn.disabled = true;
-      thatBtn.disabled = true;
-      nextBtn.disabled = false;
+      document.getElementById('correctCount').textContent = gameState.correctScore;
+      document.getElementById('totalCount').textContent = gameState.totalScore;
+      document.getElementById('thisBtn').disabled = true;
+      document.getElementById('thatBtn').disabled = true;
+      document.getElementById('theseBtn').disabled = true;
+      document.getElementById('thoseBtn').disabled = true;
+      document.getElementById('nextBtn').disabled = false;
     }
 
     // Next question
-    function nextQuestion() {
-      currentIndex++;
-      if (currentIndex >= questions.length) {
-        currentIndex = 0;
-        shuffle(questions);
+    function goToNext() {
+      gameState.currentIndex++;
+      if (gameState.currentIndex >= questions.length) {
+        gameState.currentIndex = 0;
+        shuffleArray(questions);
       }
-      showQuestion();
+      displayQuestion();
     }
 
-    // Event listeners
-    startBtn.onclick = startGame;
-    thisBtn.onclick = () => checkAnswer('this');
-    thatBtn.onclick = () => checkAnswer('that');
-    nextBtn.onclick = nextQuestion;
+    // Start game
+    function beginGame() {
+      document.getElementById('welcomeScreen').className = 'hidden';
+      document.getElementById('gameScreen').className = '';
+      shuffleArray(questions);
+      displayQuestion();
+    }
 
-    // Element SDK integration
+    // Setup events
+    document.getElementById('startBtn').addEventListener('click', beginGame, false);
+    document.getElementById('thisBtn').addEventListener('click', function() { handleAnswer('this'); }, false);
+    document.getElementById('thatBtn').addEventListener('click', function() { handleAnswer('that'); }, false);
+    document.getElementById('theseBtn').addEventListener('click', function() { handleAnswer('these'); }, false);
+    document.getElementById('thoseBtn').addEventListener('click', function() { handleAnswer('those'); }, false);
+    document.getElementById('nextBtn').addEventListener('click', goToNext, false);
+
+    // Element SDK
     async function onConfigChange(config) {
-      const titleMain = document.getElementById('titleMain');
-      const subtitleMain = document.getElementById('subtitleMain');
+      document.getElementById('titleMain').textContent = config.game_title || defaultConfig.game_title;
+      document.getElementById('subtitleMain').textContent = config.instruction_text || defaultConfig.instruction_text;
+      document.getElementById('thisBtn').textContent = config.this_button_text || defaultConfig.this_button_text;
+      document.getElementById('thatBtn').textContent = config.that_button_text || defaultConfig.that_button_text;
+      document.getElementById('nextBtn').textContent = config.next_button_text || defaultConfig.next_button_text;
+      document.getElementById('startBtn').textContent = config.start_button_text || defaultConfig.start_button_text;
       
-      titleMain.textContent = config.game_title || defaultConfig.game_title;
-      subtitleMain.textContent = config.instruction_text || defaultConfig.instruction_text;
-      thisBtn.textContent = config.this_button_text || defaultConfig.this_button_text;
-      thatBtn.textContent = config.that_button_text || defaultConfig.that_button_text;
-      nextBtn.textContent = config.next_button_text || defaultConfig.next_button_text;
-      startBtn.textContent = config.start_button_text || defaultConfig.start_button_text;
-      
-      const backgroundColor = config.background_color || defaultConfig.background_color;
+      const bgColor = config.background_color || defaultConfig.background_color;
       const surfaceColor = config.surface_color || defaultConfig.surface_color;
       const textColor = config.text_color || defaultConfig.text_color;
       const primaryColor = config.primary_action_color || defaultConfig.primary_action_color;
       const secondaryColor = config.secondary_action_color || defaultConfig.secondary_action_color;
       
-      document.querySelector('.game-wrapper').style.background = `linear-gradient(135deg, ${backgroundColor} 0%, ${backgroundColor}dd 100%)`;
-      document.querySelectorAll('.game-card').forEach(card => card.style.background = surfaceColor);
-      questionDisplay.style.color = textColor;
-      thisBtn.style.background = primaryColor;
-      thatBtn.style.background = secondaryColor;
+      document.querySelector('.game-wrapper').style.background = 'linear-gradient(135deg, ' + bgColor + ' 0%, ' + bgColor + 'dd 100%)';
+      document.querySelector('.game-card').style.background = surfaceColor;
+      document.getElementById('questionDisplay').style.color = textColor;
+      document.getElementById('thisBtn').style.background = primaryColor;
+      document.getElementById('thatBtn').style.background = secondaryColor;
       
       const customFont = config.font_family || defaultConfig.font_family;
-      const baseFontStack = 'Microsoft JhengHei, PingFang TC, sans-serif';
-      document.body.style.fontFamily = `${customFont}, ${baseFontStack}`;
+      document.body.style.fontFamily = customFont + ', Microsoft JhengHei, PingFang TC, sans-serif';
       
       const baseSize = config.font_size || defaultConfig.font_size;
-      titleMain.style.fontSize = `${baseSize * 2.25}px`;
-      subtitleMain.style.fontSize = `${baseSize * 1.125}px`;
-      questionDisplay.style.fontSize = `${baseSize * 1.5}px`;
-      thisBtn.style.fontSize = `${baseSize * 1.25}px`;
-      thatBtn.style.fontSize = `${baseSize * 1.25}px`;
-      nextBtn.style.fontSize = `${baseSize * 1.125}px`;
+      document.getElementById('titleMain').style.fontSize = (baseSize * 2.25) + 'px';
+      document.getElementById('subtitleMain').style.fontSize = (baseSize * 1.125) + 'px';
+      document.getElementById('questionDisplay').style.fontSize = (baseSize * 1.5) + 'px';
+      document.getElementById('chineseDisplay').style.fontSize = (baseSize * 1.125) + 'px';
+      document.getElementById('thisBtn').style.fontSize = (baseSize * 1.25) + 'px';
+      document.getElementById('thatBtn').style.fontSize = (baseSize * 1.25) + 'px';
+      document.getElementById('nextBtn').style.fontSize = (baseSize * 1.125) + 'px';
     }
 
     if (window.elementSdk) {
       window.elementSdk.init({
-        defaultConfig,
-        onConfigChange,
-        mapToCapabilities: (config) => ({
-          recolorables: [
-            {
-              get: () => config.background_color || defaultConfig.background_color,
-              set: (value) => {
-                config.background_color = value;
-                window.elementSdk.setConfig({ background_color: value });
-              }
-            },
-            {
-              get: () => config.surface_color || defaultConfig.surface_color,
-              set: (value) => {
-                config.surface_color = value;
-                window.elementSdk.setConfig({ surface_color: value });
-              }
-            },
-            {
-              get: () => config.text_color || defaultConfig.text_color,
-              set: (value) => {
-                config.text_color = value;
-                window.elementSdk.setConfig({ text_color: value });
-              }
-            },
-            {
-              get: () => config.primary_action_color || defaultConfig.primary_action_color,
-              set: (value) => {
-                config.primary_action_color = value;
-                window.elementSdk.setConfig({ primary_action_color: value });
-              }
-            },
-            {
-              get: () => config.secondary_action_color || defaultConfig.secondary_action_color,
-              set: (value) => {
-                config.secondary_action_color = value;
-                window.elementSdk.setConfig({ secondary_action_color: value });
-              }
-            }
-          ],
-          borderables: [],
-          fontEditable: {
-            get: () => config.font_family || defaultConfig.font_family,
-            set: (value) => {
-              config.font_family = value;
-              window.elementSdk.setConfig({ font_family: value });
-            }
-          },
-          fontSizeable: {
-            get: () => config.font_size || defaultConfig.font_size,
-            set: (value) => {
-              config.font_size = value;
-              window.elementSdk.setConfig({ font_size: value });
-            }
-          }
-        }),
-        mapToEditPanelValues: (config) => new Map([
-          ['game_title', config.game_title || defaultConfig.game_title],
-          ['instruction_text', config.instruction_text || defaultConfig.instruction_text],
-          ['this_button_text', config.this_button_text || defaultConfig.this_button_text],
-          ['that_button_text', config.that_button_text || defaultConfig.that_button_text],
-          ['next_button_text', config.next_button_text || defaultConfig.next_button_text],
-          ['start_button_text', config.start_button_text || defaultConfig.start_button_text]
-        ])
+        defaultConfig: defaultConfig,
+        onConfigChange: onConfigChange,
+        mapToCapabilities: function(config) {
+          return {
+            recolorables: [
+              { get: function() { return config.background_color || defaultConfig.background_color; }, set: function(v) { config.background_color = v; window.elementSdk.setConfig({ background_color: v }); } },
+              { get: function() { return config.surface_color || defaultConfig.surface_color; }, set: function(v) { config.surface_color = v; window.elementSdk.setConfig({ surface_color: v }); } },
+              { get: function() { return config.text_color || defaultConfig.text_color; }, set: function(v) { config.text_color = v; window.elementSdk.setConfig({ text_color: v }); } },
+              { get: function() { return config.primary_action_color || defaultConfig.primary_action_color; }, set: function(v) { config.primary_action_color = v; window.elementSdk.setConfig({ primary_action_color: v }); } },
+              { get: function() { return config.secondary_action_color || defaultConfig.secondary_action_color; }, set: function(v) { config.secondary_action_color = v; window.elementSdk.setConfig({ secondary_action_color: v }); } }
+            ],
+            borderables: [],
+            fontEditable: { get: function() { return config.font_family || defaultConfig.font_family; }, set: function(v) { config.font_family = v; window.elementSdk.setConfig({ font_family: v }); } },
+            fontSizeable: { get: function() { return config.font_size || defaultConfig.font_size; }, set: function(v) { config.font_size = v; window.elementSdk.setConfig({ font_size: v }); } }
+          };
+        },
+        mapToEditPanelValues: function(config) {
+          return new Map([
+            ['game_title', config.game_title || defaultConfig.game_title],
+            ['instruction_text', config.instruction_text || defaultConfig.instruction_text],
+            ['this_button_text', config.this_button_text || defaultConfig.this_button_text],
+            ['that_button_text', config.that_button_text || defaultConfig.that_button_text],
+            ['next_button_text', config.next_button_text || defaultConfig.next_button_text],
+            ['start_button_text', config.start_button_text || defaultConfig.start_button_text]
+          ]);
+        }
       });
     }
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9a4f712d63e28424',t:'MTc2NDIyMzYxMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9a4f8a5f95788424',t:'MTc2NDIyNDY0NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
