@@ -20,12 +20,11 @@
       width: 100%;
     }
     
-    .game-container {
+    .game-wrapper {
       width: 100%;
       min-height: 100%;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
       padding: 40px 20px;
@@ -40,25 +39,131 @@
       width: 100%;
     }
     
-    .game-header {
+    .hidden {
+      display: none;
+    }
+    
+    /* Welcome Screen Styles */
+    .welcome-header {
       text-align: center;
       margin-bottom: 32px;
     }
     
-    .game-title {
+    .welcome-title {
       font-size: 36px;
       font-weight: bold;
       color: #667eea;
       margin: 0 0 16px 0;
     }
     
-    .instruction-text {
+    .welcome-subtitle {
       font-size: 18px;
       color: #64748b;
       margin: 0;
     }
     
-    .score-display {
+    .welcome-icon {
+      font-size: 72px;
+      text-align: center;
+      margin-bottom: 24px;
+      animation: bounce 2s infinite;
+    }
+    
+    @keyframes bounce {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+    
+    .welcome-heading {
+      font-size: 28px;
+      color: #1e293b;
+      margin: 0 0 24px 0;
+      font-weight: bold;
+      text-align: center;
+    }
+    
+    .rules-box {
+      background: #f8fafc;
+      padding: 24px;
+      border-radius: 12px;
+      margin-bottom: 32px;
+    }
+    
+    .rules-intro {
+      font-size: 16px;
+      color: #475569;
+      margin: 0 0 16px 0;
+      line-height: 1.6;
+    }
+    
+    .rules-list {
+      list-style: none;
+      padding: 0;
+      margin: 16px 0;
+    }
+    
+    .rules-list li {
+      padding: 12px 16px;
+      background: white;
+      margin-bottom: 8px;
+      border-radius: 8px;
+      font-size: 16px;
+      color: #334155;
+      border-left: 4px solid #667eea;
+    }
+    
+    .rules-list strong {
+      color: #667eea;
+      font-size: 18px;
+    }
+    
+    .game-info {
+      font-size: 16px;
+      color: #64748b;
+      margin: 12px 0 0 0;
+    }
+    
+    .start-btn {
+      width: 100%;
+      padding: 20px 32px;
+      font-size: 22px;
+      font-weight: bold;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+    
+    .start-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.5);
+    }
+    
+    .start-btn:active {
+      transform: translateY(0);
+    }
+    
+    /* Game Screen Styles */
+    .game-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    
+    .game-title {
+      font-size: 28px;
+      font-weight: bold;
+      color: #667eea;
+      margin: 0;
+    }
+    
+    .score-board {
       display: flex;
       justify-content: space-around;
       margin-bottom: 32px;
@@ -77,13 +182,13 @@
       margin-bottom: 8px;
     }
     
-    .score-value {
+    .score-number {
       font-size: 32px;
       font-weight: bold;
       color: #667eea;
     }
     
-    .question-area {
+    .question-box {
       background: #fef3c7;
       border-radius: 16px;
       padding: 40px 32px;
@@ -102,13 +207,13 @@
       line-height: 1.5;
     }
     
-    .button-group {
+    .answer-buttons {
       display: flex;
       gap: 16px;
       margin-bottom: 24px;
     }
     
-    .answer-button {
+    .answer-btn {
       flex: 1;
       padding: 20px 32px;
       font-size: 20px;
@@ -118,37 +223,39 @@
       cursor: pointer;
       transition: all 0.3s ease;
       text-transform: uppercase;
-    }
-    
-    .this-button {
-      background: #10b981;
       color: white;
     }
     
-    .this-button:hover {
+    .answer-btn.this-btn {
+      background: #10b981;
+    }
+    
+    .answer-btn.this-btn:hover:not(:disabled) {
       background: #059669;
       transform: translateY(-2px);
       box-shadow: 0 8px 16px rgba(16, 185, 129, 0.3);
     }
     
-    .that-button {
+    .answer-btn.that-btn {
       background: #3b82f6;
-      color: white;
     }
     
-    .that-button:hover {
+    .answer-btn.that-btn:hover:not(:disabled) {
       background: #2563eb;
       transform: translateY(-2px);
       box-shadow: 0 8px 16px rgba(59, 130, 246, 0.3);
     }
     
-    .answer-button:disabled {
+    .answer-btn:disabled {
       opacity: 0.5;
       cursor: not-allowed;
-      transform: none;
     }
     
-    .feedback {
+    .answer-btn:active:not(:disabled) {
+      transform: translateY(0);
+    }
+    
+    .feedback-area {
       padding: 20px;
       border-radius: 12px;
       text-align: center;
@@ -163,21 +270,31 @@
       transition: opacity 0.3s ease;
     }
     
-    .feedback.show {
+    .feedback-area.visible {
       opacity: 1;
     }
     
-    .feedback.correct {
+    .feedback-area.correct {
       background: #d1fae5;
       color: #065f46;
     }
     
-    .feedback.incorrect {
+    .feedback-area.incorrect {
       background: #fee2e2;
       color: #991b1b;
     }
     
-    .next-button {
+    .explanation-box {
+      margin-top: 16px;
+      padding: 16px;
+      background: #f1f5f9;
+      border-radius: 8px;
+      font-size: 16px;
+      color: #475569;
+      line-height: 1.6;
+    }
+    
+    .next-btn {
       width: 100%;
       padding: 16px 32px;
       font-size: 18px;
@@ -190,121 +307,19 @@
       transition: all 0.3s ease;
     }
     
-    .next-button:hover {
+    .next-btn:hover:not(:disabled) {
       background: #7c3aed;
       transform: translateY(-2px);
       box-shadow: 0 8px 16px rgba(139, 92, 246, 0.3);
     }
     
-    .next-button:disabled {
+    .next-btn:disabled {
       opacity: 0.5;
       cursor: not-allowed;
-      transform: none;
     }
     
-    .explanation {
-      margin-top: 16px;
-      padding: 16px;
-      background: #f1f5f9;
-      border-radius: 8px;
-      font-size: 16px;
-      color: #475569;
-      line-height: 1.6;
-    }
-    
-    .welcome-content {
-      text-align: center;
-    }
-    
-    .welcome-icon {
-      font-size: 72px;
-      margin-bottom: 24px;
-      animation: bounce 2s infinite;
-    }
-    
-    @keyframes bounce {
-      0%, 100% {
-        transform: translateY(0);
-      }
-      50% {
-        transform: translateY(-10px);
-      }
-    }
-    
-    .welcome-heading {
-      font-size: 28px;
-      color: #1e293b;
-      margin: 0 0 32px 0;
-      font-weight: bold;
-    }
-    
-    .welcome-description {
-      text-align: left;
-      background: #f8fafc;
-      padding: 24px;
-      border-radius: 12px;
-      margin-bottom: 32px;
-    }
-    
-    .welcome-description p {
-      font-size: 16px;
-      color: #475569;
-      margin: 0 0 16px 0;
-      line-height: 1.6;
-    }
-    
-    .usage-list {
-      list-style: none;
-      padding: 0;
-      margin: 16px 0;
-    }
-    
-    .usage-list li {
-      padding: 12px 16px;
-      background: white;
-      margin-bottom: 8px;
-      border-radius: 8px;
-      font-size: 16px;
-      color: #334155;
-      border-left: 4px solid #667eea;
-    }
-    
-    .usage-list li strong {
-      color: #667eea;
-      font-size: 18px;
-    }
-    
-    .game-info {
-      font-size: 16px;
-      color: #64748b;
-      margin: 12px 0 0 0;
-    }
-    
-    .start-button {
-      width: 100%;
-      padding: 20px 32px;
-      font-size: 22px;
-      font-weight: bold;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-    }
-    
-    .start-button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.5);
-    }
-    
-    .game-title-small {
-      font-size: 28px;
-      font-weight: bold;
-      color: #667eea;
-      margin: 0;
-      text-align: center;
+    .next-btn:active:not(:disabled) {
+      transform: translateY(0);
     }
   </style>
   <style>@view-transition { navigation: auto; }</style>
@@ -312,20 +327,20 @@
   <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
  </head>
  <body>
-  <div class="game-container"><!-- Start Screen -->
-   <div class="game-card" id="startScreen">
-    <header class="game-header">
-     <h1 class="game-title" id="gameTitle">This / That 練習遊戲</h1>
-     <p class="instruction-text" id="instructionText">選擇正確的答案來完成句子!</p>
-    </header>
-    <div class="welcome-content">
+  <main class="game-wrapper">
+   <div class="game-card"><!-- Welcome Screen -->
+    <div id="welcomeScreen">
+     <header class="welcome-header">
+      <h1 class="welcome-title" id="titleMain">This / That 練習遊戲</h1>
+      <p class="welcome-subtitle" id="subtitleMain">選擇正確的答案來完成句子!</p>
+     </header>
      <div class="welcome-icon">
       📚
      </div>
      <h2 class="welcome-heading">歡迎來到 This/That 練習遊戲!</h2>
-     <div class="welcome-description">
-      <p>這個遊戲將幫助你學習如何正確使用:</p>
-      <ul class="usage-list">
+     <div class="rules-box">
+      <p class="rules-intro">這個遊戲將幫助你學習如何正確使用:</p>
+      <ul class="rules-list">
        <li><strong>This</strong> - 指近處的事物 (單數)</li>
        <li><strong>That</strong> - 指遠處的事物 (單數)</li>
        <li><strong>These</strong> - 指近處的事物 (複數)</li>
@@ -333,39 +348,39 @@
       </ul>
       <p class="game-info">🎯 共有 10 道題目，每題都會有詳細解釋</p>
       <p class="game-info">💡 答對會有鼓勵，答錯也能學習!</p>
-     </div><button class="start-button" id="startButton">開始遊戲 🚀</button>
-    </div>
-   </div><!-- Game Screen -->
-   <div class="game-card" id="gameScreen" style="display: none;">
-    <header class="game-header">
-     <h1 class="game-title-small">This / That 練習</h1>
-    </header>
-    <div class="score-display">
-     <div class="score-item">
-      <div class="score-label">
-       正確
+     </div><button class="start-btn" id="startBtn">開始遊戲 🚀</button>
+    </div><!-- Game Screen -->
+    <div id="gameScreen" class="hidden">
+     <header class="game-header">
+      <h1 class="game-title">This / That 練習</h1>
+     </header>
+     <div class="score-board">
+      <div class="score-item">
+       <div class="score-label">
+        正確
+       </div>
+       <div class="score-number" id="correctCount">
+        0
+       </div>
       </div>
-      <div class="score-value" id="correctScore">
-       0
+      <div class="score-item">
+       <div class="score-label">
+        題數
+       </div>
+       <div class="score-number" id="totalCount">
+        0
+       </div>
       </div>
      </div>
-     <div class="score-item">
-      <div class="score-label">
-       題數
-      </div>
-      <div class="score-value" id="totalScore">
-       0
-      </div>
+     <div class="question-box">
+      <p class="question-text" id="questionDisplay">___ book on the table is mine.</p>
      </div>
+     <div class="answer-buttons"><button class="answer-btn this-btn" id="thisBtn">THIS</button> <button class="answer-btn that-btn" id="thatBtn">THAT</button>
+     </div>
+     <div class="feedback-area" id="feedbackArea"></div><button class="next-btn" id="nextBtn" disabled>下一題</button>
     </div>
-    <div class="question-area">
-     <p class="question-text" id="questionText">載入中...</p>
-    </div>
-    <div class="button-group"><button class="answer-button this-button" id="thisButton">THIS</button> <button class="answer-button that-button" id="thatButton">THAT</button>
-    </div>
-    <div class="feedback" id="feedback"></div><button class="next-button" id="nextButton" disabled>下一題</button>
    </div>
-  </div>
+  </main>
   <script>
     const defaultConfig = {
       game_title: 'This / That 練習遊戲',
@@ -373,6 +388,7 @@
       this_button_text: 'THIS',
       that_button_text: 'THAT',
       next_button_text: '下一題',
+      start_button_text: '開始遊戲 🚀',
       background_color: '#667eea',
       surface_color: '#ffffff',
       text_color: '#92400e',
@@ -384,166 +400,197 @@
 
     const questions = [
       {
-        question: '___ book on the table is mine.",
+        question: '___ book on the table is mine.',
         answer: 'that',
         explanation: '使用 "that" 因為書在桌子上(離說話者較遠的地方)。'
       },
       {
-        question: '___ pen in my hand is blue.",
+        question: '___ pen in my hand is blue.',
         answer: 'this',
         explanation: '使用 "this" 因為筆在我的手中(靠近說話者)。'
       },
       {
-        question: 'Look at ___ birds over there!",
+        question: 'Look at ___ birds over there!',
         answer: 'those',
         explanation: '使用 "those" 因為鳥群在那裡(遠處且為複數)。'
       },
       {
-        question: '___ shoes I'm wearing are comfortable.",
+        question: '___ shoes I'm wearing are comfortable.',
         answer: 'these',
         explanation: '使用 "these" 因為鞋子是我正穿著的(近處且為複數)。'
       },
       {
-        question: 'Who is ___ person standing near the door?",
+        question: 'Who is ___ person standing near the door?',
         answer: 'that',
         explanation: '使用 "that" 因為那個人站在門邊(離說話者較遠)。'
       },
       {
-        question: '___ cookies here smell delicious.",
+        question: '___ cookies here smell delicious.',
         answer: 'these',
-        explanation: '使用 "these" 因為餅乾就在這裡(近��且為複數)。'
+        explanation: '使用 "these" 因為餅乾就在這裡(近處且為複數)。'
       },
       {
-        question: 'Can you pass me ___ cup over there?",
+        question: 'Can you pass me ___ cup over there?',
         answer: 'that',
         explanation: '使用 "that" 因為杯子在那裡(需要遞過來)。'
       },
       {
-        question: '___ is my favorite song.",
+        question: '___ is my favorite song.',
         answer: 'this',
         explanation: '使用 "this" 指現在正在聽的或談論的歌(當下的情境)。'
       },
       {
-        question: '___ flowers in the garden are beautiful.",
+        question: '___ flowers in the garden are beautiful.',
         answer: 'those',
         explanation: '使用 "those" 因為花在花園裡(遠處且為複數)。'
       },
       {
-        question: 'I like ___ watch you're holding.",
+        question: 'I like ___ watch you're holding.',
         answer: 'that',
         explanation: '使用 "that" 因為手錶在你手上(不在說話者手中)。'
       }
     ];
 
-    let currentQuestionIndex = 0;
-    let correctCount = 0;
-    let totalCount = 0;
-    let answered = false;
+    // Game state
+    let currentIndex = 0;
+    let correctScore = 0;
+    let totalScore = 0;
+    let hasAnswered = false;
 
-    function shuffleQuestions() {
-      for (let i = questions.length - 1; i > 0; i--) {
+    // Get DOM elements
+    const welcomeScreen = document.getElementById('welcomeScreen');
+    const gameScreen = document.getElementById('gameScreen');
+    const startBtn = document.getElementById('startBtn');
+    const thisBtn = document.getElementById('thisBtn');
+    const thatBtn = document.getElementById('thatBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const questionDisplay = document.getElementById('questionDisplay');
+    const feedbackArea = document.getElementById('feedbackArea');
+    const correctCount = document.getElementById('correctCount');
+    const totalCount = document.getElementById('totalCount');
+
+    // Shuffle array function
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        [questions[i], questions[j]] = [questions[j], questions[i]];
+        [array[i], array[j]] = [array[j], array[i]];
       }
     }
 
-    function loadQuestion() {
-      answered = false;
-      const question = questions[currentQuestionIndex];
-      document.getElementById('questionText').textContent = question.question;
-      document.getElementById('feedback').classList.remove('show', 'correct', 'incorrect');
-      document.getElementById('feedback').textContent = '';
-      document.getElementById('thisButton').disabled = false;
-      document.getElementById('thatButton').disabled = false;
-      document.getElementById('nextButton').disabled = true;
+    // Start game
+    function startGame() {
+      welcomeScreen.classList.add('hidden');
+      gameScreen.classList.remove('hidden');
+      shuffle(questions);
+      showQuestion();
+    }
+
+    // Show current question
+    function showQuestion() {
+      hasAnswered = false;
+      const question = questions[currentIndex];
+      questionDisplay.textContent = question.question;
       
-      const explanationEl = document.querySelector('.explanation');
-      if (explanationEl) {
-        explanationEl.remove();
+      feedbackArea.classList.remove('visible', 'correct', 'incorrect');
+      feedbackArea.textContent = '';
+      
+      const existingExplanation = document.querySelector('.explanation-box');
+      if (existingExplanation) {
+        existingExplanation.remove();
       }
+      
+      thisBtn.disabled = false;
+      thatBtn.disabled = false;
+      nextBtn.disabled = true;
     }
 
+    // Check answer
     function checkAnswer(userAnswer) {
-      if (answered) return;
+      if (hasAnswered) return;
       
-      answered = true;
-      totalCount++;
+      hasAnswered = true;
+      totalScore++;
       
-      const question = questions[currentQuestionIndex];
+      const question = questions[currentIndex];
       const isCorrect = userAnswer === question.answer || 
                        (userAnswer === 'this' && question.answer === 'these') ||
                        (userAnswer === 'that' && question.answer === 'those');
       
-      const feedback = document.getElementById('feedback');
-      
       if (isCorrect) {
-        correctCount++;
-        feedback.textContent = '✓ 正確!太棒了!';
-        feedback.classList.add('correct');
+        correctScore++;
+        feedbackArea.textContent = '✓ 正確!太棒了!';
+        feedbackArea.classList.add('correct');
       } else {
-        feedback.textContent = `✗ 答案是: ${question.answer.toUpperCase()}`;
-        feedback.classList.add('incorrect');
+        feedbackArea.textContent = `✗ 答案是: ${question.answer.toUpperCase()}`;
+        feedbackArea.classList.add('incorrect');
       }
       
-      feedback.classList.add('show');
+      feedbackArea.classList.add('visible');
       
-      const explanationEl = document.createElement('div');
-      explanationEl.className = 'explanation';
-      explanationEl.textContent = question.explanation;
-      feedback.parentElement.insertBefore(explanationEl, document.getElementById('nextButton'));
+      const explanationBox = document.createElement('div');
+      explanationBox.className = 'explanation-box';
+      explanationBox.textContent = question.explanation;
+      feedbackArea.parentElement.insertBefore(explanationBox, nextBtn);
       
-      document.getElementById('correctScore').textContent = correctCount;
-      document.getElementById('totalScore').textContent = totalCount;
-      document.getElementById('thisButton').disabled = true;
-      document.getElementById('thatButton').disabled = true;
-      document.getElementById('nextButton').disabled = false;
+      correctCount.textContent = correctScore;
+      totalCount.textContent = totalScore;
+      
+      thisBtn.disabled = true;
+      thatBtn.disabled = true;
+      nextBtn.disabled = false;
     }
 
+    // Next question
     function nextQuestion() {
-      currentQuestionIndex++;
-      if (currentQuestionIndex >= questions.length) {
-        currentQuestionIndex = 0;
-        shuffleQuestions();
+      currentIndex++;
+      if (currentIndex >= questions.length) {
+        currentIndex = 0;
+        shuffle(questions);
       }
-      loadQuestion();
+      showQuestion();
     }
 
+    // Event listeners
+    startBtn.onclick = startGame;
+    thisBtn.onclick = () => checkAnswer('this');
+    thatBtn.onclick = () => checkAnswer('that');
+    nextBtn.onclick = nextQuestion;
+
+    // Element SDK integration
     async function onConfigChange(config) {
-      const gameTitle = document.getElementById('gameTitle');
-      const instructionText = document.getElementById('instructionText');
-      const thisButton = document.getElementById('thisButton');
-      const thatButton = document.getElementById('thatButton');
-      const nextButton = document.getElementById('nextButton');
+      const titleMain = document.getElementById('titleMain');
+      const subtitleMain = document.getElementById('subtitleMain');
       
-      gameTitle.textContent = config.game_title || defaultConfig.game_title;
-      instructionText.textContent = config.instruction_text || defaultConfig.instruction_text;
-      thisButton.textContent = config.this_button_text || defaultConfig.this_button_text;
-      thatButton.textContent = config.that_button_text || defaultConfig.that_button_text;
-      nextButton.textContent = config.next_button_text || defaultConfig.next_button_text;
+      titleMain.textContent = config.game_title || defaultConfig.game_title;
+      subtitleMain.textContent = config.instruction_text || defaultConfig.instruction_text;
+      thisBtn.textContent = config.this_button_text || defaultConfig.this_button_text;
+      thatBtn.textContent = config.that_button_text || defaultConfig.that_button_text;
+      nextBtn.textContent = config.next_button_text || defaultConfig.next_button_text;
+      startBtn.textContent = config.start_button_text || defaultConfig.start_button_text;
       
       const backgroundColor = config.background_color || defaultConfig.background_color;
       const surfaceColor = config.surface_color || defaultConfig.surface_color;
       const textColor = config.text_color || defaultConfig.text_color;
-      const primaryActionColor = config.primary_action_color || defaultConfig.primary_action_color;
-      const secondaryActionColor = config.secondary_action_color || defaultConfig.secondary_action_color;
+      const primaryColor = config.primary_action_color || defaultConfig.primary_action_color;
+      const secondaryColor = config.secondary_action_color || defaultConfig.secondary_action_color;
       
-      document.querySelector('.game-container').style.background = `linear-gradient(135deg, ${backgroundColor} 0%, ${backgroundColor}dd 100%)`;
-      document.querySelector('.game-card').style.background = surfaceColor;
-      document.querySelector('.question-text').style.color = textColor;
-      thisButton.style.background = primaryActionColor;
-      thatButton.style.background = secondaryActionColor;
+      document.querySelector('.game-wrapper').style.background = `linear-gradient(135deg, ${backgroundColor} 0%, ${backgroundColor}dd 100%)`;
+      document.querySelectorAll('.game-card').forEach(card => card.style.background = surfaceColor);
+      questionDisplay.style.color = textColor;
+      thisBtn.style.background = primaryColor;
+      thatBtn.style.background = secondaryColor;
       
       const customFont = config.font_family || defaultConfig.font_family;
       const baseFontStack = 'Microsoft JhengHei, PingFang TC, sans-serif';
       document.body.style.fontFamily = `${customFont}, ${baseFontStack}`;
       
       const baseSize = config.font_size || defaultConfig.font_size;
-      gameTitle.style.fontSize = `${baseSize * 2.25}px`;
-      instructionText.style.fontSize = `${baseSize * 1.125}px`;
-      document.querySelector('.question-text').style.fontSize = `${baseSize * 1.5}px`;
-      thisButton.style.fontSize = `${baseSize * 1.25}px`;
-      thatButton.style.fontSize = `${baseSize * 1.25}px`;
-      nextButton.style.fontSize = `${baseSize * 1.125}px`;
+      titleMain.style.fontSize = `${baseSize * 2.25}px`;
+      subtitleMain.style.fontSize = `${baseSize * 1.125}px`;
+      questionDisplay.style.fontSize = `${baseSize * 1.5}px`;
+      thisBtn.style.fontSize = `${baseSize * 1.25}px`;
+      thatBtn.style.fontSize = `${baseSize * 1.25}px`;
+      nextBtn.style.fontSize = `${baseSize * 1.125}px`;
     }
 
     if (window.elementSdk) {
@@ -609,22 +656,11 @@
           ['instruction_text', config.instruction_text || defaultConfig.instruction_text],
           ['this_button_text', config.this_button_text || defaultConfig.this_button_text],
           ['that_button_text', config.that_button_text || defaultConfig.that_button_text],
-          ['next_button_text', config.next_button_text || defaultConfig.next_button_text]
+          ['next_button_text', config.next_button_text || defaultConfig.next_button_text],
+          ['start_button_text', config.start_button_text || defaultConfig.start_button_text]
         ])
       });
     }
-
-    function startGame() {
-      document.getElementById('startScreen').style.display = 'none';
-      document.getElementById('gameScreen').style.display = 'block';
-      shuffleQuestions();
-      loadQuestion();
-    }
-
-    document.getElementById('startButton').addEventListener('click', startGame);
-    document.getElementById('thisButton').addEventListener('click', () => checkAnswer('this'));
-    document.getElementById('thatButton').addEventListener('click', () => checkAnswer('that'));
-    document.getElementById('nextButton').addEventListener('click', nextQuestion);
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9a4f6b3ef7f9840f',t:'MTc2NDIyMzM3MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9a4f712d63e28424',t:'MTc2NDIyMzYxMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
