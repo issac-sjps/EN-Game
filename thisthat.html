@@ -191,9 +191,10 @@
       gap: 16px;
     }
     
-    .question-emoji {
-      font-size: 64px;
+    .distance-hint {
+      font-size: 48px;
       margin-bottom: 8px;
+      text-align: center;
     }
     
     .question-text {
@@ -215,8 +216,7 @@
     }
     
     .answer-buttons {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+      display: flex;
       gap: 16px;
       margin-bottom: 24px;
     }
@@ -231,8 +231,8 @@
     
     .answer-btn {
       width: 100%;
-      padding: 20px 32px;
-      font-size: 20px;
+      padding: 24px 32px;
+      font-size: 24px;
       font-weight: bold;
       border: none;
       border-radius: 12px;
@@ -243,7 +243,7 @@
     }
     
     .answer-label {
-      font-size: 16px;
+      font-size: 18px;
       color: #64748b;
       font-weight: 500;
       text-align: center;
@@ -267,26 +267,6 @@
       background: #2563eb;
       transform: translateY(-2px);
       box-shadow: 0 8px 16px rgba(59, 130, 246, 0.3);
-    }
-    
-    .answer-btn.these-btn {
-      background: #f59e0b;
-    }
-    
-    .answer-btn.these-btn:hover:not(:disabled) {
-      background: #d97706;
-      transform: translateY(-2px);
-      box-shadow: 0 8px 16px rgba(245, 158, 11, 0.3);
-    }
-    
-    .answer-btn.those-btn {
-      background: #8b5cf6;
-    }
-    
-    .answer-btn.those-btn:hover:not(:disabled) {
-      background: #7c3aed;
-      transform: translateY(-2px);
-      box-shadow: 0 8px 16px rgba(139, 92, 246, 0.3);
     }
     
     .answer-btn:disabled {
@@ -356,6 +336,102 @@
       opacity: 0.5;
       cursor: not-allowed;
     }
+    
+    /* Result Screen */
+    .result-box {
+      background: #f8fafc;
+      padding: 32px;
+      border-radius: 16px;
+      margin-bottom: 32px;
+    }
+    
+    .final-score {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    
+    .score-text {
+      font-size: 20px;
+      color: #64748b;
+      margin-bottom: 16px;
+      font-weight: 500;
+    }
+    
+    .score-display {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    
+    .score-big {
+      font-size: 72px;
+      font-weight: bold;
+      color: #667eea;
+      line-height: 1;
+    }
+    
+    .score-divider {
+      font-size: 48px;
+      color: #94a3b8;
+      font-weight: 300;
+    }
+    
+    .score-total {
+      font-size: 48px;
+      color: #94a3b8;
+      font-weight: 500;
+    }
+    
+    .score-percentage {
+      font-size: 32px;
+      color: #10b981;
+      font-weight: bold;
+    }
+    
+    .result-message {
+      text-align: center;
+      font-size: 24px;
+      color: #1e293b;
+      padding: 24px;
+      background: white;
+      border-radius: 12px;
+      margin-bottom: 24px;
+      font-weight: 500;
+      line-height: 1.6;
+    }
+    
+    .result-stats {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+    }
+    
+    .stat-item {
+      flex: 1;
+      text-align: center;
+      padding: 20px;
+      background: white;
+      border-radius: 12px;
+    }
+    
+    .stat-icon {
+      font-size: 36px;
+      margin-bottom: 8px;
+    }
+    
+    .stat-label {
+      font-size: 14px;
+      color: #64748b;
+      margin-bottom: 8px;
+    }
+    
+    .stat-value {
+      font-size: 28px;
+      font-weight: bold;
+      color: #1e293b;
+    }
   </style>
   <style>@view-transition { navigation: auto; }</style>
   <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
@@ -376,14 +452,14 @@
      <div class="rules-box">
       <p class="rules-intro">這個遊戲將幫助你練習如何正確使用:</p>
       <ul class="rules-list">
-       <li><strong>This</strong> - 指近處的事物 (單數)</li>
-       <li><strong>That</strong> - 指遠處的事物 (單數)</li>
-       <li><strong>These</strong> - 指近處的事物 (複數)</li>
-       <li><strong>Those</strong> - 指遠處的事物 (複數)</li>
+       <li><strong>This (這個)</strong> - 指近處的事物 (單數)</li>
+       <li><strong>That (那個)</strong> - 指遠處的事物 (單數)</li>
       </ul>
       <p class="game-info">🎯 共有 20 道題目，每題都會有詳細解釋</p>
-      <p class="game-info">💡 答對會有鼓勵，答錯也能學習!</p>
-     </div><button class="start-btn" id="startBtn" type="button">開始遊戲 🚀</button>
+      <p class="game-info">👇📖 手指向下指著物品 = THIS (近處)</p>
+      <p class="game-info">👉............📖 手指指向遠處物品 = THAT (遠處)</p>
+      <p class="game-info">💡 答對會有鼓勵,答錯也能學習!</p>
+     </div><button class="start-btn" id="startBtn" type="button">���始遊戲 ��</button>
     </div><!-- Game Screen -->
     <div id="gameScreen" class="hidden">
      <header class="game-header">
@@ -408,33 +484,66 @@
       </div>
      </div>
      <div class="question-box">
-      <div class="question-emoji" id="questionEmoji"></div>
+      <div class="distance-hint" id="distanceHint"></div>
       <p class="question-text" id="questionDisplay"></p>
       <p class="question-chinese" id="chineseDisplay"></p>
      </div>
      <div class="answer-buttons">
       <div class="answer-option"><button class="answer-btn this-btn" id="thisBtn" type="button">THIS</button>
        <div class="answer-label">
-        這個
+        這個 (近處)
        </div>
       </div>
       <div class="answer-option"><button class="answer-btn that-btn" id="thatBtn" type="button">THAT</button>
        <div class="answer-label">
-        那個
-       </div>
-      </div>
-      <div class="answer-option"><button class="answer-btn these-btn" id="theseBtn" type="button">THESE</button>
-       <div class="answer-label">
-        這些
-       </div>
-      </div>
-      <div class="answer-option"><button class="answer-btn those-btn" id="thoseBtn" type="button">THOSE</button>
-       <div class="answer-label">
-        那些
+        那個 (遠處)
        </div>
       </div>
      </div>
      <div class="feedback-area" id="feedbackArea"></div><button class="next-btn" id="nextBtn" type="button" disabled>下一題</button>
+    </div><!-- Result Screen -->
+    <div id="resultScreen" class="hidden">
+     <div class="welcome-icon">
+      🎉
+     </div>
+     <h2 class="welcome-heading">遊戲結束!</h2>
+     <div class="result-box">
+      <div class="final-score">
+       <div class="score-text">
+        你的成績
+       </div>
+       <div class="score-display"><span class="score-big" id="finalScore">0</span> <span class="score-divider">/</span> <span class="score-total">20</span>
+       </div>
+       <div class="score-percentage" id="scorePercentage">
+        0%
+       </div>
+      </div>
+      <div class="result-message" id="resultMessage"></div>
+      <div class="result-stats">
+       <div class="stat-item">
+        <div class="stat-icon">
+         ✅
+        </div>
+        <div class="stat-label">
+         答對題數
+        </div>
+        <div class="stat-value" id="correctFinal">
+         0
+        </div>
+       </div>
+       <div class="stat-item">
+        <div class="stat-icon">
+         ❌
+        </div>
+        <div class="stat-label">
+         答錯題數
+        </div>
+        <div class="stat-value" id="wrongFinal">
+         0
+        </div>
+       </div>
+      </div>
+     </div><button class="start-btn" id="restartBtn" type="button">再玩一次 🔄</button>
     </div>
    </div>
   </main>
@@ -456,147 +565,147 @@
       font_size: 16
     };
 
-    // Questions with Chinese translations and emojis
+    // Questions with Chinese translations and visual distance hints
     const questions = [
       { 
-        emoji: '📖',
-        question: '___ book on the table is mine.', 
-        chinese: '桌上的___本書是我的。', 
-        answer: 'that', 
-        explanation: '使用 "that" 因為書在桌子上(離說話者較遠的地方)。' 
-      },
-      { 
-        emoji: '✏️',
-        question: '___ pen in my hand is blue.', 
-        chinese: '我手中的___支筆是藍色的。', 
+        hint: '👇📖',
+        question: '___ book is mine.', 
+        chinese: '___本書是我的。', 
         answer: 'this', 
-        explanation: '使用 "this" 因為筆在我的手中(靠近說話者)。' 
+        explanation: '使用 "this" 因為手指向下指著書(靠近說話者)。'
       },
       { 
-        emoji: '🐦',
-        question: 'Look at ___ birds over there!', 
-        chinese: '看___些在那邊的鳥!', 
-        answer: 'those', 
-        explanation: '使用 "those" 因為鳥群在那裡(遠處且為複數)。' 
-      },
-      { 
-        emoji: '👟',
-        question: '___ shoes I\'m wearing are comfortable.', 
-        chinese: '我正穿著的___雙鞋子很舒服。', 
-        answer: 'these', 
-        explanation: '使用 "these" 因為鞋子是我正穿著的(近處且為複數)。' 
-      },
-      { 
-        emoji: '🚪',
-        question: 'Who is ___ person standing near the door?', 
-        chinese: '站在門邊的___個人是誰?', 
+        hint: '👉............✏️',
+        question: '___ pen is blue.', 
+        chinese: '___支筆是藍色的。', 
         answer: 'that', 
-        explanation: '使用 "that" 因為那個人站在門邊(離說話者較遠)。' 
+        explanation: '使用 "that" 因為手指指向遠處的筆(離說話者較遠)。'
       },
       { 
-        emoji: '🍪',
-        question: '___ cookies here smell delicious.', 
-        chinese: '這裡的___些餅乾聞起來很香。', 
-        answer: 'these', 
-        explanation: '使用 "these" 因為餅乾就在這裡(近處且為複數)。' 
+        hint: '👇🚪',
+        question: '___ door is open.', 
+        chinese: '___扇門是開的。', 
+        answer: 'this', 
+        explanation: '使用 "this" 因為手指向下指著門(近處)。'
       },
       { 
-        emoji: '☕',
-        question: 'Can you pass me ___ cup over there?', 
-        chinese: '你可以把___個在那邊的杯子遞給我嗎?', 
+        hint: '👉............☕',
+        question: '___ cup is hot.', 
+        chinese: '___個杯子是熱的。', 
         answer: 'that', 
-        explanation: '使用 "that" 因為杯子在那裡(需要遞過來)。' 
+        explanation: '使用 "that" 因為手指指向遠處的杯子(遠處)。'
       },
       { 
-        emoji: '🎵',
+        hint: '👇🎵',
         question: '___ is my favorite song.', 
         chinese: '___是我最喜歡的歌。', 
         answer: 'this', 
-        explanation: '使用 "this" 指現在正在聽的或談論的歌(當下的情境)。' 
+        explanation: '使用 "this" 因為手指向下指著音符(靠近)。'
       },
       { 
-        emoji: '🌸',
-        question: '___ flowers in the garden are beautiful.', 
-        chinese: '花園裡的___些花很漂亮。', 
-        answer: 'those', 
-        explanation: '使用 "those" 因為花在花園裡(遠處且為複數)。' 
-      },
-      { 
-        emoji: '⌚',
-        question: 'I like ___ watch you\'re holding.', 
-        chinese: '我喜歡你拿著的___隻手錶。', 
+        hint: '👉............⌚',
+        question: '___ watch is expensive.', 
+        chinese: '___隻手錶很貴。', 
         answer: 'that', 
-        explanation: '使用 "that" 因為手錶在你手上(不在說話者手中)。' 
+        explanation: '使用 "that" 因為手指指向遠處的手錶(遠處)。'
       },
       { 
-        emoji: '🎒',
-        question: '___ bag next to me is heavy.', 
-        chinese: '我旁邊的___個包包很重。', 
+        hint: '👇🎒',
+        question: '___ bag is heavy.', 
+        chinese: '___個包包很重。', 
         answer: 'this', 
-        explanation: '使用 "this" 因為包包就在說話者旁邊(近處)。' 
+        explanation: '使用 "this" 因為手指向下指著包包(近處)。'
       },
       { 
-        emoji: '🌳',
-        question: '___ trees across the street are tall.', 
-        chinese: '街對面的___些樹很高。', 
-        answer: 'those', 
-        explanation: '使用 "those" 因為樹在街對面(遠處且為複數)。' 
-      },
-      { 
-        emoji: '🍎',
-        question: '___ apple in the basket looks fresh.', 
-        chinese: '籃子裡的___個蘋果看起來很新鮮。', 
+        hint: '👉............🍎',
+        question: '___ apple looks fresh.', 
+        chinese: '___個蘋果看起來很新鮮。', 
         answer: 'that', 
-        explanation: '使用 "that" 因為蘋果在籃子裡(離說話者有一段距離)。' 
+        explanation: '使用 "that" 因為手指指向遠處的蘋果(遠處)。'
       },
       { 
-        emoji: '📱',
-        question: '___ phones we bought yesterday work well.', 
-        chinese: '我們昨天買的___些手機運作良好。', 
-        answer: 'these', 
-        explanation: '使用 "these" 因為是我們擁有的手機(近處且為複數)。' 
-      },
-      { 
-        emoji: '🏠',
-        question: '___ house at the end of the road is old.', 
-        chinese: '路盡頭的___棟房子很舊。', 
-        answer: 'that', 
-        explanation: '使用 "that" 因為房子在路的盡頭(遠處)。' 
-      },
-      { 
-        emoji: '🖼️',
-        question: '___ pictures on this wall are mine.', 
-        chinese: '這面牆上的___些照片是我的。', 
-        answer: 'these', 
-        explanation: '使用 "these" 因為照片就在這面牆上(近處且為複數)。' 
-      },
-      { 
-        emoji: '🐱',
-        question: '___ cat sleeping on the sofa is lazy.', 
-        chinese: '睡在沙發上的___隻貓很懶。', 
-        answer: 'that', 
-        explanation: '使用 "that" 因為貓在沙發上(離說話者有距離)。' 
-      },
-      { 
-        emoji: '📚',
-        question: '___ books in my backpack are for school.', 
-        chinese: '我背包裡的___些書是上課用的。', 
-        answer: 'these', 
-        explanation: '使用 "these" 因為書在我的背包裡(隨身攜帶，近處且為複數)。' 
-      },
-      { 
-        emoji: '🌟',
-        question: '___ stars in the sky are bright tonight.', 
-        chinese: '天上的___些星星今晚很亮。', 
-        answer: 'those', 
-        explanation: '使用 "those" 因為星星在天上(遠處且為複數)。' 
-      },
-      { 
-        emoji: '🎁',
-        question: '___ gift in my hand is for you.', 
-        chinese: '我手中的___個禮物是給你的。', 
+        hint: '👇📱',
+        question: '___ phone is ringing.', 
+        chinese: '___支手機在響。', 
         answer: 'this', 
-        explanation: '使用 "this" 因為禮物在我手中(近處)。' 
+        explanation: '使用 "this" 因為手指向下指著手機(近處)。'
+      },
+      { 
+        hint: '👉............🏠',
+        question: '___ house is old.', 
+        chinese: '___棟房子很舊。', 
+        answer: 'that', 
+        explanation: '使用 "that" 因為手指指向遠處的房子(遠處)。'
+      },
+      { 
+        hint: '👉............🐱',
+        question: '___ cat is sleeping.', 
+        chinese: '___隻貓在睡覺。', 
+        answer: 'that', 
+        explanation: '使用 "that" 因為手指指向遠處的貓(遠處)。'
+      },
+      { 
+        hint: '👇🎁',
+        question: '___ gift is for you.', 
+        chinese: '___個禮物是給你的。', 
+        answer: 'this', 
+        explanation: '使用 "this" 因為手指向下指著禮物(近處)。'
+      },
+      { 
+        hint: '👉............🌺',
+        question: '___ flower is beautiful.', 
+        chinese: '___朵花很漂亮。', 
+        answer: 'that', 
+        explanation: '使用 "that" 因為手指指向遠處的花(遠處)。'
+      },
+      { 
+        hint: '👇🍕',
+        question: '___ pizza is delicious.', 
+        chinese: '___片披薩很好吃。', 
+        answer: 'this', 
+        explanation: '使用 "this" 因為手指向下指著披薩(近處)。'
+      },
+      { 
+        hint: '👉............🚗',
+        question: '___ car is red.', 
+        chinese: '___輛車是紅色的。', 
+        answer: 'that', 
+        explanation: '使用 "that" 因為手指指向遠處的車(遠處)。'
+      },
+      { 
+        hint: '👇🌂',
+        question: '___ umbrella is new.', 
+        chinese: '___把傘是新的。', 
+        answer: 'this', 
+        explanation: '使用 "this" 因為手指向下指著傘(近處)。'
+      },
+      { 
+        hint: '👉............🎨',
+        question: '___ painting is expensive.', 
+        chinese: '___幅畫很貴。', 
+        answer: 'that', 
+        explanation: '使用 "that" 因為手指指向遠處的畫(遠處)。'
+      },
+      { 
+        hint: '👇🍰',
+        question: '___ cake looks yummy.', 
+        chinese: '___個蛋糕看起來很好吃。', 
+        answer: 'this', 
+        explanation: '使用 "this" 因為手指向下指著蛋糕(近處)。'
+      },
+      { 
+        hint: '👉............🐕',
+        question: '___ dog is playing.', 
+        chinese: '___隻狗在玩耍。', 
+        answer: 'that', 
+        explanation: '使用 "that" 因為手指指向遠處的狗(遠處)。'
+      },
+      { 
+        hint: '👇👕',
+        question: '___ shirt is comfortable.', 
+        chinese: '___件襯衫很舒服。', 
+        answer: 'this', 
+        explanation: '使用 "this" 因為手指向下指著襯衫(近處)。'
       }
     ];
 
@@ -621,15 +730,13 @@
       gameState.hasAnswered = false;
       const q = questions[gameState.currentIndex];
       
-      document.getElementById('questionEmoji').textContent = q.emoji;
+      document.getElementById('distanceHint').textContent = q.hint || '';
       document.getElementById('questionDisplay').textContent = q.question;
       document.getElementById('chineseDisplay').textContent = q.chinese;
       document.getElementById('feedbackArea').className = 'feedback-area';
       document.getElementById('feedbackArea').textContent = '';
       document.getElementById('thisBtn').disabled = false;
       document.getElementById('thatBtn').disabled = false;
-      document.getElementById('theseBtn').disabled = false;
-      document.getElementById('thoseBtn').disabled = false;
       document.getElementById('nextBtn').disabled = true;
       
       const oldExplanation = document.querySelector('.explanation-box');
@@ -666,24 +773,63 @@
       document.getElementById('totalCount').textContent = gameState.totalScore;
       document.getElementById('thisBtn').disabled = true;
       document.getElementById('thatBtn').disabled = true;
-      document.getElementById('theseBtn').disabled = true;
-      document.getElementById('thoseBtn').disabled = true;
       document.getElementById('nextBtn').disabled = false;
     }
 
     // Next question
     function goToNext() {
       gameState.currentIndex++;
-      if (gameState.currentIndex >= questions.length) {
-        gameState.currentIndex = 0;
-        shuffleArray(questions);
+      if (gameState.currentIndex >= 20) {
+        showResults();
+      } else {
+        displayQuestion();
       }
-      displayQuestion();
+    }
+    
+    // Show results
+    function showResults() {
+      document.getElementById('gameScreen').className = 'hidden';
+      document.getElementById('resultScreen').className = '';
+      
+      const correct = gameState.correctScore;
+      const wrong = 20 - correct;
+      const percentage = Math.round((correct / 20) * 100);
+      
+      document.getElementById('finalScore').textContent = correct;
+      document.getElementById('scorePercentage').textContent = percentage + '%';
+      document.getElementById('correctFinal').textContent = correct;
+      document.getElementById('wrongFinal').textContent = wrong;
+      
+      let message = '';
+      if (percentage === 100) {
+        message = '🌟 完美!你全對了!太厲害了!';
+      } else if (percentage >= 90) {
+        message = '🎉 優秀!你做得非常好!';
+      } else if (percentage >= 80) {
+        message = '👍 很棒!繼續加油!';
+      } else if (percentage >= 70) {
+        message = '😊 不錯!再多練習會更好!';
+      } else if (percentage >= 60) {
+        message = '💪 加油!多練習就會進步!';
+      } else {
+        message = '📚 別氣餒!再試一次會更好!';
+      }
+      
+      document.getElementById('resultMessage').textContent = message;
     }
 
     // Start game
     function beginGame() {
+      gameState.currentIndex = 0;
+      gameState.correctScore = 0;
+      gameState.totalScore = 0;
+      gameState.hasAnswered = false;
+      
+      document.getElementById('correctCount').textContent = '0';
+      document.getElementById('totalCount').textContent = '0';
+      
       document.getElementById('welcomeScreen').className = 'hidden';
+      document.getElementById('resultScreen').className = 'hidden';
       document.getElementById('gameScreen').className = '';
       shuffleArray(questions);
       displayQuestion();
@@ -691,11 +837,21 @@
 
     // Setup events
     document.getElementById('startBtn').addEventListener('click', beginGame, false);
+    document.getElementById('restartBtn').addEventListener('click', beginGame, false);
     document.getElementById('thisBtn').addEventListener('click', function() { handleAnswer('this'); }, false);
     document.getElementById('thatBtn').addEventListener('click', function() { handleAnswer('that'); }, false);
-    document.getElementById('theseBtn').addEventListener('click', function() { handleAnswer('these'); }, false);
-    document.getElementById('thoseBtn').addEventListener('click', function() { handleAnswer('those'); }, false);
     document.getElementById('nextBtn').addEventListener('click', goToNext, false);
+    
+    // Keyboard support - Space bar for next question
+    document.addEventListener('keydown', function(e) {
+      if (e.code === 'Space' || e.key === ' ') {
+        const nextBtn = document.getElementById('nextBtn');
+        if (!nextBtn.disabled && !document.getElementById('gameScreen').classList.contains('hidden')) {
+          e.preventDefault();
+          goToNext();
+        }
+      }
+    }, false);
 
     // Element SDK
     async function onConfigChange(config) {
@@ -726,8 +882,8 @@
       document.getElementById('subtitleMain').style.fontSize = (baseSize * 1.125) + 'px';
       document.getElementById('questionDisplay').style.fontSize = (baseSize * 1.5) + 'px';
       document.getElementById('chineseDisplay').style.fontSize = (baseSize * 1.125) + 'px';
-      document.getElementById('thisBtn').style.fontSize = (baseSize * 1.25) + 'px';
-      document.getElementById('thatBtn').style.fontSize = (baseSize * 1.25) + 'px';
+      document.getElementById('thisBtn').style.fontSize = (baseSize * 1.5) + 'px';
+      document.getElementById('thatBtn').style.fontSize = (baseSize * 1.5) + 'px';
       document.getElementById('nextBtn').style.fontSize = (baseSize * 1.125) + 'px';
     }
 
@@ -762,5 +918,5 @@
       });
     }
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9a4f8a5f95788424',t:'MTc2NDIyNDY0NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9ac3d9d4062ba9ad',t:'MTc2NTQ0NDI0OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
