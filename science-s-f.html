@@ -1,479 +1,222 @@
-<!doctype html>
-<html lang="zh-TW" class="h-full">
- <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>單字練習遊戲</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="/_sdk/element_sdk.js"></script>
-  <style>
-    body {
-      box-sizing: border-box;
-    }
-    .btn-hover:hover {
-      transform: scale(1.05);
-      transition: transform 0.2s;
-    }
-  </style>
-  <style>@view-transition { navigation: auto; }</style>
-  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
- </head>
- <body class="h-full">
-  <main id="app" class="h-full w-full"></main>
-  <script>
-    const defaultConfig = {
-      background_color: "#e0f2fe",
-      card_color: "#ffffff",
-      text_color: "#0f172a",
-      primary_button_color: "#3b82f6",
-      secondary_button_color: "#10b981",
-      font_family: "system-ui",
-      font_size: 16,
-      game_title: "📚 單字練習遊戲",
-      instruction_text: "填入缺少的字母"
-    };
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>英文單字挑戰賽</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f4f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
 
-    const words = [
-      { word: "science", translation: "科學" },
-      { word: "subject", translation: "科目" },
-      { word: "favorite", translation: "最喜歡的" },
-      { word: "computer", translation: "電腦" },
-      { word: "student", translation: "學生" }
+        #game-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            text-align: center;
+            width: 90%;
+            max-width: 500px;
+        }
+
+        h1 { color: #2d3748; margin-bottom: 0.5rem; }
+        .hint { color: #4a5568; font-size: 1.2rem; margin-bottom: 1.5rem; font-weight: bold; }
+
+        .word-display {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 2rem;
+            min-height: 50px;
+        }
+
+        .letter-slot {
+            width: 40px;
+            height: 45px;
+            border-bottom: 3px solid #cbd5e0;
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #3182ce;
+        }
+
+        .letters-bank {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+        }
+
+        .letter-btn {
+            background-color: #edf2f7;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .letter-btn:hover { background-color: #e2e8f0; transform: translateY(-2px); }
+        .letter-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .controls { display: flex; gap: 10px; justify-content: center; }
+
+        button.main-btn {
+            padding: 10px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .clear-btn { background-color: #feb2b2; color: #9b2c2c; }
+        .next-btn { background-color: #9ae6b4; color: #22543d; display: none; }
+
+        .message { margin-top: 1rem; font-weight: bold; height: 20px; }
+        .score { color: #718096; margin-top: 1rem; }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <h1>拼字大挑戰</h1>
+    <div class="score">進度: <span id="current-idx">1</span> / <span id="total-count">3</span></div>
+    
+    <div class="hint" id="hint-text">讀取中...</div>
+    
+    <div class="word-display" id="word-display"></div>
+    
+    <div class="letters-bank" id="letters-bank"></div>
+
+    <div class="controls">
+        <button class="main-btn clear-btn" onclick="resetWord()">清除重來代</button>
+        <button class="main-btn next-btn" id="next-btn" onclick="nextQuestion()">下一個單字</button>
+    </div>
+
+    <div class="message" id="message"></div>
+</div>
+
+<script>
+    const vocabulary = [
+        { word: 'science', hint: '科學' },
+        { word: 'subject', hint: '科目 / 主題' },
+        { word: 'favorite', hint: '最喜愛的' }
     ];
 
-    let currentMode = 'choice';
-    let currentWordIndex = 0;
-    let currentLevel = 2;
-    let userAnswer = [];
-    let blanksPositions = [];
+    let currentIndex = 0;
+    let currentInput = "";
 
-    function generateBlanks(word, count) {
-      const positions = [];
-      const available = [...Array(word.length).keys()];
-      const numBlanks = Math.min(count, word.length);
-      
-      for (let i = 0; i < numBlanks; i++) {
-        const randomIndex = Math.floor(Math.random() * available.length);
-        positions.push(available[randomIndex]);
-        available.splice(randomIndex, 1);
-      }
-      
-      return positions.sort((a, b) => a - b);
+    const hintEl = document.getElementById('hint-text');
+    const displayEl = document.getElementById('word-display');
+    const bankEl = document.getElementById('letters-bank');
+    const messageEl = document.getElementById('message');
+    const nextBtn = document.getElementById('next-btn');
+    const currentIdxEl = document.getElementById('current-idx');
+    const totalCountEl = document.getElementById('total-count');
+
+    function initGame() {
+        totalCountEl.innerText = vocabulary.length;
+        loadQuestion();
     }
 
-    function renderApp(config) {
-      const bg = config.background_color || defaultConfig.background_color;
-      const card = config.card_color || defaultConfig.card_color;
-      const text = config.text_color || defaultConfig.text_color;
-      const primary = config.primary_button_color || defaultConfig.primary_button_color;
-      const secondary = config.secondary_button_color || defaultConfig.secondary_button_color;
-      const font = config.font_family || defaultConfig.font_family;
-      const size = config.font_size || defaultConfig.font_size;
-      const title = config.game_title || defaultConfig.game_title;
-      const instruction = config.instruction_text || defaultConfig.instruction_text;
+    function loadQuestion() {
+        const item = vocabulary[currentIndex];
+        hintEl.innerText = `中文意思：${item.hint}`;
+        currentInput = "";
+        messageEl.innerText = "";
+        messageEl.style.color = "black";
+        nextBtn.style.display = "none";
+        currentIdxEl.innerText = currentIndex + 1;
 
-      const currentWord = words[currentWordIndex];
-      blanksPositions = generateBlanks(currentWord.word, currentLevel);
+        // 建立空格
+        displayEl.innerHTML = "";
+        for (let i = 0; i < item.word.length; i++) {
+            const slot = document.createElement('div');
+            slot.className = 'letter-slot';
+            displayEl.appendChild(slot);
+        }
 
-      const app = document.getElementById('app');
-      app.style.background = bg;
-      app.style.fontFamily = font + ', sans-serif';
-
-      app.innerHTML = `
-        <div class="h-full w-full flex items-center justify-center p-6">
-          <div class="w-full max-w-3xl">
-            <div class="rounded-3xl shadow-2xl p-8" style="background: ${card};">
-              
-              <h1 class="text-center font-bold mb-4" style="color: ${text}; font-size: ${size * 2.5}px;">
-                ${title}
-              </h1>
-              
-              <p class="text-center mb-8" style="color: ${text}; opacity: 0.7; font-size: ${size}px;">
-                ${instruction}
-              </p>
-
-              <div class="flex gap-3 mb-6 justify-center">
-                <button id="mode-choice" class="px-6 py-3 rounded-xl font-semibold btn-hover" 
-                  style="background: ${currentMode === 'choice' ? primary : text}; 
-                         color: white; 
-                         opacity: ${currentMode === 'choice' ? '1' : '0.3'}; 
-                         font-size: ${size}px;">
-                  📝 選擇題
-                </button>
-                <button id="mode-spelling" class="px-6 py-3 rounded-xl font-semibold btn-hover" 
-                  style="background: ${currentMode === 'spelling' ? primary : text}; 
-                         color: white; 
-                         opacity: ${currentMode === 'spelling' ? '1' : '0.3'}; 
-                         font-size: ${size}px;">
-                  ⌨️ 拼字
-                </button>
-              </div>
-
-              <div class="mb-6 p-5 rounded-xl text-center" style="background: ${bg};">
-                <p class="font-semibold mb-2" style="color: ${text}; font-size: ${size * 1.1}px;">
-                  第 ${currentWordIndex + 1}/${words.length} 題 - 缺 ${currentLevel} 個字母
-                </p>
-                <p style="color: ${text}; opacity: 0.8; font-size: ${size}px;">
-                  💡 提示: ${currentWord.translation}
-                </p>
-              </div>
-
-              <div class="mb-8 p-8 rounded-xl" style="background: ${bg};">
-                <div id="word-display" class="flex justify-center gap-3 flex-wrap">
-                  ${renderWord(currentWord.word, blanksPositions, userAnswer, text, size)}
-                </div>
-              </div>
-
-              <div id="controls" class="mb-6">
-                ${currentMode === 'choice' ? renderChoiceButtons(currentWord, blanksPositions, primary, text, size) : renderKeyboard(primary, text, size)}
-              </div>
-
-              <div id="feedback" class="mb-6 text-center" style="min-height: 60px;"></div>
-
-              <div class="flex gap-3">
-                <button id="check" class="flex-1 py-4 rounded-xl font-bold btn-hover" 
-                  style="background: ${primary}; color: white; font-size: ${size * 1.1}px;">
-                  ✓ 檢查
-                </button>
-                <button id="next" class="flex-1 py-4 rounded-xl font-bold btn-hover" 
-                  style="background: ${secondary}; color: white; font-size: ${size * 1.1}px; display: none;">
-                  下一題 →
-                </button>
-              </div>
-
-            </div>
-          </div>
-        </div>
-      `;
-
-      setupEventListeners(config);
+        // 建立打亂的字母按鈕
+        const shuffled = item.word.split('').sort(() => Math.random() - 0.5);
+        bankEl.innerHTML = "";
+        shuffled.forEach((char, index) => {
+            const btn = document.createElement('button');
+            btn.className = 'letter-btn';
+            btn.innerText = char;
+            btn.onclick = () => selectLetter(char, btn);
+            bankEl.appendChild(btn);
+        });
     }
 
-    function renderWord(word, blanks, answers, color, size) {
-      return word.split('').map((letter, i) => {
-        const isBlank = blanks.includes(i);
-        const blankIndex = blanks.indexOf(i);
-        const userLetter = answers[blankIndex] || '';
-        
-        if (isBlank) {
-          return `
-            <div class="inline-flex items-center justify-center border-3 border-dashed rounded-lg font-bold" 
-              style="width: 3.5rem; height: 4.5rem; border-color: ${color}; color: ${color}; font-size: ${size * 2}px;">
-              ${userLetter.toUpperCase()}
-            </div>
-          `;
+    function selectLetter(char, btn) {
+        const item = vocabulary[currentIndex];
+        if (currentInput.length < item.word.length) {
+            currentInput += char;
+            btn.disabled = true;
+            updateDisplay();
+            
+            if (currentInput.length === item.word.length) {
+                checkAnswer();
+            }
+        }
+    }
+
+    function updateDisplay() {
+        const slots = document.querySelectorAll('.letter-slot');
+        for (let i = 0; i < currentInput.length; i++) {
+            slots[i].innerText = currentInput[i];
+        }
+    }
+
+    function resetWord() {
+        currentInput = "";
+        const slots = document.querySelectorAll('.letter-slot');
+        slots.forEach(slot => slot.innerText = "");
+        const btns = document.querySelectorAll('.letter-btn');
+        btns.forEach(btn => btn.disabled = false);
+        messageEl.innerText = "";
+    }
+
+    function checkAnswer() {
+        const correctWord = vocabulary[currentIndex].word;
+        if (currentInput === correctWord) {
+            messageEl.innerText = "太棒了！答對了 ✨";
+            messageEl.style.color = "#38a169";
+            nextBtn.style.display = "block";
         } else {
-          return `
-            <div class="inline-flex items-center justify-center font-bold" 
-              style="width: 3.5rem; height: 4.5rem; color: ${color}; font-size: ${size * 2}px;">
-              ${letter.toUpperCase()}
-            </div>
-          `;
+            messageEl.innerText = "哎呀，拼錯囉！再試一次";
+            messageEl.style.color = "#e53e3e";
+            setTimeout(resetWord, 1000);
         }
-      }).join('');
     }
 
-    function renderChoiceButtons(word, blanks, btnColor, textColor, size) {
-      const correct = blanks.map(pos => word[pos]);
-      const allLetters = 'abcdefghijklmnopqrstuvwxyz'.split('');
-      const wrong = [];
-      
-      while (wrong.length < 4) {
-        const random = allLetters[Math.floor(Math.random() * allLetters.length)];
-        if (!correct.includes(random) && !wrong.includes(random)) {
-          wrong.push(random);
+    function nextQuestion() {
+        currentIndex++;
+        if (currentIndex < vocabulary.length) {
+            loadQuestion();
+        } else {
+            document.getElementById('game-container').innerHTML = `
+                <h1>🎉 恭喜完成！</h1>
+                <p>你已經學會了這次所有的單字。</p>
+                <button class="main-btn" onclick="location.reload()" style="background:#3182ce; color:white;">重新挑戰</button>
+            `;
         }
-      }
-      
-      const options = [...correct, ...wrong].sort(() => Math.random() - 0.5);
-      
-      return `
-        <p class="text-center mb-4" style="color: ${textColor}; font-size: ${size}px;">
-          選擇正確的字母:
-        </p>
-        <div class="grid grid-cols-4 gap-3 max-w-lg mx-auto">
-          ${options.map(letter => `
-            <button class="choice-btn py-5 rounded-lg font-bold btn-hover" 
-              style="background: ${btnColor}; color: white; font-size: ${size * 1.4}px;" 
-              data-letter="${letter}">
-              ${letter.toUpperCase()}
-            </button>
-          `).join('')}
-        </div>
-      `;
     }
 
-    function renderKeyboard(btnColor, textColor, size) {
-      const letters = 'abcdefghijklmnopqrstuvwxyz'.split('');
-      
-      return `
-        <p class="text-center mb-4" style="color: ${textColor}; font-size: ${size}px;">
-          使用鍵盤輸入:
-        </p>
-        <div class="grid grid-cols-7 gap-2 max-w-2xl mx-auto">
-          ${letters.map(letter => `
-            <button class="key-btn py-3 rounded-lg font-semibold btn-hover" 
-              style="background: ${btnColor}; color: white; font-size: ${size}px;" 
-              data-letter="${letter}">
-              ${letter.toUpperCase()}
-            </button>
-          `).join('')}
-          <button id="delete" class="col-span-2 py-3 rounded-lg font-semibold btn-hover" 
-            style="background: ${textColor}; color: white; opacity: 0.5; font-size: ${size}px;">
-            ⌫ 刪除
-          </button>
-        </div>
-      `;
-    }
+    initGame();
+</script>
 
-    function setupEventListeners(config) {
-      const modeChoice = document.getElementById('mode-choice');
-      const modeSpelling = document.getElementById('mode-spelling');
-      const checkBtn = document.getElementById('check');
-      const nextBtn = document.getElementById('next');
-
-      modeChoice.addEventListener('click', () => {
-        if (currentMode !== 'choice') {
-          currentMode = 'choice';
-          userAnswer = [];
-          renderApp(config);
-        }
-      });
-
-      modeSpelling.addEventListener('click', () => {
-        if (currentMode !== 'spelling') {
-          currentMode = 'spelling';
-          userAnswer = [];
-          renderApp(config);
-        }
-      });
-
-      if (currentMode === 'choice') {
-        document.querySelectorAll('.choice-btn').forEach(btn => {
-          btn.addEventListener('click', (e) => {
-            const letter = e.target.dataset.letter;
-            if (userAnswer.length < blanksPositions.length) {
-              userAnswer.push(letter);
-              updateDisplay(config);
-            }
-          });
-        });
-      } else {
-        document.querySelectorAll('.key-btn').forEach(btn => {
-          btn.addEventListener('click', (e) => {
-            const letter = e.target.dataset.letter;
-            if (letter && userAnswer.length < blanksPositions.length) {
-              userAnswer.push(letter);
-              updateDisplay(config);
-            }
-          });
-        });
-
-        const deleteBtn = document.getElementById('delete');
-        if (deleteBtn) {
-          deleteBtn.addEventListener('click', () => {
-            if (userAnswer.length > 0) {
-              userAnswer.pop();
-              updateDisplay(config);
-            }
-          });
-        }
-      }
-
-      checkBtn.addEventListener('click', () => checkAnswer(config));
-      nextBtn.addEventListener('click', () => nextQuestion(config));
-    }
-
-    function updateDisplay(config) {
-      const text = config.text_color || defaultConfig.text_color;
-      const size = config.font_size || defaultConfig.font_size;
-      const currentWord = words[currentWordIndex];
-      
-      document.getElementById('word-display').innerHTML = renderWord(
-        currentWord.word, 
-        blanksPositions, 
-        userAnswer, 
-        text, 
-        size
-      );
-    }
-
-    function checkAnswer(config) {
-      const currentWord = words[currentWordIndex];
-      const correct = blanksPositions.map(pos => currentWord.word[pos]);
-      const size = config.font_size || defaultConfig.font_size;
-      
-      if (userAnswer.length !== blanksPositions.length) {
-        showFeedback('請填完所有空格！', false, size);
-        return;
-      }
-
-      const isCorrect = userAnswer.every((letter, i) => letter === correct[i]);
-
-      if (isCorrect) {
-        showFeedback('🎉 太棒了！答對了！', true, size);
-        document.getElementById('check').style.display = 'none';
-        document.getElementById('next').style.display = 'block';
-        
-        const text = config.text_color || defaultConfig.text_color;
-        document.getElementById('word-display').innerHTML = currentWord.word.split('').map(letter => `
-          <div class="inline-flex items-center justify-center font-bold" 
-            style="width: 3.5rem; height: 4.5rem; color: #10b981; font-size: ${size * 2}px;">
-            ${letter.toUpperCase()}
-          </div>
-        `).join('');
-      } else {
-        showFeedback('❌ 再試試看！', false, size);
-        setTimeout(() => {
-          userAnswer = [];
-          updateDisplay(config);
-          document.getElementById('feedback').innerHTML = '';
-        }, 1500);
-      }
-    }
-
-    function showFeedback(message, success, size) {
-      const feedback = document.getElementById('feedback');
-      feedback.innerHTML = `
-        <div class="p-4 rounded-xl font-bold" 
-          style="background: ${success ? '#10b98133' : '#ef444433'}; 
-                 color: ${success ? '#10b981' : '#ef4444'}; 
-                 font-size: ${size * 1.2}px;">
-          ${message}
-        </div>
-      `;
-    }
-
-    function nextQuestion(config) {
-      currentWordIndex++;
-      
-      if (currentWordIndex >= words.length) {
-        currentWordIndex = 0;
-        currentLevel++;
-        
-        if (currentLevel > 5) {
-          showCompletion(config);
-          return;
-        }
-      }
-
-      userAnswer = [];
-      document.getElementById('check').style.display = 'block';
-      document.getElementById('next').style.display = 'none';
-      document.getElementById('feedback').innerHTML = '';
-      
-      renderApp(config);
-    }
-
-    function showCompletion(config) {
-      const bg = config.background_color || defaultConfig.background_color;
-      const card = config.card_color || defaultConfig.card_color;
-      const text = config.text_color || defaultConfig.text_color;
-      const primary = config.primary_button_color || defaultConfig.primary_button_color;
-      const font = config.font_family || defaultConfig.font_family;
-      const size = config.font_size || defaultConfig.font_size;
-
-      const app = document.getElementById('app');
-      app.style.background = bg;
-      app.style.fontFamily = font + ', sans-serif';
-
-      app.innerHTML = `
-        <div class="h-full w-full flex items-center justify-center p-6">
-          <div class="w-full max-w-2xl">
-            <div class="rounded-3xl shadow-2xl p-12 text-center" style="background: ${card};">
-              <div style="font-size: 6rem;">🏆</div>
-              <h2 class="font-bold mb-4" style="color: ${text}; font-size: ${size * 2.5}px;">
-                恭喜完成！
-              </h2>
-              <p class="mb-8" style="color: ${text}; font-size: ${size * 1.3}px;">
-                你已經完成所有關卡！
-              </p>
-              <button id="restart" class="px-10 py-4 rounded-xl font-bold btn-hover" 
-                style="background: ${primary}; color: white; font-size: ${size * 1.2}px;">
-                🔄 重新開始
-              </button>
-            </div>
-          </div>
-        </div>
-      `;
-
-      document.getElementById('restart').addEventListener('click', () => {
-        currentWordIndex = 0;
-        currentLevel = 2;
-        userAnswer = [];
-        renderApp(config);
-      });
-    }
-
-    // 初始化
-    if (window.elementSdk) {
-      window.elementSdk.init({
-        defaultConfig,
-        onConfigChange: async (config) => {
-          renderApp(config);
-        },
-        mapToCapabilities: (config) => ({
-          recolorables: [
-            {
-              get: () => config.background_color || defaultConfig.background_color,
-              set: (value) => {
-                config.background_color = value;
-                window.elementSdk.setConfig({ background_color: value });
-              }
-            },
-            {
-              get: () => config.card_color || defaultConfig.card_color,
-              set: (value) => {
-                config.card_color = value;
-                window.elementSdk.setConfig({ card_color: value });
-              }
-            },
-            {
-              get: () => config.text_color || defaultConfig.text_color,
-              set: (value) => {
-                config.text_color = value;
-                window.elementSdk.setConfig({ text_color: value });
-              }
-            },
-            {
-              get: () => config.primary_button_color || defaultConfig.primary_button_color,
-              set: (value) => {
-                config.primary_button_color = value;
-                window.elementSdk.setConfig({ primary_button_color: value });
-              }
-            },
-            {
-              get: () => config.secondary_button_color || defaultConfig.secondary_button_color,
-              set: (value) => {
-                config.secondary_button_color = value;
-                window.elementSdk.setConfig({ secondary_button_color: value });
-              }
-            }
-          ],
-          borderables: [],
-          fontEditable: {
-            get: () => config.font_family || defaultConfig.font_family,
-            set: (value) => {
-              config.font_family = value;
-              window.elementSdk.setConfig({ font_family: value });
-            }
-          },
-          fontSizeable: {
-            get: () => config.font_size || defaultConfig.font_size,
-            set: (value) => {
-              config.font_size = value;
-              window.elementSdk.setConfig({ font_size: value });
-            }
-          }
-        }),
-        mapToEditPanelValues: (config) => new Map([
-          ["game_title", config.game_title || defaultConfig.game_title],
-          ["instruction_text", config.instruction_text || defaultConfig.instruction_text]
-        ])
-      });
-    }
-
-    renderApp(window.elementSdk?.config || defaultConfig);
-  </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b581b40533c4a46',t:'MTc2Njk5ODgyMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</body>
 </html>
