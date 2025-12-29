@@ -3,72 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>英文單字挑戰 - 統計版</title>
+    <title>單字測驗 - 老師驗收版</title>
     <style>
-        :root { --primary: #4a90e2; --success: #48bb78; --error: #f56565; --bg: #f0f4f8; }
+        :root { --primary: #4a90e2; --success: #48bb78; --error: #f56565; --bg: #f0f4f8; --dark: #2d3748; }
         body { font-family: 'PingFang TC', sans-serif; background: var(--bg); display: flex; justify-content: center; padding: 20px; margin: 0; }
         .card { background: white; width: 100%; max-width: 500px; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; position: relative; }
         
-        /* 統計與進度區 */
-        .header-info { margin-bottom: 25px; border-bottom: 1px dashed #e2e8f0; padding-bottom: 15px; }
-        .stats-row { display: flex; justify-content: space-around; margin-bottom: 10px; font-size: 14px; color: #4a5568; }
-        .stat-box { background: #f8fafc; padding: 5px 10px; border-radius: 8px; border: 1px solid #edf2f7; }
-        .stat-val { font-weight: bold; color: var(--primary); }
+        /* 統計與計時區 */
+        .header-info { margin-bottom: 20px; border-bottom: 2px solid #edf2f7; padding-bottom: 15px; }
+        .stats-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; font-size: 14px; }
+        .stat-box { background: #f8fafc; padding: 8px; border-radius: 10px; border: 1px solid #e2e8f0; color: var(--dark); }
+        .stat-val { font-weight: bold; color: var(--primary); font-size: 16px; }
 
         .prog-bar-bg { background: #e2e8f0; height: 12px; border-radius: 6px; overflow: hidden; margin-top: 10px; }
         #prog-fill { background: var(--success); width: 0%; height: 100%; transition: width 0.4s; }
 
-        .stage-tag { background: #ebf8ff; color: var(--primary); padding: 6px 18px; border-radius: 20px; font-size: 15px; font-weight: bold; }
-        .hint-cn { font-size: 36px; font-weight: bold; margin: 20px 0; color: #2d3748; }
+        .stage-tag { background: #ebf8ff; color: var(--primary); padding: 6px 18px; border-radius: 20px; font-size: 15px; font-weight: bold; display: inline-block; margin-bottom: 10px; }
+        .hint-cn { font-size: 36px; font-weight: bold; margin: 15px 0; color: var(--dark); }
 
-        /* 單字槽位 */
+        /* 大字卡與槽位 */
         .word-slots { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin: 25px 0; min-height: 60px; }
         .slot { width: 45px; height: 55px; border-bottom: 4px solid #cbd5e0; font-size: 32px; font-weight: bold; color: var(--primary); display: flex; align-items: center; justify-content: center; }
         .slot.fixed { border-bottom: none; color: #a0aec0; }
 
-        /* 大字卡區 */
-        .letter-bank { 
-            display: grid; 
-            grid-template-columns: repeat(4, 1fr); 
-            gap: 15px; 
-            margin-top: 20px; 
-            padding: 20px; 
-            background: #f8fafc; 
-            border-radius: 15px; 
-        }
-        .letter-card { 
-            width: 60px; height: 70px; background: white; border: 2px solid #e2e8f0; 
-            border-radius: 12px; display: flex; align-items: center; justify-content: center; 
-            font-size: 28px; font-weight: bold; cursor: pointer; transition: all 0.2s; 
-        }
-        .letter-card:hover { transform: translateY(-3px); border-color: var(--primary); color: var(--primary); }
-        .letter-card.used { opacity: 0.15; cursor: default; pointer-events: none; }
+        .letter-bank { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 20px; padding: 20px; background: #f8fafc; border-radius: 15px; }
+        .letter-card { width: 60px; height: 70px; background: white; border: 2px solid #e2e8f0; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: bold; cursor: pointer; transition: 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .letter-card:hover { transform: translateY(-3px); border-color: var(--primary); }
+        .letter-card.used { opacity: 0.1; pointer-events: none; }
 
         /* 選擇題 */
         .options-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin: 20px 0; }
         .opt-btn { padding: 18px; border: 2px solid #e2e8f0; background: white; border-radius: 12px; font-size: 20px; font-weight: bold; cursor: pointer; }
-        .opt-btn:hover { border-color: var(--primary); background: #f0f7ff; }
 
-        .msg { margin-top: 15px; font-weight: bold; font-size: 22px; min-height: 30px; }
+        .msg { margin-top: 15px; font-weight: bold; font-size: 20px; min-height: 28px; }
         .next-btn { width: 100%; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 12px; font-size: 18px; cursor: pointer; display: none; margin-top: 15px; font-weight: bold; }
-        .k-hint { font-size: 12px; color: #adb5bd; margin-top: 8px; font-weight: normal; }
+        
+        /* 通關特寫 */
+        .pass-banner { background: #c6f6d5; color: #22543d; padding: 20px; border-radius: 15px; border: 3px solid #48bb78; margin-top: 20px; font-size: 20px; font-weight: bold; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.03); } 100% { transform: scale(1); } }
 
         .reset-link { margin-top: 40px; font-size: 13px; color: #adb5bd; cursor: pointer; text-decoration: underline; }
     </style>
 </head>
 <body>
 
-<div class="card">
+<div class="card" id="game-card">
     <div class="header-info">
         <div class="stats-row">
-            <div class="stat-box">正確: <span class="stat-val" id="stat-correct">0</span></div>
-            <div class="stat-box">總計: <span class="stat-val" id="stat-total">0</span></div>
-            <div class="stat-box">正確率: <span class="stat-val" id="stat-acc">0%</span></div>
+            <div class="stat-box">正確率: <span class="stat-val" id="stat-acc">0%</span> (<span id="stat-c">0</span>/<span id="stat-t">0</span>)</div>
+            <div class="stat-box">計時: <span class="stat-val" id="timer">00:00</span></div>
         </div>
         <div class="prog-bar-bg"><div id="prog-fill"></div></div>
     </div>
 
-    <span class="stage-tag" id="stage-name">載入中...</span>
+    <span class="stage-tag" id="stage-name">階段載入中</span>
     <div class="hint-cn" id="display-cn">---</div>
 
     <div id="ui-choice" style="display:none;">
@@ -81,12 +69,9 @@
     </div>
 
     <div class="msg" id="msg"></div>
-    <button class="next-btn" id="next-btn" onclick="goNext()">
-        下一題 (Next Step)
-        <div class="k-hint">按 [空白鍵] 也可以繼續</div>
-    </button>
+    <button class="next-btn" id="next-btn" onclick="goNext()">下一題 (空白鍵 ⎵)</button>
 
-    <div class="reset-link" onclick="resetAll()">清除進度與統計，重頭開始</div>
+    <div class="reset-link" onclick="resetAll()">清除進度重新開始 (歸零時間)</div>
 </div>
 
 <script>
@@ -97,27 +82,38 @@
     ];
 
     const STAGES = [
-        { name: '1. 單字選擇題', mode: 'choice', holes: 0 },
+        { name: '1. 單字選擇', mode: 'choice', holes: 0 },
         { name: '2. 填空 (缺2字)', mode: 'spell', holes: 2 },
         { name: '3. 填空 (缺3字)', mode: 'spell', holes: 3 },
-        { name: '4. 終極挑戰 (全拼)', mode: 'spell', holes: 99 }
+        { name: '4. 全拼挑戰', mode: 'spell', holes: 99 }
     ];
 
-    // 初始化狀態，增加正確數與總題數
-    let state = JSON.parse(localStorage.getItem('vocab_v5_save')) || { 
-        s: 0, w: 0, correct: 0, total: 0 
+    // 狀態包含計時（秒數）
+    let state = JSON.parse(localStorage.getItem('vocab_v6_teacher')) || { 
+        s: 0, w: 0, correct: 0, total: 0, seconds: 0 
     };
 
     let currentAnswers = []; 
     let targetHoles = [];    
+    let timerInterval;
 
-    function save() { localStorage.setItem('vocab_v5_save', JSON.stringify(state)); }
+    function save() { localStorage.setItem('vocab_v6_teacher', JSON.stringify(state)); }
 
-    function updateStatsUI() {
-        document.getElementById('stat-correct').innerText = state.correct;
-        document.getElementById('stat-total').innerText = state.total;
-        const acc = state.total === 0 ? 0 : Math.floor((state.correct / state.total) * 100);
-        document.getElementById('stat-acc').innerText = acc + "%";
+    function startTimer() {
+        clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+            if (state.s < STAGES.length) {
+                state.seconds++;
+                updateTimerUI();
+                if (state.seconds % 5 === 0) save(); // 每 5 秒自動存一次時間
+            }
+        }, 1000);
+    }
+
+    function updateTimerUI() {
+        const m = Math.floor(state.seconds / 60).toString().padStart(2, '0');
+        const s = (state.seconds % 60).toString().padStart(2, '0');
+        document.getElementById('timer').innerText = `${m}:${s}`;
     }
 
     function render() {
@@ -125,11 +121,12 @@
 
         const stage = STAGES[state.s];
         const word = WORDS[state.w];
-        const allSteps = STAGES.length * WORDS.length;
-        const finishedSteps = (state.s * WORDS.length) + state.w;
-        const progressPercent = Math.floor((finishedSteps / allSteps) * 100);
+        const progressPercent = Math.floor(((state.s * WORDS.length + state.w) / (STAGES.length * WORDS.length)) * 100);
 
-        updateStatsUI();
+        updateTimerUI();
+        document.getElementById('stat-c').innerText = state.correct;
+        document.getElementById('stat-t').innerText = state.total;
+        document.getElementById('stat-acc').innerText = (state.total === 0 ? 0 : Math.floor(state.correct/state.total*100)) + "%";
         document.getElementById('stage-name').innerText = stage.name;
         document.getElementById('display-cn').innerText = word.cn;
         document.getElementById('prog-fill').style.width = progressPercent + "%";
@@ -210,26 +207,19 @@
     }
 
     function checkSpell(en) {
-        let result = ""; let holePtr = 0;
-        for(let i=0; i<en.length; i++) {
-            if(targetHoles.includes(i)) result += currentAnswers[holePtr++];
-            else result += en[i];
-        }
-        finishStep(result === en, en);
+        let res = ""; let hP = 0;
+        for(let i=0; i<en.length; i++) res += targetHoles.includes(i) ? currentAnswers[hP++] : en[i];
+        finishStep(res === en, en);
     }
 
     function finishStep(isOk, correct) {
         state.total++;
         if (isOk) state.correct++;
-        updateStatsUI();
-
         const msg = document.getElementById('msg');
         msg.innerText = isOk ? "✅ 答對了！" : "❌ 答錯了，正確是: " + correct;
         msg.style.color = isOk ? "var(--success)" : "var(--error)";
         document.getElementById('next-btn').style.display = "block";
-        
-        document.querySelectorAll('.letter-card').forEach(c => c.classList.add('used'));
-        document.querySelectorAll('.opt-btn').forEach(b => b.disabled = true);
+        document.querySelectorAll('.letter-card, .opt-btn').forEach(el => { el.classList.add('used'); el.disabled = true; });
         save();
     }
 
@@ -239,35 +229,39 @@
         save(); render();
     }
 
-    // 空白鍵監聽
     window.addEventListener('keydown', (e) => {
-        if (e.code === 'Space') {
-            const btn = document.getElementById('next-btn');
-            if (btn.style.display === 'block') {
-                e.preventDefault(); // 避免網頁滾動
-                goNext();
-            }
+        if (e.code === 'Space' && document.getElementById('next-btn').style.display === 'block') {
+            e.preventDefault(); goNext();
         }
     });
 
     function showFinal() {
-        document.getElementById('prog-fill').style.width = "100%";
-        updateStatsUI();
-        document.querySelector('.card').innerHTML = `
-            <h1 style="font-size:80px; margin:0;">🏆</h1>
-            <h2>練習結束！</h2>
-            <div class="stats-row" style="margin: 20px 0;">
-                <div class="stat-box">最終正確率: <span class="stat-val">${document.getElementById('stat-acc').innerText}</span></div>
-            </div>
-            <p>你已經完成這組單字的所有挑戰。</p>
-            <button class="next-btn" style="display:block" onclick="resetAll()">重新挑戰</button>
+        clearInterval(timerInterval);
+        const finalTime = document.getElementById('timer').innerText;
+        const isUnder10 = state.seconds < 600;
+        
+        document.getElementById('game-card').innerHTML = `
+            <h1 style="font-size:60px; margin:0;">🏁</h1>
+            <h2>練習完成！</h2>
+            <p>總花費時間：<span class="stat-val">${finalTime}</span></p>
+            <p>正確率：<span class="stat-val">${Math.floor(state.correct/state.total*100)}%</span></p>
+            
+            ${isUnder10 ? `
+                <div class="pass-banner">
+                    🌟 達成老師要求通關標準 🌟<br>
+                    不要關掉，請舉手給老師驗收<br>
+                    【 過 關 】
+                </div>
+            ` : `<p style="color:var(--error)">超過 10 分鐘，請再接再厲！</p>`}
+
+            <button class="next-btn" style="display:block" onclick="resetAll()">重新挑戰 (重計時間)</button>
         `;
     }
 
-    function resetAll() { localStorage.removeItem('vocab_v5_save'); location.reload(); }
+    function resetAll() { localStorage.removeItem('vocab_v6_teacher'); location.reload(); }
 
+    startTimer();
     render();
 </script>
-
 </body>
 </html>
