@@ -3,219 +3,315 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>英文單字挑戰賽</title>
+    <title>單字進階挑戰挑戰</title>
     <style>
+        :root {
+            --primary: #4a90e2;
+            --success: #48bb78;
+            --error: #f56565;
+            --bg: #f7fafc;
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f4f8;
+            font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+            background-color: var(--bg);
             display: flex;
             justify-content: center;
-            align-items: center;
-            height: 100vh;
+            padding: 20px;
             margin: 0;
         }
 
-        #game-container {
+        .card {
             background: white;
-            padding: 2rem;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            text-align: center;
-            width: 90%;
+            width: 100%;
             max-width: 500px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            padding: 30px;
+            text-align: center;
         }
 
-        h1 { color: #2d3748; margin-bottom: 0.5rem; }
-        .hint { color: #4a5568; font-size: 1.2rem; margin-bottom: 1.5rem; font-weight: bold; }
+        .level-badge {
+            background: #edf2f7;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: #4a5568;
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+
+        .hint-chinese {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #2d3748;
+            margin: 15px 0;
+        }
 
         .word-display {
-            display: flex;
-            justify-content: center;
+            font-size: 2rem;
+            letter-spacing: 5px;
+            font-family: 'Courier New', Courier, monospace;
+            color: var(--primary);
+            margin: 20px 0;
+            min-height: 40px;
+        }
+
+        /* 選擇題樣式 */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
             gap: 10px;
-            margin-bottom: 2rem;
-            min-height: 50px;
+            margin-top: 20px;
         }
 
-        .letter-slot {
-            width: 40px;
-            height: 45px;
-            border-bottom: 3px solid #cbd5e0;
-            font-size: 1.5rem;
-            font-weight: bold;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: #3182ce;
-        }
-
-        .letters-bank {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 1.5rem;
-        }
-
-        .letter-btn {
-            background-color: #edf2f7;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 8px;
-            font-size: 1.2rem;
+        .option-btn {
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            background: white;
             cursor: pointer;
+            font-size: 1.1rem;
             transition: all 0.2s;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
 
-        .letter-btn:hover { background-color: #e2e8f0; transform: translateY(-2px); }
-        .letter-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+        .option-btn:hover { background: #f8fafc; border-color: var(--primary); }
 
-        .controls { display: flex; gap: 10px; justify-content: center; }
+        /* 拼字輸入樣式 */
+        .input-area {
+            margin-top: 20px;
+            display: none;
+        }
 
-        button.main-btn {
-            padding: 10px 25px;
-            border: none;
+        input[type="text"] {
+            width: 80%;
+            padding: 12px;
+            font-size: 1.2rem;
+            border: 2px solid #cbd5e0;
             border-radius: 8px;
-            font-size: 1rem;
-            cursor: pointer;
-            font-weight: bold;
+            text-align: center;
+            outline: none;
         }
 
-        .clear-btn { background-color: #feb2b2; color: #9b2c2c; }
-        .next-btn { background-color: #9ae6b4; color: #22543d; display: none; }
+        input[type="text"]:focus { border-color: var(--primary); }
 
-        .message { margin-top: 1rem; font-weight: bold; height: 20px; }
-        .score { color: #718096; margin-top: 1rem; }
+        .msg {
+            margin-top: 20px;
+            font-weight: bold;
+            height: 24px;
+        }
+
+        .next-btn {
+            margin-top: 20px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            display: none;
+            width: 100%;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #eee;
+            border-radius: 4px;
+            margin-top: 30px;
+            overflow: hidden;
+        }
+
+        #progress-inner {
+            height: 100%;
+            background: var(--success);
+            width: 0%;
+            transition: width 0.3s;
+        }
     </style>
 </head>
 <body>
 
-<div id="game-container">
-    <h1>拼字大挑戰</h1>
-    <div class="score">進度: <span id="current-idx">1</span> / <span id="total-count">3</span></div>
+<div class="card" id="game-card">
+    <div class="level-badge" id="level-text">階段 1: 選擇題</div>
+    <div class="hint-chinese" id="hint-cn">提示</div>
     
-    <div class="hint" id="hint-text">讀取中...</div>
-    
-    <div class="word-display" id="word-display"></div>
-    
-    <div class="letters-bank" id="letters-bank"></div>
-
-    <div class="controls">
-        <button class="main-btn clear-btn" onclick="resetWord()">清除重來代</button>
-        <button class="main-btn next-btn" id="next-btn" onclick="nextQuestion()">下一個單字</button>
+    <div id="quiz-section">
+        <div class="options-grid" id="options"></div>
     </div>
 
-    <div class="message" id="message"></div>
+    <div id="spelling-section" class="input-area">
+        <div class="word-display" id="masked-word">s _ _ e n c e</div>
+        <input type="text" id="word-input" placeholder="請輸入完整的單字" autocomplete="off">
+    </div>
+
+    <div class="msg" id="feedback"></div>
+    <button class="next-btn" id="next-btn" onclick="nextStep()">下一題</button>
+
+    <div class="progress-bar">
+        <div id="progress-inner"></div>
+    </div>
 </div>
 
 <script>
-    const vocabulary = [
-        { word: 'science', hint: '科學' },
-        { word: 'subject', hint: '科目 / 主題' },
-        { word: 'favorite', hint: '最喜愛的' }
+    const data = [
+        { en: 'science', cn: '科學' },
+        { en: 'subject', cn: '科目 / 主題' },
+        { en: 'favorite', cn: '最喜愛的' }
     ];
 
-    let currentIndex = 0;
-    let currentInput = "";
+    // 關卡設定：模式, 缺漏字數 (0代表選擇題)
+    const stages = [
+        { mode: 'mcq', holes: 0, label: '階段 1: 字義選擇' },
+        { mode: 'spell', holes: 2, label: '階段 2: 初級填空 (缺2字)' },
+        { mode: 'spell', holes: 3, label: '階段 3: 中級填空 (缺3字)' },
+        { mode: 'spell', holes: 99, label: '最終階段: 完全拼寫' }
+    ];
 
-    const hintEl = document.getElementById('hint-text');
-    const displayEl = document.getElementById('word-display');
-    const bankEl = document.getElementById('letters-bank');
-    const messageEl = document.getElementById('message');
-    const nextBtn = document.getElementById('next-btn');
-    const currentIdxEl = document.getElementById('current-idx');
-    const totalCountEl = document.getElementById('total-count');
+    let currentStageIdx = 0;
+    let currentWordIdx = 0;
+    let isAnswered = false;
 
-    function initGame() {
-        totalCountEl.innerText = vocabulary.length;
-        loadQuestion();
+    function init() {
+        render();
     }
 
-    function loadQuestion() {
-        const item = vocabulary[currentIndex];
-        hintEl.innerText = `中文意思：${item.hint}`;
-        currentInput = "";
-        messageEl.innerText = "";
-        messageEl.style.color = "black";
-        nextBtn.style.display = "none";
-        currentIdxEl.innerText = currentIndex + 1;
+    function render() {
+        isAnswered = false;
+        const stage = stages[currentStageIdx];
+        const wordObj = data[currentWordIdx];
+        
+        document.getElementById('level-text').innerText = stage.label;
+        document.getElementById('hint-cn').innerText = wordObj.cn;
+        document.getElementById('feedback').innerText = "";
+        document.getElementById('next-btn').style.display = "none";
+        
+        updateProgressBar();
 
-        // 建立空格
-        displayEl.innerHTML = "";
-        for (let i = 0; i < item.word.length; i++) {
-            const slot = document.createElement('div');
-            slot.className = 'letter-slot';
-            displayEl.appendChild(slot);
+        if (stage.mode === 'mcq') {
+            showMCQ(wordObj);
+        } else {
+            showSpelling(wordObj, stage.holes);
         }
+    }
 
-        // 建立打亂的字母按鈕
-        const shuffled = item.word.split('').sort(() => Math.random() - 0.5);
-        bankEl.innerHTML = "";
-        shuffled.forEach((char, index) => {
+    function showMCQ(wordObj) {
+        document.getElementById('quiz-section').style.display = "block";
+        document.getElementById('spelling-section').style.display = "none";
+        
+        const optionsDiv = document.getElementById('options');
+        optionsDiv.innerHTML = "";
+        
+        // 產生干擾選項
+        let choices = [wordObj.en];
+        while(choices.length < 4) {
+            let randomWord = data[Math.floor(Math.random() * data.length)].en;
+            if(!choices.includes(randomWord)) choices.push(randomWord);
+        }
+        choices.sort(() => Math.random() - 0.5);
+
+        choices.forEach(choice => {
             const btn = document.createElement('button');
-            btn.className = 'letter-btn';
-            btn.innerText = char;
-            btn.onclick = () => selectLetter(char, btn);
-            bankEl.appendChild(btn);
+            btn.className = 'option-btn';
+            btn.innerText = choice;
+            btn.onclick = () => checkMCQ(choice, wordObj.en);
+            optionsDiv.appendChild(btn);
         });
     }
 
-    function selectLetter(char, btn) {
-        const item = vocabulary[currentIndex];
-        if (currentInput.length < item.word.length) {
-            currentInput += char;
-            btn.disabled = true;
-            updateDisplay();
-            
-            if (currentInput.length === item.word.length) {
-                checkAnswer();
+    function checkMCQ(selected, correct) {
+        if (isAnswered) return;
+        isAnswered = true;
+        if (selected === correct) {
+            showFeedback(true, "答對了！");
+        } else {
+            showFeedback(false, `錯囉，正確答案是 ${correct}`);
+        }
+    }
+
+    function showSpelling(wordObj, holesCount) {
+        document.getElementById('quiz-section').style.display = "none";
+        document.getElementById('spelling-section').style.display = "block";
+        const input = document.getElementById('word-input');
+        input.value = "";
+        input.disabled = false;
+        input.focus();
+
+        let masked = "";
+        if (holesCount >= wordObj.en.length) {
+            masked = "_ ".repeat(wordObj.en.length);
+        } else {
+            // 隨機選取要隱藏的位置
+            let indices = [];
+            while(indices.length < holesCount) {
+                let r = Math.floor(Math.random() * wordObj.en.length);
+                if(!indices.includes(r)) indices.push(r);
+            }
+            for(let i=0; i<wordObj.en.length; i++) {
+                masked += indices.includes(i) ? "_ " : wordObj.en[i] + " ";
             }
         }
+        document.getElementById('masked-word').innerText = masked;
+
+        // 監聽 Enter 鍵
+        input.onkeypress = (e) => {
+            if (e.key === 'Enter') checkSpelling(input.value.toLowerCase(), wordObj.en);
+        };
     }
 
-    function updateDisplay() {
-        const slots = document.querySelectorAll('.letter-slot');
-        for (let i = 0; i < currentInput.length; i++) {
-            slots[i].innerText = currentInput[i];
-        }
-    }
-
-    function resetWord() {
-        currentInput = "";
-        const slots = document.querySelectorAll('.letter-slot');
-        slots.forEach(slot => slot.innerText = "");
-        const btns = document.querySelectorAll('.letter-btn');
-        btns.forEach(btn => btn.disabled = false);
-        messageEl.innerText = "";
-    }
-
-    function checkAnswer() {
-        const correctWord = vocabulary[currentIndex].word;
-        if (currentInput === correctWord) {
-            messageEl.innerText = "太棒了！答對了 ✨";
-            messageEl.style.color = "#38a169";
-            nextBtn.style.display = "block";
+    function checkSpelling(val, correct) {
+        if (isAnswered || val === "") return;
+        isAnswered = true;
+        const input = document.getElementById('word-input');
+        input.disabled = true;
+        
+        if (val.trim() === correct) {
+            showFeedback(true, "完美的拼寫！");
         } else {
-            messageEl.innerText = "哎呀，拼錯囉！再試一次";
-            messageEl.style.color = "#e53e3e";
-            setTimeout(resetWord, 1000);
+            showFeedback(false, `拼錯了，應為：${correct}`);
         }
     }
 
-    function nextQuestion() {
-        currentIndex++;
-        if (currentIndex < vocabulary.length) {
-            loadQuestion();
+    function showFeedback(isCorrect, text) {
+        const f = document.getElementById('feedback');
+        f.innerText = text;
+        f.style.color = isCorrect ? 'var(--success)' : 'var(--error)';
+        document.getElementById('next-btn').style.display = "block";
+    }
+
+    function nextStep() {
+        currentWordIdx++;
+        
+        // 如果這個階段的單字都練習完了，進入下一個階段
+        if (currentWordIdx >= data.length) {
+            currentWordIdx = 0;
+            currentStageIdx++;
+        }
+
+        if (currentStageIdx < stages.length) {
+            render();
         } else {
-            document.getElementById('game-container').innerHTML = `
-                <h1>🎉 恭喜完成！</h1>
-                <p>你已經學會了這次所有的單字。</p>
-                <button class="main-btn" onclick="location.reload()" style="background:#3182ce; color:white;">重新挑戰</button>
-            `;
+            showFinal();
         }
     }
 
-    initGame();
+    function updateProgressBar() {
+        const totalSteps = stages.length * data.length;
+        const currentStep = (currentStageIdx * data.length) + currentWordIdx;
+        const percent = (currentStep / totalSteps) * 100;
+        document.getElementById('progress-inner').style.width = percent + "%";
+    }
+
+    function showFinal() {
+        document.getElementById('game-card').innerHTML = `
+            <h1 style="color:var(--success)">🎉 挑戰完成！</h1>
+            <p>你已經精通了這組單字的所有拼法。</p>
+            <button class="next-btn" style="display:block" onclick="location.reload()">重新開始</button>
+        `;
+    }
+
+    init();
 </script>
 
 </body>
