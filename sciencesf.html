@@ -3,282 +3,177 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>英文單字進階挑戰賽</title>
+    <title>英文單字練習器</title>
     <style>
-        :root {
-            --primary: #4a90e2;
-            --success: #48bb78;
-            --bg: #f0f4f8;
-        }
-
-        body { 
-            font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif; 
-            background: var(--bg); 
-            display: flex; 
-            justify-content: center; 
-            padding: 20px; 
-            margin: 0;
-        }
-
-        .card { 
-            background: white; 
-            padding: 30px; 
-            border-radius: 15px; 
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1); 
-            width: 100%; 
-            max-width: 450px; 
-            text-align: center; 
-        }
-
-        /* 進度條樣式 */
-        .progress-wrapper {
-            margin-bottom: 20px;
-        }
-        .progress-info {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.85rem;
-            color: #718096;
-            margin-bottom: 5px;
-        }
-        .progress-bg {
-            background: #e2e8f0;
-            border-radius: 10px;
-            height: 12px;
-            width: 100%;
-            overflow: hidden;
-        }
-        #progress-fill {
-            background: var(--success);
-            height: 100%;
-            width: 0%;
-            transition: width 0.4s ease;
-        }
-
-        .level-tag { 
-            background: #ebf4ff;
-            color: var(--primary);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: bold;
-        }
-
-        .cn-hint { font-size: 2.2rem; margin: 20px 0; font-weight: bold; color: #2d3748; }
+        :root { --blue: #3182ce; --green: #38a169; --red: #e53e3e; --gray: #f7fafc; }
+        body { font-family: system-ui, -apple-system, sans-serif; background: #edf2f7; display: flex; justify-content: center; padding: 20px; margin: 0; }
+        .container { background: white; width: 100%; max-width: 400px; padding: 25px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; }
         
-        .word-box { 
-            font-size: 1.8rem; 
-            letter-spacing: 4px; 
-            margin: 20px 0; 
-            color: var(--primary); 
-            min-height: 1.5em;
-            font-family: 'Courier New', Courier, monospace;
-        }
+        /* 進度條 */
+        .progress-box { margin-bottom: 20px; }
+        .bar-bg { background: #e2e8f0; height: 10px; border-radius: 5px; overflow: hidden; }
+        #bar-fill { background: var(--green); width: 0%; height: 100%; transition: 0.3s; }
+        .info { display: flex; justify-content: space-between; font-size: 12px; color: #718096; margin-bottom: 4px; }
 
-        input { 
-            width: 90%; 
-            padding: 12px; 
-            font-size: 1.2rem; 
-            border: 2px solid #cbd5e0; 
-            border-radius: 8px; 
-            text-align: center; 
-            outline: none;
-        }
-        input:focus { border-color: var(--primary); }
+        .tag { color: var(--blue); font-weight: bold; font-size: 14px; display: block; margin-bottom: 10px; }
+        .chinese { font-size: 32px; font-weight: bold; margin: 10px 0; color: #2d3748; }
+        .mask { font-size: 24px; letter-spacing: 4px; font-family: monospace; color: var(--blue); margin: 15px 0; min-height: 36px; }
 
-        .option-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
-        .opt-btn { 
-            padding: 15px; 
-            border: 2px solid #e2e8f0; 
-            background: white; 
-            cursor: pointer; 
-            border-radius: 10px; 
-            font-size: 1.1rem;
-            transition: all 0.2s;
-        }
-        .opt-btn:hover { border-color: var(--primary); background: #f7fafc; }
+        input { width: 90%; padding: 12px; font-size: 18px; border: 2px solid #cbd5e0; border-radius: 6px; text-align: center; outline: none; }
+        input:focus { border-color: var(--blue); }
 
-        .msg { margin-top: 20px; font-weight: bold; font-size: 1.1rem; min-height: 1.5em; }
-        
-        button#nextBtn { 
-            margin-top: 20px; 
-            padding: 12px; 
-            background: var(--primary); 
-            color: white; 
-            border: none; 
-            border-radius: 8px; 
-            cursor: pointer; 
-            display: none; 
-            width: 100%; 
-            font-size: 1.1rem;
-            font-weight: bold;
-        }
+        .options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+        .opt-btn { padding: 12px; border: 1px solid #e2e8f0; background: white; cursor: pointer; border-radius: 6px; font-size: 16px; }
+        .opt-btn:hover { background: #f7fafc; border-color: var(--blue); }
+
+        .msg { margin-top: 15px; font-weight: bold; min-height: 24px; }
+        .btn-next { width: 100%; padding: 12px; background: var(--blue); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; display: none; margin-top: 10px; }
+        .reset { margin-top: 30px; font-size: 12px; color: #a0aec0; cursor: pointer; text-decoration: underline; }
     </style>
 </head>
 <body>
 
-<div class="card" id="gameCard">
-    <div class="progress-wrapper">
-        <div class="progress-info">
-            <span id="progress-percent">進度: 0%</span>
-            <span id="progress-count">0 / 0</span>
+<div class="container" id="app">
+    <div class="progress-box">
+        <div class="info">
+            <span id="label-step">進度</span>
+            <span id="label-percent">0%</span>
         </div>
-        <div class="progress-bg">
-            <div id="progress-fill"></div>
-        </div>
+        <div class="bar-bg"><div id="bar-fill"></div></div>
     </div>
 
-    <div class="level-tag" id="levelTitle">載入中...</div>
-    <div class="cn-hint" id="cnText">單字</div>
-    
-    <div id="choiceArea">
-        <div class="option-grid" id="options"></div>
+    <span class="tag" id="label-stage">階段</span>
+    <div class="chinese" id="display-cn">載入中...</div>
+
+    <div id="choice-mode">
+        <div class="options" id="options-grid"></div>
     </div>
 
-    <div id="spellArea" style="display:none;">
-        <div class="word-box" id="maskDisplay"></div>
-        <input type="text" id="wordInput" placeholder="請輸入完整單字並按回車" autocomplete="off">
+    <div id="spell-mode" style="display:none;">
+        <div class="mask" id="display-mask"></div>
+        <input type="text" id="input-word" placeholder="輸入完按 Enter" autocomplete="off">
     </div>
 
-    <div class="msg" id="msgBox"></div>
-    <button id="nextBtn" onclick="goToNext()">下一題</button>
+    <div class="msg" id="display-msg"></div>
+    <button class="btn-next" id="btn-next" onclick="toNext()">下一題</button>
+    <div class="reset" onclick="resetGame()">重新開始遊戲</div>
 </div>
 
 <script>
-    const vocabulary = [
+    // 1. 設定單字與關卡
+    const WORDS = [
         { en: 'science', cn: '科學' },
         { en: 'subject', cn: '科目' },
         { en: 'favorite', cn: '最喜愛的' }
     ];
 
-    const stages = [
-        { mode: 'choice', holes: 0, title: '階段 1：字義選擇' },
-        { mode: 'spell', holes: 2, title: '階段 2：填空 (缺2字)' },
-        { mode: 'spell', holes: 3, title: '階段 3：填空 (缺3字)' },
-        { mode: 'spell', holes: 99, title: '最終階段：全拼練習' }
+    const STAGES = [
+        { name: '階段 1：看中文選英文', mode: 'choice', holes: 0 },
+        { name: '階段 2：填空 (缺2字)', mode: 'spell', holes: 2 },
+        { name: '階段 3：填空 (缺3字)', mode: 'spell', holes: 3 },
+        { name: '階段 4：全拼挑戰', mode: 'spell', holes: 99 }
     ];
 
-    let sIdx = 0; // 當前階段索引
-    let wIdx = 0; // 當前單字索引
-    let isFinished = false;
+    // 2. 讀取儲存資料
+    let current = JSON.parse(localStorage.getItem('study_pos')) || { s: 0, w: 0 };
 
-    function initGame() {
-        renderQuestion();
-    }
+    function save() { localStorage.setItem('study_pos', JSON.stringify(current)); }
 
-    function updateProgressBar() {
-        const totalSteps = stages.length * vocabulary.length;
-        const currentStep = (sIdx * vocabulary.length) + wIdx;
-        const percentage = Math.floor((currentStep / totalSteps) * 100);
-        
-        document.getElementById('progress-fill').style.width = percentage + "%";
-        document.getElementById('progress-percent').innerText = `總進度: ${percentage}%`;
-        document.getElementById('progress-count').innerText = `${currentStep} / ${totalSteps}`;
-    }
+    // 3. 渲染畫面
+    function render() {
+        if (current.s >= STAGES.length) {
+            showFinal();
+            return;
+        }
 
-    function renderQuestion() {
-        isFinished = false;
-        const stage = stages[sIdx];
-        const word = vocabulary[wIdx];
-        
-        updateProgressBar();
+        const stage = STAGES[current.s];
+        const word = WORDS[current.w];
+        const total = STAGES.length * WORDS.length;
+        const count = (current.s * WORDS.length) + current.w;
+        const percent = Math.floor((count / total) * 100);
 
-        document.getElementById('levelTitle').innerText = stage.title;
-        document.getElementById('cnText').innerText = word.cn;
-        document.getElementById('msgBox').innerText = "";
-        document.getElementById('nextBtn').style.display = "none";
+        document.getElementById('label-stage').innerText = stage.name;
+        document.getElementById('display-cn').innerText = word.cn;
+        document.getElementById('label-percent').innerText = percent + "%";
+        document.getElementById('label-step').innerText = `第 ${count + 1} / ${total} 題`;
+        document.getElementById('bar-fill').style.width = percent + "%";
+        document.getElementById('display-msg').innerText = "";
+        document.getElementById('btn-next').style.display = "none";
 
         if (stage.mode === 'choice') {
-            document.getElementById('choiceArea').style.display = "block";
-            document.getElementById('spellArea').style.display = "none";
-            setupChoiceMode(word.en);
+            document.getElementById('choice-mode').style.display = "block";
+            document.getElementById('spell-mode').style.display = "none";
+            makeOptions(word.en);
         } else {
-            document.getElementById('choiceArea').style.display = "none";
-            document.getElementById('spellArea').style.display = "block";
-            setupSpellMode(word.en, stage.holes);
+            document.getElementById('choice-mode').style.display = "none";
+            document.getElementById('spell-mode').style.display = "block";
+            makeSpell(word.en, stage.holes);
         }
     }
 
-    function setupChoiceMode(correct) {
-        const optDiv = document.getElementById('options');
-        optDiv.innerHTML = "";
-        let choices = [correct];
-        while(choices.length < 4) {
-            let r = vocabulary[Math.floor(Math.random()*vocabulary.length)].en;
-            if(!choices.includes(r)) choices.push(r);
+    function makeOptions(correct) {
+        const grid = document.getElementById('options-grid');
+        grid.innerHTML = "";
+        let opts = [correct];
+        while(opts.length < 4 && opts.length < WORDS.length) {
+            let r = WORDS[Math.floor(Math.random()*WORDS.length)].en;
+            if(!opts.includes(r)) opts.push(r);
         }
-        choices.sort(() => Math.random() - 0.5).forEach(text => {
+        opts.sort(() => Math.random() - 0.5).forEach(text => {
             const btn = document.createElement('button');
             btn.className = 'opt-btn';
             btn.innerText = text;
-            btn.onclick = () => {
-                if(isFinished) return;
-                checkAnswer(text === correct, correct);
-            };
-            optDiv.appendChild(btn);
+            btn.onclick = () => check(text === correct, correct);
+            grid.appendChild(btn);
         });
     }
 
-    function setupSpellMode(en, holes) {
-        let display = "";
+    function makeSpell(en, holes) {
+        let m = "";
+        let hIdx = [];
         if (holes >= en.length) {
-            display = "_ ".repeat(en.length);
+            m = "_ ".repeat(en.length);
         } else {
-            let hiddenIndices = [];
-            while(hiddenIndices.length < holes) {
+            while(hIdx.length < holes) {
                 let r = Math.floor(Math.random()*en.length);
-                if(!hiddenIndices.includes(r)) hiddenIndices.push(r);
+                if(!hIdx.includes(r)) hIdx.push(r);
             }
-            for(let i=0; i<en.length; i++) {
-                display += hiddenIndices.includes(i) ? "_ " : en[i] + " ";
-            }
+            for(let i=0; i<en.length; i++) m += hIdx.includes(i) ? "_ " : en[i] + " ";
         }
-        document.getElementById('maskDisplay').innerText = display;
-        const input = document.getElementById('wordInput');
+        document.getElementById('display-mask').innerText = m;
+        const input = document.getElementById('input-word');
         input.value = "";
         input.disabled = false;
         input.focus();
-        input.onkeypress = (e) => {
-            if(e.key === 'Enter') checkAnswer(input.value.toLowerCase().trim() === en, en);
-        };
+        input.onkeydown = (e) => { if(e.key === 'Enter') check(input.value.toLowerCase().trim() === en, en); };
     }
 
-    function checkAnswer(isCorrect, correctAns) {
-        isFinished = true;
-        const msg = document.getElementById('msgBox');
-        if (isCorrect) {
-            msg.innerText = "✅ 太棒了，答對了！";
-            msg.style.color = "#38a169";
-        } else {
-            msg.innerText = "❌ 答錯了，正確答案是: " + correctAns;
-            msg.style.color = "#e53e3e";
-        }
-        document.getElementById('nextBtn').style.display = "block";
-        document.getElementById('wordInput').disabled = true;
+    function check(isOk, ans) {
+        const msg = document.getElementById('display-msg');
+        msg.innerText = isOk ? "✅ 答對了！" : "❌ 正確答案: " + ans;
+        msg.style.color = isOk ? "var(--green)" : "var(--red)";
+        document.getElementById('btn-next').style.display = "block";
+        const input = document.getElementById('input-word');
+        if(input) input.disabled = true;
     }
 
-    function goToNext() {
-        wIdx++;
-        if(wIdx >= vocabulary.length) {
-            wIdx = 0;
-            sIdx++;
-        }
-
-        if(sIdx >= stages.length) {
-            // 完成所有挑戰
-            document.getElementById('progress-fill').style.width = "100%";
-            document.getElementById('progress-percent').innerText = "進度: 100%";
-            document.getElementById('gameCard').innerHTML = `
-                <h1 style="color:#38a169">🎉 恭喜畢業！</h1>
-                <p>你已經完全掌握了這組單字。</p>
-                <button class="opt-btn" style="width:100%; margin-top:20px;" onclick="location.reload()">重新挑戰</button>
-            `;
-        } else {
-            renderQuestion();
-        }
+    function toNext() {
+        current.w++;
+        if (current.w >= WORDS.length) { current.w = 0; current.s++; }
+        save();
+        render();
     }
 
-    initGame();
+    function showFinal() {
+        document.getElementById('bar-fill').style.width = "100%";
+        document.getElementById('label-percent').innerText = "100%";
+        document.getElementById('app').innerHTML = `<h2>🎉 挑戰完成！</h2><p>你已經精通這組單字了。</p><button class="opt-btn" onclick="resetGame()" style="width:100%">重新開始</button>`;
+    }
+
+    function resetGame() { localStorage.removeItem('study_pos'); location.reload(); }
+
+    // 開始執行
+    render();
 </script>
 
 </body>
