@@ -10,123 +10,134 @@
     body {
       box-sizing: border-box;
     }
-    .option-btn {
-      transition: all 0.3s ease;
-    }
-    .option-btn:hover {
-      transform: translateY(-2px);
-    }
-    .letter-blank {
-      min-width: 2rem;
-      transition: all 0.3s ease;
-    }
-    .feedback-show {
-      animation: slideIn 0.3s ease;
-    }
-    @keyframes slideIn {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
+    .btn-hover:hover {
+      transform: scale(1.05);
+      transition: transform 0.2s;
     }
   </style>
   <style>@view-transition { navigation: auto; }</style>
   <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
  </head>
  <body class="h-full">
-  <div id="app" class="h-full w-full overflow-auto"></div>
+  <main id="app" class="h-full w-full"></main>
   <script>
     const defaultConfig = {
-      background_color: "#f0f9ff",
+      background_color: "#e0f2fe",
       card_color: "#ffffff",
-      text_color: "#1e293b",
+      text_color: "#0f172a",
       primary_button_color: "#3b82f6",
-      secondary_button_color: "#8b5cf6",
+      secondary_button_color: "#10b981",
       font_family: "system-ui",
       font_size: 16,
       game_title: "📚 單字練習遊戲",
-      instruction_text: "選擇正確的單字填入空格",
-      choice_mode_label: "選擇題模式",
-      spelling_mode_label: "拼字模式"
+      instruction_text: "填入缺少的字母"
     };
 
     const words = [
       { word: "science", translation: "科學" },
       { word: "subject", translation: "科目" },
-      { word: "favorite", translation: "最喜歡的" }
+      { word: "favorite", translation: "最喜歡的" },
+      { word: "computer", translation: "電腦" },
+      { word: "student", translation: "學生" }
     ];
 
-    let currentMode = 'choice'; // 'choice' or 'spelling'
+    let currentMode = 'choice';
     let currentWordIndex = 0;
-    let currentLevel = 2; // 開始缺2個字母
+    let currentLevel = 2;
     let userAnswer = [];
     let blanksPositions = [];
 
-    function render(config) {
-      const backgroundColor = config.background_color || defaultConfig.background_color;
-      const cardColor = config.card_color || defaultConfig.card_color;
-      const textColor = config.text_color || defaultConfig.text_color;
-      const primaryButtonColor = config.primary_button_color || defaultConfig.primary_button_color;
-      const secondaryButtonColor = config.secondary_button_color || defaultConfig.secondary_button_color;
-      const fontFamily = config.font_family || defaultConfig.font_family;
-      const baseSize = config.font_size || defaultConfig.font_size;
-      const gameTitle = config.game_title || defaultConfig.game_title;
-      const instructionText = config.instruction_text || defaultConfig.instruction_text;
-      const choiceModeLabel = config.choice_mode_label || defaultConfig.choice_mode_label;
-      const spellingModeLabel = config.spelling_mode_label || defaultConfig.spelling_mode_label;
+    function generateBlanks(word, count) {
+      const positions = [];
+      const available = [...Array(word.length).keys()];
+      const numBlanks = Math.min(count, word.length);
+      
+      for (let i = 0; i < numBlanks; i++) {
+        const randomIndex = Math.floor(Math.random() * available.length);
+        positions.push(available[randomIndex]);
+        available.splice(randomIndex, 1);
+      }
+      
+      return positions.sort((a, b) => a - b);
+    }
+
+    function renderApp(config) {
+      const bg = config.background_color || defaultConfig.background_color;
+      const card = config.card_color || defaultConfig.card_color;
+      const text = config.text_color || defaultConfig.text_color;
+      const primary = config.primary_button_color || defaultConfig.primary_button_color;
+      const secondary = config.secondary_button_color || defaultConfig.secondary_button_color;
+      const font = config.font_family || defaultConfig.font_family;
+      const size = config.font_size || defaultConfig.font_size;
+      const title = config.game_title || defaultConfig.game_title;
+      const instruction = config.instruction_text || defaultConfig.instruction_text;
 
       const currentWord = words[currentWordIndex];
       blanksPositions = generateBlanks(currentWord.word, currentLevel);
 
-      document.getElementById('app').innerHTML = `
-        <div class="h-full w-full flex items-center justify-center p-4" style="background: ${backgroundColor}; font-family: ${fontFamily}, system-ui, sans-serif;">
+      const app = document.getElementById('app');
+      app.style.background = bg;
+      app.style.fontFamily = font + ', sans-serif';
+
+      app.innerHTML = `
+        <div class="h-full w-full flex items-center justify-center p-6">
           <div class="w-full max-w-3xl">
-            <div class="rounded-2xl shadow-2xl p-8" style="background: ${cardColor};">
+            <div class="rounded-3xl shadow-2xl p-8" style="background: ${card};">
               
-              <!-- 標題 -->
-              <h1 class="text-center font-bold mb-2" style="color: ${textColor}; font-size: ${baseSize * 2.5}px;">${gameTitle}</h1>
-              <p class="text-center mb-6" style="color: ${textColor}; opacity: 0.7; font-size: ${baseSize}px;">${instructionText}</p>
+              <h1 class="text-center font-bold mb-4" style="color: ${text}; font-size: ${size * 2.5}px;">
+                ${title}
+              </h1>
+              
+              <p class="text-center mb-8" style="color: ${text}; opacity: 0.7; font-size: ${size}px;">
+                ${instruction}
+              </p>
 
-              <!-- 模式切換 -->
-              <div class="flex gap-3 mb-8 justify-center">
-                <button id="choice-mode-btn" class="px-6 py-3 rounded-lg font-semibold transition-all" style="background: ${currentMode === 'choice' ? primaryButtonColor : textColor}; color: white; opacity: ${currentMode === 'choice' ? '1' : '0.3'}; font-size: ${baseSize}px;">
-                  📝 ${choiceModeLabel}
+              <div class="flex gap-3 mb-6 justify-center">
+                <button id="mode-choice" class="px-6 py-3 rounded-xl font-semibold btn-hover" 
+                  style="background: ${currentMode === 'choice' ? primary : text}; 
+                         color: white; 
+                         opacity: ${currentMode === 'choice' ? '1' : '0.3'}; 
+                         font-size: ${size}px;">
+                  📝 選擇題
                 </button>
-                <button id="spelling-mode-btn" class="px-6 py-3 rounded-lg font-semibold transition-all" style="background: ${currentMode === 'spelling' ? secondaryButtonColor : textColor}; color: white; opacity: ${currentMode === 'spelling' ? '1' : '0.3'}; font-size: ${baseSize}px;">
-                  ⌨️ ${spellingModeLabel}
+                <button id="mode-spelling" class="px-6 py-3 rounded-xl font-semibold btn-hover" 
+                  style="background: ${currentMode === 'spelling' ? primary : text}; 
+                         color: white; 
+                         opacity: ${currentMode === 'spelling' ? '1' : '0.3'}; 
+                         font-size: ${size}px;">
+                  ⌨️ 拼字
                 </button>
               </div>
 
-              <!-- 進度指示 -->
-              <div class="mb-6 p-4 rounded-lg text-center" style="background: ${backgroundColor};">
-                <p class="font-semibold mb-2" style="color: ${textColor}; font-size: ${baseSize * 1.1}px;">
-                  單字 ${currentWordIndex + 1}/${words.length} - 難度: 缺${currentLevel}個字母
+              <div class="mb-6 p-5 rounded-xl text-center" style="background: ${bg};">
+                <p class="font-semibold mb-2" style="color: ${text}; font-size: ${size * 1.1}px;">
+                  第 ${currentWordIndex + 1}/${words.length} 題 - 缺 ${currentLevel} 個字母
                 </p>
-                <p style="color: ${textColor}; opacity: 0.8; font-size: ${baseSize * 0.9}px;">
-                  中文提示: ${currentWord.translation}
+                <p style="color: ${text}; opacity: 0.8; font-size: ${size}px;">
+                  💡 提示: ${currentWord.translation}
                 </p>
               </div>
 
-              <!-- 單字顯示區 -->
-              <div class="mb-8 p-6 rounded-xl" style="background: ${backgroundColor};">
-                <div id="word-display" class="flex justify-center gap-2 flex-wrap mb-6">
-                  ${renderWordDisplay(currentWord.word, blanksPositions, userAnswer, textColor, baseSize)}
+              <div class="mb-8 p-8 rounded-xl" style="background: ${bg};">
+                <div id="word-display" class="flex justify-center gap-3 flex-wrap">
+                  ${renderWord(currentWord.word, blanksPositions, userAnswer, text, size)}
                 </div>
               </div>
 
-              <!-- 互動區域 -->
-              <div id="interaction-area" class="mb-6">
-                ${currentMode === 'choice' ? renderChoiceMode(currentWord, blanksPositions, primaryButtonColor, textColor, baseSize) : renderSpellingMode(blanksPositions, primaryButtonColor, textColor, baseSize)}
+              <div id="controls" class="mb-6">
+                ${currentMode === 'choice' ? renderChoiceButtons(currentWord, blanksPositions, primary, text, size) : renderKeyboard(primary, text, size)}
               </div>
 
-              <!-- 回饋區 -->
-              <div id="feedback" class="mb-6 text-center min-h-12"></div>
+              <div id="feedback" class="mb-6 text-center" style="min-height: 60px;"></div>
 
-              <!-- 控制按鈕 -->
               <div class="flex gap-3">
-                <button id="check-btn" class="flex-1 py-3 rounded-lg font-semibold transition-all hover:opacity-90" style="background: ${primaryButtonColor}; color: white; font-size: ${baseSize}px;">
-                  ✓ 檢查答案
+                <button id="check" class="flex-1 py-4 rounded-xl font-bold btn-hover" 
+                  style="background: ${primary}; color: white; font-size: ${size * 1.1}px;">
+                  ✓ 檢查
                 </button>
-                <button id="next-btn" class="flex-1 py-3 rounded-lg font-semibold transition-all" style="background: ${secondaryButtonColor}; color: white; opacity: 0.5; font-size: ${baseSize}px; display: none;">
-                  → 下一題
+                <button id="next" class="flex-1 py-4 rounded-xl font-bold btn-hover" 
+                  style="background: ${secondary}; color: white; font-size: ${size * 1.1}px; display: none;">
+                  下一題 →
                 </button>
               </div>
 
@@ -135,37 +146,26 @@
         </div>
       `;
 
-      attachEventListeners(config);
+      setupEventListeners(config);
     }
 
-    function generateBlanks(word, count) {
-      const positions = [];
-      const availablePositions = [...Array(word.length).keys()];
-      
-      for (let i = 0; i < Math.min(count, word.length); i++) {
-        const randomIndex = Math.floor(Math.random() * availablePositions.length);
-        positions.push(availablePositions[randomIndex]);
-        availablePositions.splice(randomIndex, 1);
-      }
-      
-      return positions.sort((a, b) => a - b);
-    }
-
-    function renderWordDisplay(word, blanks, answers, textColor, baseSize) {
-      return word.split('').map((letter, index) => {
-        const isBlank = blanks.includes(index);
-        const blankIndex = blanks.indexOf(index);
+    function renderWord(word, blanks, answers, color, size) {
+      return word.split('').map((letter, i) => {
+        const isBlank = blanks.includes(i);
+        const blankIndex = blanks.indexOf(i);
         const userLetter = answers[blankIndex] || '';
         
         if (isBlank) {
           return `
-            <div class="letter-blank inline-flex items-center justify-center px-3 py-2 border-2 border-dashed rounded-lg font-bold" style="border-color: ${textColor}; color: ${textColor}; font-size: ${baseSize * 1.8}px; min-width: 3rem; height: 4rem;">
+            <div class="inline-flex items-center justify-center border-3 border-dashed rounded-lg font-bold" 
+              style="width: 3.5rem; height: 4.5rem; border-color: ${color}; color: ${color}; font-size: ${size * 2}px;">
               ${userLetter.toUpperCase()}
             </div>
           `;
         } else {
           return `
-            <div class="inline-flex items-center justify-center px-3 py-2 font-bold" style="color: ${textColor}; font-size: ${baseSize * 1.8}px;">
+            <div class="inline-flex items-center justify-center font-bold" 
+              style="width: 3.5rem; height: 4.5rem; color: ${color}; font-size: ${size * 2}px;">
               ${letter.toUpperCase()}
             </div>
           `;
@@ -173,27 +173,29 @@
       }).join('');
     }
 
-    function renderChoiceMode(word, blanks, buttonColor, textColor, baseSize) {
-      const correctLetters = blanks.map(pos => word[pos]);
+    function renderChoiceButtons(word, blanks, btnColor, textColor, size) {
+      const correct = blanks.map(pos => word[pos]);
       const allLetters = 'abcdefghijklmnopqrstuvwxyz'.split('');
-      const wrongLetters = [];
+      const wrong = [];
       
-      while (wrongLetters.length < 3) {
-        const randomLetter = allLetters[Math.floor(Math.random() * allLetters.length)];
-        if (!correctLetters.includes(randomLetter) && !wrongLetters.includes(randomLetter)) {
-          wrongLetters.push(randomLetter);
+      while (wrong.length < 4) {
+        const random = allLetters[Math.floor(Math.random() * allLetters.length)];
+        if (!correct.includes(random) && !wrong.includes(random)) {
+          wrong.push(random);
         }
       }
       
-      const options = [...correctLetters, ...wrongLetters].sort(() => Math.random() - 0.5);
+      const options = [...correct, ...wrong].sort(() => Math.random() - 0.5);
       
       return `
-        <div class="text-center mb-4" style="color: ${textColor}; font-size: ${baseSize}px;">
-          選擇正確的字母填入空格:
-        </div>
-        <div class="grid grid-cols-4 gap-3 max-w-md mx-auto">
+        <p class="text-center mb-4" style="color: ${textColor}; font-size: ${size}px;">
+          選擇正確的字母:
+        </p>
+        <div class="grid grid-cols-4 gap-3 max-w-lg mx-auto">
           ${options.map(letter => `
-            <button class="option-btn py-4 rounded-lg font-bold" style="background: ${buttonColor}; color: white; font-size: ${baseSize * 1.3}px;" data-letter="${letter}">
+            <button class="choice-btn py-5 rounded-lg font-bold btn-hover" 
+              style="background: ${btnColor}; color: white; font-size: ${size * 1.4}px;" 
+              data-letter="${letter}">
               ${letter.toUpperCase()}
             </button>
           `).join('')}
@@ -201,140 +203,142 @@
       `;
     }
 
-    function renderSpellingMode(blanks, buttonColor, textColor, baseSize) {
+    function renderKeyboard(btnColor, textColor, size) {
+      const letters = 'abcdefghijklmnopqrstuvwxyz'.split('');
+      
       return `
-        <div class="text-center mb-4" style="color: ${textColor}; font-size: ${baseSize}px;">
-          使用鍵盤輸入正確的字母:
-        </div>
-        <div class="grid grid-cols-7 gap-2 max-w-lg mx-auto">
-          ${'abcdefghijklmnopqrstuvwxyz'.split('').map(letter => `
-            <button class="key-btn px-2 py-3 rounded-lg font-semibold transition-all hover:opacity-80" style="background: ${buttonColor}; color: white; font-size: ${baseSize * 0.85}px;" data-letter="${letter}">
+        <p class="text-center mb-4" style="color: ${textColor}; font-size: ${size}px;">
+          使用鍵盤輸入:
+        </p>
+        <div class="grid grid-cols-7 gap-2 max-w-2xl mx-auto">
+          ${letters.map(letter => `
+            <button class="key-btn py-3 rounded-lg font-semibold btn-hover" 
+              style="background: ${btnColor}; color: white; font-size: ${size}px;" 
+              data-letter="${letter}">
               ${letter.toUpperCase()}
             </button>
           `).join('')}
-          <button id="delete-btn" class="key-btn col-span-2 px-2 py-3 rounded-lg font-semibold transition-all hover:opacity-80" style="background: ${textColor}; color: white; opacity: 0.5; font-size: ${baseSize * 0.85}px;">
+          <button id="delete" class="col-span-2 py-3 rounded-lg font-semibold btn-hover" 
+            style="background: ${textColor}; color: white; opacity: 0.5; font-size: ${size}px;">
             ⌫ 刪除
           </button>
         </div>
       `;
     }
 
-    function attachEventListeners(config) {
-      // 模式切換
-      document.getElementById('choice-mode-btn').addEventListener('click', () => {
+    function setupEventListeners(config) {
+      const modeChoice = document.getElementById('mode-choice');
+      const modeSpelling = document.getElementById('mode-spelling');
+      const checkBtn = document.getElementById('check');
+      const nextBtn = document.getElementById('next');
+
+      modeChoice.addEventListener('click', () => {
         if (currentMode !== 'choice') {
           currentMode = 'choice';
           userAnswer = [];
-          render(config);
+          renderApp(config);
         }
       });
 
-      document.getElementById('spelling-mode-btn').addEventListener('click', () => {
+      modeSpelling.addEventListener('click', () => {
         if (currentMode !== 'spelling') {
           currentMode = 'spelling';
           userAnswer = [];
-          render(config);
+          renderApp(config);
         }
       });
 
-      // 選擇題模式
       if (currentMode === 'choice') {
-        document.querySelectorAll('.option-btn').forEach(btn => {
+        document.querySelectorAll('.choice-btn').forEach(btn => {
           btn.addEventListener('click', (e) => {
             const letter = e.target.dataset.letter;
             if (userAnswer.length < blanksPositions.length) {
               userAnswer.push(letter);
-              updateWordDisplay(config);
+              updateDisplay(config);
             }
           });
         });
-      }
-
-      // 拼字模式
-      if (currentMode === 'spelling') {
+      } else {
         document.querySelectorAll('.key-btn').forEach(btn => {
           btn.addEventListener('click', (e) => {
             const letter = e.target.dataset.letter;
             if (letter && userAnswer.length < blanksPositions.length) {
               userAnswer.push(letter);
-              updateWordDisplay(config);
+              updateDisplay(config);
             }
           });
         });
 
-        document.getElementById('delete-btn').addEventListener('click', () => {
-          if (userAnswer.length > 0) {
-            userAnswer.pop();
-            updateWordDisplay(config);
-          }
-        });
+        const deleteBtn = document.getElementById('delete');
+        if (deleteBtn) {
+          deleteBtn.addEventListener('click', () => {
+            if (userAnswer.length > 0) {
+              userAnswer.pop();
+              updateDisplay(config);
+            }
+          });
+        }
       }
 
-      // 檢查答案
-      document.getElementById('check-btn').addEventListener('click', () => {
-        checkAnswer(config);
-      });
-
-      // 下一題
-      document.getElementById('next-btn').addEventListener('click', () => {
-        nextQuestion(config);
-      });
+      checkBtn.addEventListener('click', () => checkAnswer(config));
+      nextBtn.addEventListener('click', () => nextQuestion(config));
     }
 
-    function updateWordDisplay(config) {
-      const textColor = config.text_color || defaultConfig.text_color;
-      const baseSize = config.font_size || defaultConfig.font_size;
+    function updateDisplay(config) {
+      const text = config.text_color || defaultConfig.text_color;
+      const size = config.font_size || defaultConfig.font_size;
       const currentWord = words[currentWordIndex];
       
-      document.getElementById('word-display').innerHTML = renderWordDisplay(
+      document.getElementById('word-display').innerHTML = renderWord(
         currentWord.word, 
         blanksPositions, 
         userAnswer, 
-        textColor, 
-        baseSize
+        text, 
+        size
       );
     }
 
     function checkAnswer(config) {
-      const textColor = config.text_color || defaultConfig.text_color;
-      const baseSize = config.font_size || defaultConfig.font_size;
       const currentWord = words[currentWordIndex];
-      const correctAnswers = blanksPositions.map(pos => currentWord.word[pos]);
+      const correct = blanksPositions.map(pos => currentWord.word[pos]);
+      const size = config.font_size || defaultConfig.font_size;
       
       if (userAnswer.length !== blanksPositions.length) {
-        showFeedback('請填入所有空格！', false, textColor, baseSize);
+        showFeedback('請填完所有空格！', false, size);
         return;
       }
 
-      const isCorrect = userAnswer.every((letter, index) => letter === correctAnswers[index]);
+      const isCorrect = userAnswer.every((letter, i) => letter === correct[i]);
 
       if (isCorrect) {
-        showFeedback('🎉 答對了！太棒了！', true, textColor, baseSize);
-        document.getElementById('check-btn').style.display = 'none';
-        document.getElementById('next-btn').style.display = 'block';
-        document.getElementById('next-btn').style.opacity = '1';
+        showFeedback('🎉 太棒了！答對了！', true, size);
+        document.getElementById('check').style.display = 'none';
+        document.getElementById('next').style.display = 'block';
         
-        // 顯示完整單字
-        const wordDisplay = document.getElementById('word-display');
-        wordDisplay.innerHTML = currentWord.word.split('').map(letter => `
-          <div class="inline-flex items-center justify-center px-3 py-2 font-bold" style="color: #10b981; font-size: ${baseSize * 1.8}px;">
+        const text = config.text_color || defaultConfig.text_color;
+        document.getElementById('word-display').innerHTML = currentWord.word.split('').map(letter => `
+          <div class="inline-flex items-center justify-center font-bold" 
+            style="width: 3.5rem; height: 4.5rem; color: #10b981; font-size: ${size * 2}px;">
             ${letter.toUpperCase()}
           </div>
         `).join('');
       } else {
-        showFeedback('❌ 不對喔，再試一次！', false, textColor, baseSize);
+        showFeedback('❌ 再試試看！', false, size);
         setTimeout(() => {
           userAnswer = [];
-          updateWordDisplay(config);
+          updateDisplay(config);
           document.getElementById('feedback').innerHTML = '';
         }, 1500);
       }
     }
 
-    function showFeedback(message, isSuccess, textColor, baseSize) {
-      const feedbackEl = document.getElementById('feedback');
-      feedbackEl.innerHTML = `
-        <div class="feedback-show p-4 rounded-lg font-bold" style="background: ${isSuccess ? '#10b98122' : '#ef444422'}; color: ${isSuccess ? '#10b981' : '#ef4444'}; font-size: ${baseSize * 1.1}px;">
+    function showFeedback(message, success, size) {
+      const feedback = document.getElementById('feedback');
+      feedback.innerHTML = `
+        <div class="p-4 rounded-xl font-bold" 
+          style="background: ${success ? '#10b98133' : '#ef444433'}; 
+                 color: ${success ? '#10b981' : '#ef4444'}; 
+                 font-size: ${size * 1.2}px;">
           ${message}
         </div>
       `;
@@ -343,41 +347,49 @@
     function nextQuestion(config) {
       currentWordIndex++;
       
-      // 如果完成所有單字，增加難度
       if (currentWordIndex >= words.length) {
         currentWordIndex = 0;
-        currentLevel = Math.min(currentLevel + 1, 5); // 最多缺5個字母
+        currentLevel++;
         
-        if (currentLevel > words[0].word.length) {
-          showCompletionMessage(config);
+        if (currentLevel > 5) {
+          showCompletion(config);
           return;
         }
       }
 
       userAnswer = [];
-      document.getElementById('check-btn').style.display = 'block';
-      document.getElementById('next-btn').style.display = 'none';
+      document.getElementById('check').style.display = 'block';
+      document.getElementById('next').style.display = 'none';
       document.getElementById('feedback').innerHTML = '';
       
-      render(config);
+      renderApp(config);
     }
 
-    function showCompletionMessage(config) {
-      const backgroundColor = config.background_color || defaultConfig.background_color;
-      const cardColor = config.card_color || defaultConfig.card_color;
-      const textColor = config.text_color || defaultConfig.text_color;
-      const primaryButtonColor = config.primary_button_color || defaultConfig.primary_button_color;
-      const fontFamily = config.font_family || defaultConfig.font_family;
-      const baseSize = config.font_size || defaultConfig.font_size;
+    function showCompletion(config) {
+      const bg = config.background_color || defaultConfig.background_color;
+      const card = config.card_color || defaultConfig.card_color;
+      const text = config.text_color || defaultConfig.text_color;
+      const primary = config.primary_button_color || defaultConfig.primary_button_color;
+      const font = config.font_family || defaultConfig.font_family;
+      const size = config.font_size || defaultConfig.font_size;
 
-      document.getElementById('app').innerHTML = `
-        <div class="h-full w-full flex items-center justify-center p-4" style="background: ${backgroundColor}; font-family: ${fontFamily}, system-ui, sans-serif;">
+      const app = document.getElementById('app');
+      app.style.background = bg;
+      app.style.fontFamily = font + ', sans-serif';
+
+      app.innerHTML = `
+        <div class="h-full w-full flex items-center justify-center p-6">
           <div class="w-full max-w-2xl">
-            <div class="rounded-2xl shadow-2xl p-8 text-center" style="background: ${cardColor};">
-              <div style="font-size: 5rem;">🏆</div>
-              <h2 class="font-bold mb-4" style="color: ${textColor}; font-size: ${baseSize * 2}px;">恭喜完成所有關卡！</h2>
-              <p class="mb-8" style="color: ${textColor}; font-size: ${baseSize * 1.2}px;">你已經掌握所有單字了！</p>
-              <button id="restart-btn" class="px-8 py-3 rounded-lg font-semibold transition-all hover:opacity-90" style="background: ${primaryButtonColor}; color: white; font-size: ${baseSize}px;">
+            <div class="rounded-3xl shadow-2xl p-12 text-center" style="background: ${card};">
+              <div style="font-size: 6rem;">🏆</div>
+              <h2 class="font-bold mb-4" style="color: ${text}; font-size: ${size * 2.5}px;">
+                恭喜完成！
+              </h2>
+              <p class="mb-8" style="color: ${text}; font-size: ${size * 1.3}px;">
+                你已經完成所有關卡！
+              </p>
+              <button id="restart" class="px-10 py-4 rounded-xl font-bold btn-hover" 
+                style="background: ${primary}; color: white; font-size: ${size * 1.2}px;">
                 🔄 重新開始
               </button>
             </div>
@@ -385,11 +397,11 @@
         </div>
       `;
 
-      document.getElementById('restart-btn').addEventListener('click', () => {
+      document.getElementById('restart').addEventListener('click', () => {
         currentWordIndex = 0;
         currentLevel = 2;
         userAnswer = [];
-        render(config);
+        renderApp(config);
       });
     }
 
@@ -398,7 +410,7 @@
       window.elementSdk.init({
         defaultConfig,
         onConfigChange: async (config) => {
-          render(config);
+          renderApp(config);
         },
         mapToCapabilities: (config) => ({
           recolorables: [
@@ -456,14 +468,12 @@
         }),
         mapToEditPanelValues: (config) => new Map([
           ["game_title", config.game_title || defaultConfig.game_title],
-          ["instruction_text", config.instruction_text || defaultConfig.instruction_text],
-          ["choice_mode_label", config.choice_mode_label || defaultConfig.choice_mode_label],
-          ["spelling_mode_label", config.spelling_mode_label || defaultConfig.spelling_mode_label]
+          ["instruction_text", config.instruction_text || defaultConfig.instruction_text]
         ])
       });
     }
 
-    render(window.elementSdk?.config || defaultConfig);
+    renderApp(window.elementSdk?.config || defaultConfig);
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b5814d8056180a4',t:'MTc2Njk5ODU1Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b581b40533c4a46',t:'MTc2Njk5ODgyMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
