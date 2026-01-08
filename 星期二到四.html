@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>單字驗收 - 彈回功能版</title>
+    <title>單字驗收 - 選擇題標記版</title>
     <style>
         :root { 
             --primary: #4a90e2; 
@@ -26,21 +26,25 @@
         .stage-tag { background: #ebf8ff; color: var(--primary); padding: 6px 20px; border-radius: 50px; font-size: 14px; font-weight: bold; display: inline-block; margin-bottom: 15px; }
         .hint-cn { font-size: 42px; font-weight: 800; margin: 20px 0; color: var(--dark); }
 
-        /* 拼字區格子 */
-        .word-slots { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; margin: 30px 0; min-height: 60px; }
-        .slot { width: 40px; height: 55px; border-bottom: 3px solid #cbd5e0; font-size: 32px; font-weight: bold; color: var(--primary); display: flex; align-items: center; justify-content: center; transition: 0.2s; cursor: default; }
-        .slot.fixed { border-bottom: none; color: #a0aec0; }
-        .slot.active-hole { border-bottom-color: var(--primary); cursor: pointer; } /* 可點擊退回的格子 */
-        .slot.active-hole:hover { background: #f0f7ff; border-radius: 8px 8px 0 0; }
-
-        /* 字母銀行 */
-        .letter-bank { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 25px; padding: 20px; background: #f8fafc; border-radius: 18px; border: 1px dashed #cbd5e0; }
-        .letter-card { width: 50px; height: 60px; background: white; border: 2px solid #e2e8f0; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.05); user-select: none; }
-        .letter-card.used { opacity: 0.1; pointer-events: none; transform: scale(0.9); }
-
+        /* 選擇題樣式 */
         .options-grid { display: grid; grid-template-columns: 1fr; gap: 15px; margin: 25px 0; }
-        .opt-btn { padding: 20px; border: 2px solid #e2e8f0; background: white; border-radius: 15px; font-size: 22px; font-weight: bold; cursor: pointer; }
-        .opt-btn.used { opacity: 0.5; pointer-events: none; }
+        .opt-btn { padding: 20px; border: 2px solid #e2e8f0; background: white; border-radius: 15px; font-size: 22px; font-weight: bold; cursor: pointer; transition: 0.3s; color: var(--dark); outline: none; }
+        
+        /* 答案反饋顏色 */
+        .opt-btn.btn-correct { background-color: #c6f6d5 !important; border-color: var(--success) !important; color: #22543d !important; }
+        .opt-btn.btn-wrong { background-color: #fed7d7 !important; border-color: var(--error) !important; color: #822727 !important; }
+        .opt-btn.used { pointer-events: none; opacity: 0.6; }
+        .opt-btn.used.btn-correct, .opt-btn.used.btn-wrong { opacity: 1; }
+
+        /* 拼字區樣式 */
+        .word-slots { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; margin: 30px 0; min-height: 60px; }
+        .slot { width: 40px; height: 55px; border-bottom: 3px solid #cbd5e0; font-size: 32px; font-weight: bold; color: var(--primary); display: flex; align-items: center; justify-content: center; cursor: default; }
+        .slot.active-hole { border-bottom-color: var(--primary); cursor: pointer; }
+        .slot.fixed { border-bottom: none; color: #a0aec0; }
+
+        .letter-bank { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 25px; padding: 20px; background: #f8fafc; border-radius: 18px; border: 1px dashed #cbd5e0; }
+        .letter-card { width: 50px; height: 60px; background: white; border: 2px solid #e2e8f0; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; cursor: pointer; user-select: none; }
+        .letter-card.used { opacity: 0.1; pointer-events: none; }
 
         .msg { margin-top: 20px; font-weight: bold; font-size: 22px; min-height: 33px; }
         .next-btn { width: 100%; padding: 20px; background: var(--primary); color: white; border: none; border-radius: 15px; font-size: 20px; cursor: pointer; display: none; margin-top: 20px; font-weight: bold; }
@@ -85,21 +89,20 @@
     ];
 
     const STAGES = [
-        { name: '階段 1：選擇題', mode: 'choice', holes: 0 },
-        { name: '階段 2：填空 (2字)', mode: 'spell', holes: 2 },
-        { name: '階段 3：填空 (4字)', mode: 'spell', holes: 4 },
-        { name: '階段 4：全拼驗收', mode: 'spell', holes: 99 }
+        { name: '1. 辨識選擇', mode: 'choice', holes: 0 },
+        { name: '2. 缺字填空 (2)', mode: 'spell', holes: 2 },
+        { name: '3. 缺字填空 (4)', mode: 'spell', holes: 4 },
+        { name: '4. 全拼挑戰', mode: 'spell', holes: 99 }
     ];
 
-    let state = JSON.parse(localStorage.getItem('vocab_v7_undo')) || { 
+    let state = JSON.parse(localStorage.getItem('vocab_v8_color')) || { 
         s: 0, w: 0, correct: 0, total: 0, seconds: 0 
     };
 
     let timerInterval;
-    // 關鍵：用來追蹤哪些字母卡被填入到哪個槽位
     let slotToCardMap = {}; 
 
-    function save() { localStorage.setItem('vocab_v7_undo', JSON.stringify(state)); }
+    function save() { localStorage.setItem('vocab_v8_color', JSON.stringify(state)); }
 
     function startTimer() {
         clearInterval(timerInterval);
@@ -147,10 +150,10 @@
         }
     }
 
-    function initChoice(correct) {
+    function initChoice(correctEn) {
         const box = document.getElementById('choice-box');
         box.innerHTML = "";
-        let opts = [correct];
+        let opts = [correctEn];
         while(opts.length < 3) {
             let r = WORDS[Math.floor(Math.random()*WORDS.length)].en;
             if(!opts.includes(r)) opts.push(r);
@@ -159,9 +162,32 @@
             const b = document.createElement('button');
             b.className = 'opt-btn';
             b.innerText = t;
-            b.onclick = () => finishStep(t === correct, correct);
+            // 點擊時傳入自己的文字、正確答案以及自己的 Element
+            b.onclick = () => handleChoiceSelect(t, correctEn, b);
             box.appendChild(b);
         });
+    }
+
+    // 處理選擇題點擊
+    function handleChoiceSelect(selected, correct, element) {
+        const isOk = (selected === correct);
+        
+        // 標記所有按鈕為不可點擊
+        const allBtns = document.querySelectorAll('.opt-btn');
+        allBtns.forEach(btn => {
+            btn.classList.add('used');
+            // 如果這個按鈕是正確答案，標記綠色
+            if (btn.innerText === correct) {
+                btn.classList.add('btn-correct');
+            }
+        });
+
+        // 如果選錯了，將選中的那個標記為紅色
+        if (!isOk) {
+            element.classList.add('btn-wrong');
+        }
+
+        finishStep(isOk, correct);
     }
 
     function initSpell(en, holes) {
@@ -170,13 +196,11 @@
         slotsBox.innerHTML = ""; bankBox.innerHTML = "";
         slotToCardMap = {};
 
-        // 決定洞的位置
         let indices = Array.from({length: en.length}, (_, i) => i);
         let targetHoles = (holes < en.length) 
             ? indices.sort(() => Math.random() - 0.5).slice(0, holes).sort((a,b) => a-b)
             : indices;
 
-        // 建立槽位
         targetHoles.forEach(idx => slotToCardMap[idx] = null);
 
         for(let i=0; i<en.length; i++) {
@@ -185,7 +209,6 @@
                 s.className = 'slot active-hole';
                 s.id = `slot-${i}`;
                 s.innerText = "";
-                // 點擊已填入的字母彈回
                 s.onclick = () => undoSlot(i);
             } else {
                 s.className = 'slot fixed';
@@ -194,9 +217,7 @@
             slotsBox.appendChild(s);
         }
 
-        // 建立字母卡
         let letters = targetHoles.map(idx => ({ char: en[idx], id: idx }));
-        // 干擾項
         const alpha = "abcdefghijklmnopqrstuvwxyz";
         while(letters.length < targetHoles.length + 2) {
             letters.push({ char: alpha[Math.floor(Math.random()*26)], id: 'noise-' + Math.random() });
@@ -213,13 +234,10 @@
         });
     }
 
-    // 填入字母
     function fillSlot(char, cardIdx, correctEn) {
-        // 尋找第一個空的槽位
         const emptySlotId = Object.keys(slotToCardMap).find(id => slotToCardMap[id] === null);
         if (emptySlotId === undefined) return;
 
-        // 執行填入
         const slot = document.getElementById(`slot-${emptySlotId}`);
         const card = document.getElementById(`card-${cardIdx}`);
         
@@ -227,51 +245,35 @@
         card.classList.add('used');
         slotToCardMap[emptySlotId] = cardIdx;
 
-        // 檢查是否填滿
         if (Object.values(slotToCardMap).every(v => v !== null)) {
             checkSpell(correctEn);
         }
     }
 
-    // 點擊槽位彈回字母 (核心功能)
     function undoSlot(slotIdx) {
         const cardIdx = slotToCardMap[slotIdx];
         if (cardIdx === null || document.getElementById('next-btn').style.display === 'block') return;
-
-        // 恢復字母卡
         document.getElementById(`card-${cardIdx}`).classList.remove('used');
-        // 清空槽位
         document.getElementById(`slot-${slotIdx}`).innerText = "";
         slotToCardMap[slotIdx] = null;
-        // 清除訊息（避免還沒拼完就顯示錯了）
         document.getElementById('msg').innerText = "";
     }
 
     function checkSpell(en) {
         let studentWord = "";
         const slots = document.getElementById('slots-box').children;
-        for (let s of slots) {
-            studentWord += s.innerText;
-        }
-        
-        if (studentWord === en) {
-            finishStep(true, en);
-        } else {
-            // 如果填滿了但錯了，這裡可以選擇直接判錯，或讓學生可以繼續修改
-            // 為了驗收嚴謹，我們這裡直接判錯
-            finishStep(false, en);
-        }
+        for (let s of slots) studentWord += s.innerText;
+        finishStep(studentWord === en, en);
     }
 
     function finishStep(isOk, correct) {
         state.total++;
         if (isOk) state.correct++;
         const msg = document.getElementById('msg');
-        msg.innerText = isOk ? "✅ 正確！" : "❌ 錯誤，正確是: " + correct;
+        msg.innerText = isOk ? "✅ Excellent!" : "❌ Try again! Correct: " + correct;
         msg.style.color = isOk ? "var(--success)" : "var(--error)";
         document.getElementById('next-btn').style.display = "block";
         
-        // 鎖定所有操作
         document.querySelectorAll('.letter-card, .opt-btn, .slot').forEach(el => {
             el.style.pointerEvents = "none";
         });
@@ -303,8 +305,10 @@
     }
 
     function resetAll() { 
-        localStorage.removeItem('vocab_v7_undo'); 
-        location.reload(); 
+        if(confirm("確定要重來嗎？")) {
+            localStorage.removeItem('vocab_v8_color'); 
+            location.reload(); 
+        }
     }
 
     startTimer();
