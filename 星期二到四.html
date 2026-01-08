@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>單字驗收：星期二至星期四</title>
+    <title>單字驗收 - 彈回功能版</title>
     <style>
         :root { 
             --primary: #4a90e2; 
@@ -11,48 +11,40 @@
             --error: #f56565; 
             --bg: #f7fafc; 
             --dark: #2d3748; 
-            --card-shadow: 0 10px 25px rgba(0,0,0,0.08);
         }
-        body { font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif; background: var(--bg); display: flex; justify-content: center; padding: 20px; margin: 0; min-height: 100vh; }
-        .card { background: white; width: 100%; max-width: 550px; padding: 30px; border-radius: 24px; box-shadow: var(--card-shadow); text-align: center; position: relative; align-self: flex-start; }
+        body { font-family: 'PingFang TC', sans-serif; background: var(--bg); display: flex; justify-content: center; padding: 20px; margin: 0; min-height: 100vh; }
+        .card { background: white; width: 100%; max-width: 550px; padding: 30px; border-radius: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); text-align: center; position: relative; }
         
-        /* 頂部資訊區 */
         .header-info { margin-bottom: 25px; border-bottom: 2px solid #edf2f7; padding-bottom: 20px; }
         .stats-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; font-size: 15px; }
-        .stat-box { background: #f8fafc; padding: 10px; border-radius: 12px; border: 1px solid #e2e8f0; color: var(--dark); }
+        .stat-box { background: #f8fafc; padding: 10px; border-radius: 12px; border: 1px solid #e2e8f0; }
         .stat-val { font-weight: 800; color: var(--primary); font-size: 18px; }
 
         .prog-bar-bg { background: #e2e8f0; height: 10px; border-radius: 5px; overflow: hidden; margin-top: 15px; }
-        #prog-fill { background: var(--success); width: 0%; height: 100%; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        #prog-fill { background: var(--success); width: 0%; height: 100%; transition: width 0.5s; }
 
         .stage-tag { background: #ebf8ff; color: var(--primary); padding: 6px 20px; border-radius: 50px; font-size: 14px; font-weight: bold; display: inline-block; margin-bottom: 15px; }
-        .hint-cn { font-size: 42px; font-weight: 800; margin: 20px 0; color: var(--dark); letter-spacing: 2px; }
+        .hint-cn { font-size: 42px; font-weight: 800; margin: 20px 0; color: var(--dark); }
 
-        /* 拼字區：格子優化 */
+        /* 拼字區格子 */
         .word-slots { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; margin: 30px 0; min-height: 60px; }
-        .slot { width: 40px; height: 55px; border-bottom: 3px solid #cbd5e0; font-size: 32px; font-weight: bold; color: var(--primary); display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .slot { width: 40px; height: 55px; border-bottom: 3px solid #cbd5e0; font-size: 32px; font-weight: bold; color: var(--primary); display: flex; align-items: center; justify-content: center; transition: 0.2s; cursor: default; }
         .slot.fixed { border-bottom: none; color: #a0aec0; }
-        .slot.filled { border-bottom-color: var(--primary); }
+        .slot.active-hole { border-bottom-color: var(--primary); cursor: pointer; } /* 可點擊退回的格子 */
+        .slot.active-hole:hover { background: #f0f7ff; border-radius: 8px 8px 0 0; }
 
-        /* 字母銀行：按鈕優化 */
+        /* 字母銀行 */
         .letter-bank { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 25px; padding: 20px; background: #f8fafc; border-radius: 18px; border: 1px dashed #cbd5e0; }
-        .letter-card { width: 50px; height: 60px; background: white; border: 2px solid #e2e8f0; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        .letter-card:active { transform: translateY(2px); box-shadow: none; }
-        .letter-card.used { opacity: 0.15; pointer-events: none; transform: scale(0.9); }
+        .letter-card { width: 50px; height: 60px; background: white; border: 2px solid #e2e8f0; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.05); user-select: none; }
+        .letter-card.used { opacity: 0.1; pointer-events: none; transform: scale(0.9); }
 
-        /* 選擇題模式 */
         .options-grid { display: grid; grid-template-columns: 1fr; gap: 15px; margin: 25px 0; }
-        .opt-btn { padding: 20px; border: 2px solid #e2e8f0; background: white; border-radius: 15px; font-size: 22px; font-weight: bold; cursor: pointer; transition: 0.2s; color: var(--dark); }
-        .opt-btn:hover:not(.used) { border-color: var(--primary); background: #f0f7ff; }
+        .opt-btn { padding: 20px; border: 2px solid #e2e8f0; background: white; border-radius: 15px; font-size: 22px; font-weight: bold; cursor: pointer; }
+        .opt-btn.used { opacity: 0.5; pointer-events: none; }
 
-        /* 反饋與按鈕 */
         .msg { margin-top: 20px; font-weight: bold; font-size: 22px; min-height: 33px; }
-        .next-btn { width: 100%; padding: 20px; background: var(--primary); color: white; border: none; border-radius: 15px; font-size: 20px; cursor: pointer; display: none; margin-top: 20px; font-weight: bold; box-shadow: 0 4px 14px rgba(74, 144, 226, 0.3); }
+        .next-btn { width: 100%; padding: 20px; background: var(--primary); color: white; border: none; border-radius: 15px; font-size: 20px; cursor: pointer; display: none; margin-top: 20px; font-weight: bold; }
         
-        /* 結算畫面 */
-        .pass-banner { background: #f0fff4; color: #22543d; padding: 25px; border-radius: 20px; border: 2px solid #48bb78; margin-top: 20px; font-size: 20px; font-weight: bold; line-height: 1.6; animation: bounce 1s infinite alternate; }
-        @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-5px); } }
-
         .reset-link { margin-top: 40px; font-size: 13px; color: #a0aec0; cursor: pointer; text-decoration: underline; }
     </style>
 </head>
@@ -86,31 +78,28 @@
 </div>
 
 <script>
-    // 目標單字
     const WORDS = [
         { en: 'Tuesday', cn: '星期二' },
         { en: 'Wednesday', cn: '星期三' },
         { en: 'Thursday', cn: '星期四' }
     ];
 
-    // 關卡設定
     const STAGES = [
-        { name: '第 1 階段：辨識選擇', mode: 'choice', holes: 0 },
-        { name: '第 2 階段：關鍵填空', mode: 'spell', holes: 2 },
-        { name: '第 3 階段：進階挑戰', mode: 'spell', holes: 4 },
-        { name: '第 4 階段：全拼驗收', mode: 'spell', holes: 99 }
+        { name: '階段 1：選擇題', mode: 'choice', holes: 0 },
+        { name: '階段 2：填空 (2字)', mode: 'spell', holes: 2 },
+        { name: '階段 3：填空 (4字)', mode: 'spell', holes: 4 },
+        { name: '階段 4：全拼驗收', mode: 'spell', holes: 99 }
     ];
 
-    // 初始化狀態 (從 LocalStorage 讀取)
-    let state = JSON.parse(localStorage.getItem('vocab_weekly_goal')) || { 
+    let state = JSON.parse(localStorage.getItem('vocab_v7_undo')) || { 
         s: 0, w: 0, correct: 0, total: 0, seconds: 0 
     };
 
-    let currentAnswers = []; 
-    let targetHoles = [];    
     let timerInterval;
+    // 關鍵：用來追蹤哪些字母卡被填入到哪個槽位
+    let slotToCardMap = {}; 
 
-    function save() { localStorage.setItem('vocab_weekly_goal', JSON.stringify(state)); }
+    function save() { localStorage.setItem('vocab_v7_undo', JSON.stringify(state)); }
 
     function startTimer() {
         clearInterval(timerInterval);
@@ -118,7 +107,6 @@
             if (state.s < STAGES.length) {
                 state.seconds++;
                 updateTimerUI();
-                if (state.seconds % 10 === 0) save();
             }
         }, 1000);
     }
@@ -134,8 +122,6 @@
 
         const stage = STAGES[state.s];
         const word = WORDS[state.w];
-        
-        // 進度條計算
         const totalTasks = STAGES.length * WORDS.length;
         const currentTask = state.s * WORDS.length + state.w;
         const progressPercent = Math.floor((currentTask / totalTasks) * 100);
@@ -165,7 +151,6 @@
         const box = document.getElementById('choice-box');
         box.innerHTML = "";
         let opts = [correct];
-        // 隨機從 WORDS 中抓其他選項
         while(opts.length < 3) {
             let r = WORDS[Math.floor(Math.random()*WORDS.length)].en;
             if(!opts.includes(r)) opts.push(r);
@@ -183,77 +168,111 @@
         const slotsBox = document.getElementById('slots-box');
         const bankBox = document.getElementById('bank-box');
         slotsBox.innerHTML = ""; bankBox.innerHTML = "";
-        currentAnswers = []; targetHoles = [];
+        slotToCardMap = {};
 
-        // 決定哪些位置是洞 (hole)
+        // 決定洞的位置
         let indices = Array.from({length: en.length}, (_, i) => i);
-        // 如果不是全拼，隨機挑選位置；如果是全拼，全部都是洞
-        if (holes < en.length) {
-            indices.sort(() => Math.random() - 0.5);
-            targetHoles = indices.slice(0, holes).sort((a,b) => a-b);
-        } else {
-            targetHoles = indices;
-        }
+        let targetHoles = (holes < en.length) 
+            ? indices.sort(() => Math.random() - 0.5).slice(0, holes).sort((a,b) => a-b)
+            : indices;
 
         // 建立槽位
+        targetHoles.forEach(idx => slotToCardMap[idx] = null);
+
         for(let i=0; i<en.length; i++) {
             const s = document.createElement('div');
             if (targetHoles.includes(i)) {
-                s.className = 'slot'; s.id = `slot-${i}`; s.innerText = "";
+                s.className = 'slot active-hole';
+                s.id = `slot-${i}`;
+                s.innerText = "";
+                // 點擊已填入的字母彈回
+                s.onclick = () => undoSlot(i);
             } else {
-                s.className = 'slot fixed'; s.innerText = en[i];
+                s.className = 'slot fixed';
+                s.innerText = en[i];
             }
             slotsBox.appendChild(s);
         }
 
-        // 建立字母銀行
-        let letters = targetHoles.map(idx => en[idx]);
-        // 增加 2 個干擾項
+        // 建立字母卡
+        let letters = targetHoles.map(idx => ({ char: en[idx], id: idx }));
+        // 干擾項
         const alpha = "abcdefghijklmnopqrstuvwxyz";
         while(letters.length < targetHoles.length + 2) {
-            let r = alpha[Math.floor(Math.random()*26)];
-            // 避免干擾項剛好是答案，讓難度適中
-            if(!letters.includes(r)) letters.push(r);
+            letters.push({ char: alpha[Math.floor(Math.random()*26)], id: 'noise-' + Math.random() });
         }
         letters.sort(() => Math.random() - 0.5);
 
-        letters.forEach(char => {
+        letters.forEach((item, index) => {
             const c = document.createElement('div');
             c.className = 'letter-card';
-            c.innerText = char;
-            c.onclick = () => {
-                if (currentAnswers.length < targetHoles.length) {
-                    const targetIdx = targetHoles[currentAnswers.length];
-                    const slot = document.getElementById(`slot-${targetIdx}`);
-                    slot.innerText = char;
-                    slot.classList.add('filled');
-                    currentAnswers.push(char);
-                    c.classList.add('used');
-                    if (currentAnswers.length === targetHoles.length) checkSpell(en);
-                }
-            };
+            c.id = `card-${index}`;
+            c.innerText = item.char;
+            c.onclick = () => fillSlot(item.char, index, en);
             bankBox.appendChild(c);
         });
     }
 
-    function checkSpell(en) {
-        let res = ""; let hP = 0;
-        for(let i=0; i<en.length; i++) {
-            res += targetHoles.includes(i) ? currentAnswers[hP++] : en[i];
+    // 填入字母
+    function fillSlot(char, cardIdx, correctEn) {
+        // 尋找第一個空的槽位
+        const emptySlotId = Object.keys(slotToCardMap).find(id => slotToCardMap[id] === null);
+        if (emptySlotId === undefined) return;
+
+        // 執行填入
+        const slot = document.getElementById(`slot-${emptySlotId}`);
+        const card = document.getElementById(`card-${cardIdx}`);
+        
+        slot.innerText = char;
+        card.classList.add('used');
+        slotToCardMap[emptySlotId] = cardIdx;
+
+        // 檢查是否填滿
+        if (Object.values(slotToCardMap).every(v => v !== null)) {
+            checkSpell(correctEn);
         }
-        // 注意大小寫：這裡我們強制檢查第一個字母是否大寫（如果題目是 Tuesday）
-        finishStep(res === en, en);
+    }
+
+    // 點擊槽位彈回字母 (核心功能)
+    function undoSlot(slotIdx) {
+        const cardIdx = slotToCardMap[slotIdx];
+        if (cardIdx === null || document.getElementById('next-btn').style.display === 'block') return;
+
+        // 恢復字母卡
+        document.getElementById(`card-${cardIdx}`).classList.remove('used');
+        // 清空槽位
+        document.getElementById(`slot-${slotIdx}`).innerText = "";
+        slotToCardMap[slotIdx] = null;
+        // 清除訊息（避免還沒拼完就顯示錯了）
+        document.getElementById('msg').innerText = "";
+    }
+
+    function checkSpell(en) {
+        let studentWord = "";
+        const slots = document.getElementById('slots-box').children;
+        for (let s of slots) {
+            studentWord += s.innerText;
+        }
+        
+        if (studentWord === en) {
+            finishStep(true, en);
+        } else {
+            // 如果填滿了但錯了，這裡可以選擇直接判錯，或讓學生可以繼續修改
+            // 為了驗收嚴謹，我們這裡直接判錯
+            finishStep(false, en);
+        }
     }
 
     function finishStep(isOk, correct) {
         state.total++;
         if (isOk) state.correct++;
         const msg = document.getElementById('msg');
-        msg.innerText = isOk ? "✅ Excellent!" : "❌ Keep trying! Correct: " + correct;
+        msg.innerText = isOk ? "✅ 正確！" : "❌ 錯誤，正確是: " + correct;
         msg.style.color = isOk ? "var(--success)" : "var(--error)";
         document.getElementById('next-btn').style.display = "block";
-        document.querySelectorAll('.letter-card, .opt-btn').forEach(el => { 
-            el.classList.add('used'); 
+        
+        // 鎖定所有操作
+        document.querySelectorAll('.letter-card, .opt-btn, .slot').forEach(el => {
             el.style.pointerEvents = "none";
         });
         save();
@@ -265,7 +284,6 @@
         save(); render();
     }
 
-    // 空白鍵快捷鍵
     window.addEventListener('keydown', (e) => {
         if (e.code === 'Space' && document.getElementById('next-btn').style.display === 'block') {
             e.preventDefault(); goNext();
@@ -275,36 +293,20 @@
     function showFinal() {
         clearInterval(timerInterval);
         const finalTime = document.getElementById('timer').innerText;
-        const accuracy = Math.floor(state.correct/state.total*100);
-        
         document.getElementById('game-card').innerHTML = `
-            <h1 style="font-size:80px; margin:20px 0;">🎉</h1>
-            <h2 style="font-size:28px; color:var(--dark);">全部階段完成！</h2>
-            <div style="margin: 20px 0; text-align: left; background: #f8fafc; padding: 20px; border-radius: 15px;">
-                <p>⌛ 總花費時間：<span class="stat-val">${finalTime}</span></p>
-                <p>🎯 最終正確率：<span class="stat-val">${accuracy}%</span></p>
-            </div>
-            
-            ${accuracy >= 80 ? `
-                <div class="pass-banner">
-                    🌟 恭喜達成驗收標準 🌟<br>
-                    請舉手請老師過目結果<br>
-                    【 簽 名 認 證 】
-                </div>
-            ` : `<p style="color:var(--error); font-weight:bold;">正確率低於 80%，建議再挑戰一次！</p>`}
-
-            <button class="next-btn" style="display:block; background:var(--success);" onclick="resetAll()">重新開始新挑戰</button>
+            <h1 style="font-size:60px; margin:0;">🏁</h1>
+            <h2>練習完成！</h2>
+            <p>總花費時間：<span class="stat-val">${finalTime}</span></p>
+            <p>正確率：<span class="stat-val">${Math.floor(state.correct/state.total*100)}%</span></p>
+            <button class="next-btn" style="display:block" onclick="resetAll()">重新挑戰</button>
         `;
     }
 
     function resetAll() { 
-        if(confirm("確定要清除進度重新開始嗎？")) {
-            localStorage.removeItem('vocab_weekly_goal'); 
-            location.reload(); 
-        }
+        localStorage.removeItem('vocab_v7_undo'); 
+        location.reload(); 
     }
 
-    // 啟動
     startTimer();
     render();
 </script>
